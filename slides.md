@@ -2436,6 +2436,8 @@ class: 'grid text-center align-self-center justify-self-center'
 
 [Documentations](https://Docker.io/)
 
+---
+
 # Les services Docker
 
 ## Introduction aux services Docker
@@ -2479,6 +2481,8 @@ services:
     networks:
       - backend
 ```
+
+---
 
 2. **Démarrage des services** :
 
