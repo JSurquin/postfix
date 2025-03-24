@@ -111,11 +111,9 @@ html:not(.dark) #slide-content {
     font-style: italic;
   }
 
-  .slidev-code-wrapper {
+  .slidev-code {
     max-width: 1000px;
-    // en attendant
     max-height: 53.33vh !important;
-    overflow-y: auto !important;
   }
 
   iframe label.btn {
@@ -151,7 +149,7 @@ html:not(.dark) #slide-content {
   }
 }
 pre.shiki {
-  @apply p-4 rounded overflow-scroll;
+  @apply p-4 rounded overflow-auto;
 }
 code {
   @apply font-mono;

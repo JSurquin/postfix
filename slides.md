@@ -2,11 +2,11 @@
 theme: ./
 colorSchema: "auto"
 layout: intro
-# https://sli.dev/custom/highlighters.html
 highlighter: shiki
+# https://sli.dev/custom/highlighters.html
 title: Formation Docker
 # download: true
-transition: slide-left
+#transition: slide-left
 # remoteAssets: false
 # export:
 #   zoom: 1
