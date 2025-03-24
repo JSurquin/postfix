@@ -39,7 +39,7 @@ eventUrl: 'https://vuejs.amsterdam/'
 twitter: '@jimmylansrq'
 
 twitterUrl: 'https://twitter.com/jimmylansrq'
-presenterImage: 'https://andromed.fr/assets/fondator-205054868b0195afbf807299ba4446169e2958fe902a5b5d036850ac8d4e06ee.jpg'
+presenterImage: 'https://legacy.andromed.fr/images/fondator.jpg'
 ---
 
 # Jimmylan Surquin
