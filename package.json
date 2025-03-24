@@ -41,6 +41,7 @@
   "dependencies": {
     "@alvarosabu/ui": "3.0.0",
     "@slidev/client": "^51.3.0",
+    "@slidev/theme-default": "^0.25.0",
     "@slidev/types": "^0.49.29",
     "prism-theme-vars": "^0.2.5",
     "slidev-addon-tldraw": "^0.4.2",

@@ -14,6 +14,9 @@ importers:
       '@slidev/client':
         specifier: ^51.3.0
         version: 51.3.0(@nuxt/kit@3.15.4)(@vue/compiler-sfc@3.5.13)(markdown-it-async@2.0.0)(postcss@8.5.2)(react@18.3.1)(vite@5.4.14(@types/node@18.19.75)(sass@1.84.0))
+      '@slidev/theme-default':
+        specifier: ^0.25.0
+        version: 0.25.0
       '@slidev/types':
         specifier: ^0.49.29
         version: 0.49.29(@nuxt/kit@3.15.4)(@vue/compiler-sfc@3.5.13)(postcss@8.5.2)(rollup@4.34.6)(typescript@5.7.3)(vite@5.4.14(@types/node@18.19.75)(sass@1.84.0))
@@ -1531,6 +1534,14 @@ packages:
   '@slidev/rough-notation@0.1.0':
     resolution: {integrity: sha512-a/CbVmjuoO3E4JbUr2HOTsXndbcrdLWOM+ajbSQIY3gmLFzhjeXHGksGcp1NZ08pJjLZyTCxfz1C7v/ltJqycA==}
 
+  '@slidev/theme-default@0.25.0':
+    resolution: {integrity: sha512-iWvthH1Ny+i6gTwRnEeeU+EiqsHC56UdEO45bqLSNmymRAOWkKUJ/M0o7iahLzHSXsiPu71B7C715WxqjXk2hw==}
+    engines: {node: '>=14.0.0', slidev: '>=v0.47.0'}
+
+  '@slidev/types@0.47.5':
+    resolution: {integrity: sha512-X67V4cCgM0Sz50bP8GbVzmiL8DHC2IXvdKcsN7DlxHyf+/T4d9GveeGukwha5Fx3MuYeGZWKag7TFL2ZY4w54A==}
+    engines: {node: '>=18.0.0'}
+
   '@slidev/types@0.49.29':
     resolution: {integrity: sha512-xfUcW+zcZU/vzd4WMkZxnAbZbdI0faOPll1A0viXHqR8BlQhZxBV49kCreGl8NK4kd/+oJ/kM5gOXCwDQve0RQ==}
     engines: {node: '>=18.0.0'}
@@ -2429,6 +2440,9 @@ packages:
   clone@1.0.4:
     resolution: {integrity: sha512-JQHZ2QMW6l3aH/j6xCqQThY/9OH4D/9ls34cgkUBiEeocRTU04tHfKPBsUK1PqZCUQM7GiA0IIXJSuXHI64Kbg==}
     engines: {node: '>=0.8'}
+
+  codemirror-theme-vars@0.1.2:
+    resolution: {integrity: sha512-WTau8X2q58b0SOAY9DO+iQVw8JKVEgyQIqArp2D732tcc+pobbMta3bnVMdQdmgwuvNrOFFr6HoxPRoQOgooFA==}
 
   color-convert@2.0.1:
     resolution: {integrity: sha512-RRECPsj7iu/xb5oKYcsFHSppFNnsj/52OVTRKb4zP5onXwVF3zVmmToNcOfGC+CRDpfK/U584fMg38ZHCaElKQ==}
@@ -7461,6 +7475,14 @@ snapshots:
     dependencies:
       roughjs: 4.6.6
 
+  '@slidev/theme-default@0.25.0':
+    dependencies:
+      '@slidev/types': 0.47.5
+      codemirror-theme-vars: 0.1.2
+      prism-theme-vars: 0.2.5
+
+  '@slidev/types@0.47.5': {}
+
   '@slidev/types@0.49.29(@nuxt/kit@3.15.4)(@vue/compiler-sfc@3.5.13)(postcss@8.5.2)(rollup@4.34.6)(typescript@5.7.3)(vite@5.4.14(@types/node@18.19.75)(sass@1.84.0))':
     dependencies:
       '@antfu/utils': 0.7.10
@@ -8731,6 +8753,8 @@ snapshots:
       is-regexp: 3.1.0
 
   clone@1.0.4: {}
+
+  codemirror-theme-vars@0.1.2: {}
 
   color-convert@2.0.1:
     dependencies:

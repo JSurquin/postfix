@@ -641,7 +641,7 @@ routeAlias: 'images-Docker'
 
 # Images Docker
 
-<img class="mt-20 mx-auto" src="https://i0.wp.com/blog.Docker.io/wp-content/uploads/2023/07/Docker-blog-simple.png?fit=1920%2C1080&ssl=1" alt="cli Docker" width="300"/>
+<img class="mt-20 mx-auto" src="https://www.cril.univ-artois.fr/pyxai/assets/figures/docker.png" alt="cli Docker" width="300"/>
 
 ---
 
@@ -786,7 +786,7 @@ layout: new-section
 
 # DockerFile
 
-<img class="mt-20 mx-auto" src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Docker-logo-orig.png" alt="cli Docker" width="300"/>
+<img class="mt-20 mx-auto" src="https://miro.medium.com/v2/resize:fit:940/1*wDC9bAk_EJP4D_6pU5VNgQ.png" alt="cli Docker" width="300"/>
 
 ---
 
