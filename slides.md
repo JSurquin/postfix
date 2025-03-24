@@ -1492,7 +1492,9 @@ routeAlias: 'reseaux-docker'
 
 Les réseaux dans Docker permettent aux conteneurs de communiquer entre eux et avec le monde extérieur. Ils jouent un rôle crucial dans l'isolation, la sécurité et la performance des conteneurs.
 
-## Types de réseaux dans Docker
+---
+
+## Types de réseaux dans Docker (1/2)
 
 1. **Bridge Network** : Le réseau par défaut qui permet aux conteneurs de communiquer entre eux sur le même hôte.
    Exemple : Les conteneurs sur un réseau "bridge" peuvent se connecter entre eux en utilisant leurs adresses IP internes.
@@ -1504,6 +1506,10 @@ Les réseaux dans Docker permettent aux conteneurs de communiquer entre eux et a
    docker run --network host nginx
    ```
    Métaphore : Un bateau qui utilise directement les infrastructures du port.
+
+---
+
+## Types de réseaux dans Docker (2/2)
 
 3. **None Network** : Désactive tout accès réseau pour le conteneur.
    Exemple :
@@ -1549,8 +1555,6 @@ networks:
   frontend-network:
   backend-network:
 ```
-
-Cette configuration crée deux réseaux isolés : un pour la communication frontend-backend et un autre pour la communication backend-db.
 
 ---
 
@@ -1601,15 +1605,23 @@ Docker compose est un outil qui permet de déployer des conteneurs avec des fich
 
 > Attention : je parle bien de conteneurs et pas d'images, vous pouvez utiliser des images existantes ou des images personnalisées pour vos conteneurs.
 
-<br>
+---
+
+# Syntaxe YAML
 
 > Deuxieme chose : Le YAML est un langage de configuration très simple à prendre en main mais qui demande une indentation parfaite (comme par exemple du python), si vous ne respectez pas l'indentation, vous aurez une erreur.
 
 ---
 
+# Exemple concret avec Next.js et PostgreSQL
+
 **Exemple avec un projet next qui veut utiliser postgreSQL comme base de données, pourquoi l'installer en local et galérer à devoir recommencer ces étapes si on voudrais changer de serveur ou pour un autre developpeur sur le projet qui devrais donc refaire les memes étapes en local sur sa machine ?**
 
 > Parce que oui vous l'avez compris, mais on installe pas pareil postgresql sur windows que sur linux et que sur macOS, donc si un développeur arrive sur le projet bonjour la galère.
+
+---
+
+# Déploiement avec Docker Compose
 
 Ou : On utilise un dockerfile/Dockerfile , et un docker-compose.yml pour deployer nos conteneurs dans des environnements de prod, le docker-compose lancera donc dans ce cas les builds de nos images personnalisées et en suite lancera les conteneurs dans des "pods" ou "services".
 
@@ -1617,195 +1629,24 @@ Ou : On utilise un dockerfile/Dockerfile , et un docker-compose.yml pour deploye
 
 # SCHEMA DE Docker COMPOSE ET Docker FILE
 
-<!-- ce n'est pas à la bonne place mais bon... -->
-
 Nous allons voir ici un schéma de Docker Compose et Docker File.
 Comment nous pouvons faire pour déployer nos conteneurs avec des fichiers YAML.
 Mais comment aussi pour déployer des conteneurs avec des fichiers JSON.
 
 <div class="mermaid">
-
-```mermaid
-graph LR
-    A[Développeur] -->|Écrit| B[Docker Compose]
-    B -->|Génère| C[Docker YAML]
-    C -->|Déploie| D[Docker Pods]
-    D -->|Contient| E[Conteneur 1: Nginx]
-    D -->|Contient| F[Conteneur 2: PostgreSQL]
-    D -->|Contient| G[Conteneur 3: Redis]
-    E -->|Expose| H[Port 80]
-    F -->|Expose| I[Port 5432]
-    G -->|Expose| J[Port 6379]
-    A -->|Écrit| K[Docker File]
-    K -->|Crée| L[Image Personnalisée]
-    L -->|Lancée par| B
-    L -->|Déploie| M[Docker Conteneurs]
-    M -->|Contient| N[Conteneur 1: Nginx]
-    M -->|Contient| O[Conteneur 2: PostgreSQL]
-    M -->|Contient| P[Conteneur 3: Redis]
-    N -->|Expose| Q[Port 80]
-    O -->|Expose| R[Port 5432]
-    P -->|Expose| S[Port 6379]
-```
-
+graph TD
+    A[Dockerfile] --> B[Image Docker]
+    B --> C[Conteneur]
+    D[docker-compose.yml] --> E[Services]
+    E --> C
 </div>
 
 ---
 
-Parlons des réseaux maintenant.
+# Exemple de configuration Docker Compose
 
 ```yaml
 version: '3.8'
-
-services:
-  frontend:
-    image: nginx:latest
-    networks:
-      - frontend_net
-
-  backend:
-    image: php:7.4-apache
-    networks:
-      - frontend_net
-      - backend_net
-
-  db:
-    image: mysql:latest
-    networks:
-      - backend_net
-
-networks:
-  frontend_net:
-  backend_net:
-```
-
----
-
-## Parlons maintenant du Docker-compose
-
-<small>
-
-```yaml
-# Utiliser une version spécifique de Docker Compose
-version: '3.8'
-# pourquoi 3.8 ? et pourquoi pas 4.0 ?
-# parce que 4.0 n'est pas compatible avec les anciens fichiers docker-compose.yaml
-# et parce que 3.8 est compatible avec les anciens fichiers docker-compose.yaml
-
-# Définir les services (conteneurs) à exécuter
-services:
-  # Définir le service web (c'est son nom que vous verrez dans les logs)
-  web:
-    # Utiliser une image de base officielle de Python
-    image: python:3.9
-    # Définir le répertoire de travail dans le conteneur
-    working_dir: /app
-    # Copier le fichier requirements.txt dans le répertoire de travail
-    volumes:
-      - .:/app
-    # Exposer le port sur lequel l'application va s'exécuter
-    ports:
-      - "8000:8000"
-    # Démarrer l'application
-    command: ["python", "app.py"]
-
-  # Définir le service db
-  db:
-    # Utiliser une image de base officielle de PostgreSQL
-    image: postgres:13
-    # Définir les variables d'environnement pour la base de données
-    environment:
-      POSTGRES_USER: example
-      POSTGRES_PASSWORD: example
-      POSTGRES_DB: example
-    # Exposer le port sur lequel la base de données va s'exécuter
-    ports:
-      - "5432:5432"
-
-```
-
-</small>
-
----
-
-Un mauvais Docker-compose
-
-<small>
-
-```yaml
-version: '3'
-
-# Utilisation d'un format incorrect pour définir les services
-services:
-  web-app:
-    # Utilisation d'une image sans version, ce qui peut provoquer des builds instables
-    image: nginx
-
-    # Mauvaise syntaxe pour les ports, cette configuration ne mappe pas correctement
-    ports:
-      - "80:"
-
-    # Montage de volumes non nécessaires et peu sécurisés, sans spécifier de chemin hôte ou conteneur
-    volumes:
-      - "/tmp"
-
-    # Dépendances entre services manquantes, ce qui peut provoquer des problèmes de démarrage
-    depends_on:
-      - db
-
-  db:
-    # Utilisation de l'image latest pour une base de données, ce qui est instable
-    image: postgres:latest
-
-    # Manque de variables d'environnement nécessaires pour configurer la base de données
-    environment:
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
-      - POSTGRES_DB
-
-    # Volumes non définis pour la persistance des données, ce qui entraînera une perte de données lors du redémarrage
-    volumes:
-      - "/var/lib/postgresql/data"
-```
-
-</small>
-<br>
-
----
-
-## Pouquoi est-ce un mauvais Docker-compose ?
-
-1. **`version: '3'`** : Bien que cette version fonctionne, il est recommandé de spécifier la dernière version disponible (comme `3.8`) pour utiliser les nouvelles fonctionnalités et éviter des comportements inattendus.
-
-2. **`image: nginx`** : Ne pas spécifier de version de l'image est une très mauvaise pratique. L'image `nginx` par défaut utilisera `latest`, ce qui peut entraîner des builds instables si la version change sans préavis. Il est préférable de spécifier une version explicite (par exemple, `nginx:1.21.6`).
-
-3. **`ports: - "80:"`** : Ici, la syntaxe de port est incorrecte. Il manque le port du conteneur, ce qui signifie que la redirection du port ne fonctionnera pas. Il doit être spécifié correctement comme `"80:80"` (port hôte:port conteneur).
-
----
-
-4. **`volumes: - "/tmp"`** : Le volume monte un répertoire temporaire de l'hôte sans préciser de répertoire cible dans le conteneur, ce qui n'a pas de sens ici. En plus, il est dangereux d'utiliser des répertoires comme `/tmp` sans contrôle sur les permissions. Il faut toujours spécifier le chemin hôte/conteneur de manière explicite pour plus de clarté.
-
-5. **`depends_on` manquant de configuration** : La section `depends_on` est utilisée pour gérer l'ordre de démarrage des conteneurs. Cependant, cela n'assure pas que le service dépendant est réellement prêt à l'emploi. Il faut utiliser des vérifications de santé (`healthcheck`) pour garantir que le service dépendant est opérationnel avant de démarrer le suivant.
-
----
-
-6. **`image: postgres:latest`** : Utiliser `latest` est risqué pour une base de données comme Postgres. Il est préférable de fixer une version spécifique (par exemple, `postgres:13.3`) pour éviter des migrations ou des changements inattendus dans la base de données lors d'une mise à jour.
-
-7. **Variables d'environnement non définies correctement** : Les variables `POSTGRES_USER`, `POSTGRES_PASSWORD` et `POSTGRES_DB` sont nécessaires pour configurer la base de données, mais elles ne sont pas définies ici, ce qui entraînera un échec de démarrage du conteneur Postgres.
-
-8. **Volumes non définis pour la persistance des données** : Le volume `/var/lib/postgresql/data` n'est pas défini de manière appropriée. Il est important de spécifier un chemin de volume sur l'hôte pour permettre la persistance des données, par exemple :
-   ```yaml
-   volumes:
-     - postgres_data:/var/lib/postgresql/data
-   ```
-
----
-
-### Version corrigée :
-
-```yaml
-version: '3.8'
-
 services:
   web-app:
     # Utilisation d'une image adaptée avec une version spécifique pour plus de stabilité
@@ -1860,7 +1701,7 @@ volumes:
 
 ---
 
-### Explication des améliorations :
+### Explication des améliorations (1/2)
 
 1. **`version: '3.8'`** : Utilisation d'une version plus récente et stable de la spécification Compose.
 
@@ -1871,6 +1712,8 @@ volumes:
 4. **Volumes correctement définis** : Les volumes sont montés avec des chemins explicites entre l'hôte et le conteneur, garantissant que les données et fichiers sources sont correctement synchronisés.
 
 ---
+
+### Explication des améliorations (2/2)
 
 5. **`networks`** : Création d'un réseau personnalisé pour garantir que les services peuvent communiquer correctement tout en isolant le trafic du réseau hôte.
 
@@ -1903,6 +1746,8 @@ Un volume persistant est un espace de stockage partagé entre le conteneur et le
 
 Un volume persistant est utile pour stocker des données de manière permanente.
 
+---
+
 ### Comment utiliser un volume persistant ?
 
 Pour utiliser un volume persistant, vous devez le déclarer dans votre fichier de configuration et le monter dans votre conteneur. Voici un exemple concret avec un container Nginx :
@@ -1912,16 +1757,12 @@ volumes:
   - nginx-data:/var/www/html
 ```
 
-<br>
-
 ---
 
 ## Explication
 
 - `nginx-data` est le nom du volume persistant.
 - `/var/www/html` est le chemin dans le conteneur où le volume sera monté.
-
-<br>
 
 ## En clair :
 
@@ -1932,6 +1773,10 @@ Sur mon pc je pourrais y acceder à cet endroit dans mon filesystem :
 ```bash
 ~/nginx-data
 ```
+
+---
+
+## Création d'un volume en CLI
 
 Vous pouvez le faire en cli via la commande :
 
@@ -1954,9 +1799,9 @@ docker run -d \
   mysql:latest
 ```
 
-Nous venons d'associer un volume persistant à notre conteneur MySQL.
+---
 
-# Explications :
+# Explications de l'exemple :
 
 - `mysql-data` est un volume persistant qui stocke les données de la base de données.
 - `mysql-logs` est un volume persistant qui stocke les logs de la base de données.
@@ -1966,14 +1811,14 @@ Nous venons d'associer un volume persistant à notre conteneur MySQL.
 
 ### Exercice : Utilisation d'un volume Docker
 
-<br>
-
 1. **Objectif** : Utiliser un volume Docker pour persister les fichiers de l'application.
+
 2. **Tâches** :
-	- Modifiez le conteneur que vous avez créer précedemment pour qu'il utilise un volume Docker, de sorte que les fichiers de l'application web puissent être partagés entre l'hôte et le conteneur.
-	- Lancez le conteneur avec ce volume et vérifiez que les modifications de fichiers sur l'hôte se reflètent bien dans le conteneur.
+   - Modifiez le conteneur que vous avez créer précedemment pour qu'il utilise un volume Docker, de sorte que les fichiers de l'application web puissent être partagés entre l'hôte et le conteneur.
+   - Lancez le conteneur avec ce volume et vérifiez que les modifications de fichiers sur l'hôte se reflètent bien dans le conteneur.
+
 3. **Indications** :
-	- Trouvez comment utiliser un volume pour monter un dossier de l'hôte dans le conteneur.
+   - Trouvez comment utiliser un volume pour monter un dossier de l'hôte dans le conteneur.
 
 ---
 layout: new-section
@@ -2666,6 +2511,17 @@ Les services dans Docker offrent une façon simple et efficace de gérer des gro
 | **Services**         | Gère les services via Docker Compose                                   | Utilise des pods ou d'autres concepts similaires |
 | **Sécurité**         | Fonctionne avec un démon, ce qui peut poser des problèmes de sécurité  | Certaines solutions sont conçues pour une meilleure sécurité |
 | **Compatibilité**    | Standard de facto pour la conteneurisation                             | Compatibilité variable selon la solution |
+
+</div>
+
+---
+
+# Différences entre Docker et autres solutions (suite)
+
+<div class="text-[8px]">
+
+| Fonctionnalité       | Docker                                                                 | Autres solutions                                                                 |
+|----------------------|------------------------------------------------------------------------|-----------------------------------------------------------------------|
 | **Rootless**         | Nécessite des privilèges root pour certaines opérations                | Certaines solutions permettent l'exécution rootless par défaut |
 | **Outils standards** | Utilise des outils standards de Linux pour la gestion des conteneurs   | Utilise des outils spécifiques à chaque solution |
 | **Images**           | Nécessite un démon d'arrière-plan pour créer des images                | Certaines solutions permettent de créer des images sans démon |
