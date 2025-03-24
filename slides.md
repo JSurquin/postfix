@@ -764,6 +764,8 @@ Créer, gérer et supprimer un conteneur en utilisant des commandes CLI.
      docker pull nginx
      ```
 
+---
+
 3. **Créer et exécuter un conteneur**
    Créez et exécutez un conteneur `nginx` avec un port exposé sur votre machine hôte (port 8080 sur l'hôte redirigé vers le port 80 du conteneur).
 
@@ -1937,6 +1939,8 @@ Voici la structure du projet :
 │   └── src/
 └── docker-compose.yml
 ```
+
+---
 
 Commençons par créer le `docker-compose.yml` :
 
