@@ -116,6 +116,29 @@ html:not(.dark) #slide-content {
     max-height: 53.33vh !important;
   }
 
+  .slidev-code::-webkit-scrollbar,
+  pre::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .slidev-code::-webkit-scrollbar-track,
+  pre::-webkit-scrollbar-track {
+    background: #2d2d2d;
+    border-radius: 4px;
+  }
+
+  .slidev-code::-webkit-scrollbar-thumb,
+  pre::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+  }
+
+  .slidev-code::-webkit-scrollbar-thumb:hover,
+  pre::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+
   iframe label.btn {
     display: none;
   }
@@ -123,6 +146,11 @@ html:not(.dark) #slide-content {
   .dishonored {
     opacity: 0.5;
   }
+}
+
+.slidev-code-copy {
+  color: white !important;
+  right: 10px !important;
 }
 
 :root {
