@@ -485,7 +485,7 @@ reverse: true
 routeAlias: 'intro-Docker'
 title: 'intro-Docker'
 anchor: 'intro-Docker'
-media: 'https://developers.redhat.com/sites/default/files/styles/share/public/blog/2019/08/Docker.png?itok=rIuCQyMl'
+media: 'https://wiki.ghr36cloud.com/docker.png'
 ---
 
 <a name="DISCLAIMER" id="intro-Docker"></a>
@@ -1482,7 +1482,7 @@ routeAlias: 'reseaux-docker'
 
 # Les réseaux Docker
 
-<img class="mt-20 mx-auto" src="https://Docker-desktop.io/assets/images/Docker-desktop-release-1.2-3a022da0788ed1fd7e6c1820879dd235.png" alt="cli Docker" width="300"/>
+<img class="mt-20 mx-auto" src="https://xavki.blog/wp-content/uploads/2023/03/Docker-8-network-intro.png" alt="cli Docker" width="300"/>
 
 ---
 
@@ -1889,7 +1889,7 @@ routeAlias: 'volumes-persistants'
 
 <a name="volumes-persistants" id="volumes-persistants"></a>
 
-<img class="mt-20 mx-auto" src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Docker-logo-orig.png" alt="cli Docker" width="300"/>
+<img class="mt-20 mx-auto" src="https://miro.medium.com/v2/resize:fit:1400/1*xONk464vW-xNYxzE_HsSkw.png" alt="cli Docker" width="300"/>
 
 ---
 
@@ -1984,7 +1984,7 @@ routeAlias: 'pods-et-reseau'
 
 # Les Pods et le réseau
 
-<img class="mt-20 mx-auto" src="https://Docker-desktop.io/assets/images/Docker-desktop-release-1.2-3a022da0788ed1fd7e6c1820879dd235.png" alt="cli Docker" width="300"/>
+<img class="mt-20 mx-auto" src="https://wiki.ghr36cloud.com/docker.png" alt="cli Docker" width="300"/>
 
 ---
 
