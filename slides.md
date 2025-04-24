@@ -82,7 +82,6 @@ routeAlias: 'sommaire'
 <Link to="des-definitions-avant-tout">🔧 Des définitions avant tout</Link>
 <Link to="virtualisation-vs-conteneurisation">💻 Virtualisation vs conteneurisation</Link>
 <Link to="intro-Docker">🚀 Introduction à Docker</Link>
-<Link to="quel-est-la-différence-entre-docker-et-Docker">🐳 Quel est la différence entre Docker et Docker ?</Link>
 </div>
 ::right::
 
