@@ -95,6 +95,7 @@ routeAlias: 'sommaire'
 <Link to="reseaux-docker">🔍 Les réseaux Docker</Link>
 <Link to="volumes-persistants">🔍 Les volumes persistants</Link>
 <Link to="le-rootless">🔍 Le rootless</Link>
+<Link to="introduction-ansible">🔧 Introduction à Ansible</Link>
 <Link to="kubernetes">🎉 Bonus : Introduction à Kubernetes</Link>
 </div>
 
@@ -2536,3 +2537,7 @@ Les services dans Docker offrent une façon simple et efficace de gérer des gro
 | **Images**           | Nécessite un démon d'arrière-plan pour créer des images                | Certaines solutions permettent de créer des images sans démon |
 
 </div>
+
+---
+src: './pages/ansible.md'
+---
