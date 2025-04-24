@@ -169,13 +169,13 @@ Que veux dire pipeline ?
 
 ---
 
-# Pourquoi parler de CI/CD avec Docker et Docker ?
+# Pourquoi parler de CI/CD avec Docker ?
 
-> Docker et Docker sont des outils de conteneurisation.
+> Docker est un outil de conteneurisation.
 
 <small>
 
-Donc il est important de comprendre le concept de CI/CD avec ces outils.
+Donc il est important de comprendre le concept de CI/CD avec cet outil.
 
 Imaginons que nous développons une application web, nous voudrions déployer notre application.
 
@@ -187,7 +187,7 @@ Mais elle déploie notre application dans un container.
 
 Dans un environnement **ISOLÉ ET PORTABLE**, c'est ça que nous voulons !.
 
-Si on change d'environnement de travail, nous n'aurons pas besoin de refaire les mêmes étapes, via Docker ou Docker.
+Si on change d'environnement de travail, nous n'aurons pas besoin de refaire les mêmes étapes, via Docker.
 
 </small>
 
@@ -1169,30 +1169,30 @@ CMD ["./start-app.sh"]
 ---
 
 ```dockerfile
-    FROM ubuntu:20.04
-    # Update and install tools
-    RUN apt-get update && apt-get install -y vim
-    RUN apt-get install -y git
-    RUN apt-get install -y curl
-    RUN apt-get install -y wget
-    # Installing nodejs and npm
-    RUN apt-get update && apt-get install -y nodejs
-    RUN apt-get install -y npm
-    # Installing web server
-    RUN apt-get install -y apache2
-    RUN service apache2 start
-    RUN apt-get install -y nginx
-    CMD ["service", "nginx", "start"]
-    # Setup application
-    RUN mkdir /app
-    RUN mkdir /app/tmp
-    RUN mkdir /app/static
-    COPY index.html /app/static/
-    COPY styles.css /app/static/
-    RUN mv /app/static/* /var/www/html/
-    # Cleanup
-    RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-    CMD ["apache2ctl", "-D", "FOREGROUND"]
+FROM ubuntu:20.04
+# Update and install tools
+RUN apt-get update && apt-get install -y vim
+RUN apt-get install -y git
+RUN apt-get install -y curl
+RUN apt-get install -y wget
+# Installing nodejs and npm
+RUN apt-get update && apt-get install -y nodejs
+RUN apt-get install -y npm
+# Installing web server
+RUN apt-get install -y apache2
+RUN service apache2 start
+RUN apt-get install -y nginx
+CMD ["service", "nginx", "start"]
+# Setup application
+RUN mkdir /app
+RUN mkdir /app/tmp
+RUN mkdir /app/static
+COPY index.html /app/static/
+COPY styles.css /app/static/
+RUN mv /app/static/* /var/www/html/
+# Cleanup
+RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+CMD ["apache2ctl", "-D", "FOREGROUND"]
 ```
 
 ---
@@ -1989,7 +1989,7 @@ volumes:
 
 # Compatibilité OCI (Open Container Initiative)
 
-- Docker et Docker suivent les standards **OCI** pour les images et les runtime des conteneurs.
+- Docker suit les standards **OCI** pour les images et les runtime des conteneurs.
 
   **Exemple : Exporter une image conforme à OCI**
 
@@ -2019,7 +2019,7 @@ volumes:
 
 # Mode détaché avec rétentions spécifiques
 
-- Docker et Docker permettent de configurer des conteneurs en mode détaché tout en imposant des politiques de redémarrage spécifiques.
+- Docker permet de configurer des conteneurs en mode détaché tout en imposant des politiques de redémarrage spécifiques.
 
   **Exemple : Docker restart policy**
 
@@ -2314,7 +2314,7 @@ Il existe plusieurs solutions pour résoudre les noms entre conteneurs :
 
    ```bash
    echo "172.17.0.2 backend" >> /etc/hosts
-   ```
+```
 
 ---
 
@@ -2485,13 +2485,13 @@ docker-compose up -d
 
 3. **Inspection des services** :
 
-```bash
+  ```bash
 docker-compose ps
 ```
 
 4. **Arrêt des services** :
 
-```bash
+     ```bash
 docker-compose down
 ```
 
