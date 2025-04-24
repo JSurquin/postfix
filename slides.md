@@ -125,6 +125,7 @@ routeAlias: 'sommaire-ansible'
 <Link to="ressources-ansible">📚 Ressources pour aller plus loin</Link>
 <Link to="formation-continue-ansible">🎓 Formation continue</Link>
 <Link to="communaute-support">👥 Communauté et support</Link>
+<Link to="ansible-docker">🎉 Ansible et Docker</Link>
 <Link to="prochaines-etapes-ansible">🔜 Prochaines étapes</Link>
 </div>
 

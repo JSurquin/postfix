@@ -1825,3 +1825,365 @@ notifications:
 - Meetups locaux
 - Conférences
 - Réseaux sociaux 
+
+---
+
+# Ansible + Docker : Une combinaison puissante
+
+**"Automatiser la gestion des conteneurs avec Ansible"**
+
+## Pourquoi combiner Ansible et Docker ?
+- Automatisation complète de l'infrastructure
+- Gestion des conteneurs à grande échelle
+- Configuration cohérente
+- Déploiement reproductible
+
+---
+
+# Exercice 7 : Gestion de conteneurs Docker avec Ansible
+
+**"Automatisation de la gestion des conteneurs"**
+
+## Contexte
+Dans cet exercice, nous allons utiliser Ansible pour automatiser la gestion des conteneurs Docker. Nous allons créer un playbook qui va :
+- Installer Docker
+- Configurer le daemon Docker
+- Gérer les conteneurs
+- Mettre en place un environnement de développement
+
+---
+
+# Exercice 7 : Préparation de l'environnement
+
+## Étape 1 : Création de la structure du projet
+```bash
+# Création des répertoires
+mkdir -p ansible-docker/{roles,group_vars,inventory}
+cd ansible-docker
+
+# Création des rôles
+ansible-galaxy init roles/docker
+ansible-galaxy init roles/containers
+
+# Création du fichier d'inventaire
+cat > inventory/hosts << EOF
+[docker_servers]
+localhost ansible_connection=local
+EOF
+```
+
+## Pourquoi cette structure ?
+- Organisation claire du code
+- Séparation des responsabilités
+- Facilité de maintenance
+- Réutilisation possible
+
+---
+
+# Exercice 7 : Configuration de base
+
+## Étape 2 : Variables globales
+```yaml
+# group_vars/all.yml
+---
+# Docker settings
+docker_version: latest
+docker_compose_version: "1.29.2"
+
+# Container settings
+mysql_root_password: "{{ vault_mysql_root_password }}"
+mysql_data_volume: mysql_data
+
+# Network settings
+frontend_network: frontend
+backend_network: backend
+```
+
+## Pourquoi ces variables ?
+- Configuration centralisée
+- Facilité de modification
+- Sécurité des secrets
+- Cohérence des paramètres
+
+---
+
+# Exercice 7 : Installation de Docker
+
+## Étape 3 : Rôle Docker - Installation
+```yaml
+# roles/docker/tasks/main.yml
+---
+- name: Install prerequisites
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - gnupg
+    - lsb-release
+
+- name: Add Docker GPG key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add Docker repository
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
+    state: present
+```
+
+## Pourquoi ces tâches ?
+- Préparation du système
+- Ajout des dépôts officiels
+- Installation sécurisée
+- Configuration de base
+
+---
+
+# Exercice 7 : Configuration de Docker
+
+## Étape 4 : Rôle Docker - Configuration
+```yaml
+# roles/docker/tasks/main.yml (suite)
+---
+- name: Install Docker
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+
+- name: Start and enable Docker
+  systemd:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Add user to docker group
+  user:
+    name: "{{ ansible_user }}"
+    groups: docker
+    append: yes
+```
+
+## Pourquoi cette configuration ?
+- Installation complète
+- Démarrage automatique
+- Permissions utilisateur
+- Sécurité de base
+
+---
+
+# Exercice 7 : Gestion des images
+
+## Étape 5 : Rôle Containers - Images
+```yaml
+# roles/containers/tasks/main.yml
+---
+- name: Pull required images
+  docker_image:
+    name: "{{ item }}"
+    source: pull
+  with_items:
+    - nginx:latest
+    - mysql:8.0
+    - redis:latest
+```
+
+## Pourquoi ces images ?
+- Stack web complète
+- Base de données
+- Cache Redis
+- Images officielles
+
+---
+
+# Exercice 7 : Configuration des réseaux
+
+## Étape 6 : Rôle Containers - Réseaux
+```yaml
+# roles/containers/tasks/main.yml (suite)
+---
+- name: Create Docker networks
+  docker_network:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - frontend
+    - backend
+```
+
+## Pourquoi ces réseaux ?
+- Isolation des services
+- Communication sécurisée
+- Organisation logique
+- Scalabilité
+
+---
+
+# Exercice 7 : Déploiement des conteneurs
+
+## Étape 7 : Rôle Containers - Nginx
+```yaml
+# roles/containers/tasks/main.yml (suite)
+---
+- name: Create Nginx container
+  docker_container:
+    name: nginx
+    image: nginx:latest
+    ports:
+      - "80:80"
+    networks:
+      - name: frontend
+    volumes:
+      - /etc/nginx/conf.d:/etc/nginx/conf.d
+    state: started
+    restart_policy: always
+```
+
+## Pourquoi Nginx ?
+- Serveur web léger
+- Configuration simple
+- Performance
+- Documentation riche
+
+---
+
+# Exercice 7 : Déploiement de MySQL
+
+## Étape 8 : Rôle Containers - MySQL
+```yaml
+# roles/containers/tasks/main.yml (suite)
+---
+- name: Create MySQL container
+  docker_container:
+    name: mysql
+    image: mysql:8.0
+    env:
+      MYSQL_ROOT_PASSWORD: "{{ mysql_root_password }}"
+    networks:
+      - name: backend
+    volumes:
+      - mysql_data:/var/lib/mysql
+    state: started
+    restart_policy: always
+```
+
+## Pourquoi MySQL ?
+- Base de données relationnelle
+- Persistance des données
+- Performance
+- Compatibilité
+
+---
+
+# Exercice 7 : Playbook principal
+
+## Étape 9 : Configuration du déploiement
+```yaml
+# site.yml
+---
+- name: Configure Docker environment
+  hosts: docker_servers
+  become: yes
+  vars_files:
+    - group_vars/all.yml
+  roles:
+    - docker
+    - containers
+  handlers:
+    - name: restart docker
+      systemd:
+        name: docker
+        state: restarted
+```
+
+## Pourquoi ce playbook ?
+- Orchestration complète
+- Gestion des rôles
+- Variables centralisées
+- Handlers pour les redémarrages
+
+---
+
+# Exercice 7 : Déploiement
+
+## Étape 10 : Processus de déploiement
+```bash
+# Création du fichier vault pour les secrets
+ansible-vault create group_vars/vault.yml
+
+# Déploiement de l'environnement Docker
+ansible-playbook -i inventory site.yml --ask-vault-pass
+
+# Vérification des conteneurs
+docker ps
+```
+
+## Pourquoi ces étapes ?
+- Sécurité des secrets
+- Déploiement automatisé
+- Vérification du résultat
+- Debugging facilité
+
+---
+
+# Exercice 7 : Vérifications
+
+## Étape 11 : Tests et vérifications
+```bash
+# Vérification des conteneurs
+docker ps
+
+# Vérification des réseaux
+docker network ls
+
+# Vérification des volumes
+docker volume ls
+
+# Test de Nginx
+curl http://localhost
+```
+
+## Pourquoi ces vérifications ?
+- Confirmation du déploiement
+- Détection des problèmes
+- Validation de la configuration
+- Assurance qualité
+
+---
+
+# Exercice 7 : Bonnes pratiques
+
+## Sécurité
+- Gestion des secrets avec Ansible Vault
+- Permissions minimales
+- Configuration sécurisée
+- Audit des logs
+
+## Maintenance
+- Mises à jour régulières
+- Backup des données
+- Monitoring
+- Documentation
+
+---
+
+# Exercice 7 : Prochaines étapes
+
+## Améliorations possibles
+- Docker Compose avec Ansible
+- Orchestration Kubernetes
+- CI/CD avec Docker
+- Monitoring des conteneurs
+
+## Cas d'usage avancés
+- Environnements de développement
+- Tests automatisés
+- Déploiement en production
+- Scaling horizontal 
