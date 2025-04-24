@@ -54,7 +54,7 @@ Fondateur <a  href="https://www.andromed.fr/"><logos-storyblok-icon  mr-1/>Andro
 ---
 layout: text-image
 media: 'https://i.pinimg.com/originals/f5/5e/80/f55e8059ea945abfd6804b887dd4a0af.gif'
-caption: 'DOCKER X Docker'
+caption: 'DOCKER'
 ---
 
 # DISCLAIMER 🐧
@@ -70,7 +70,7 @@ routeAlias: 'sommaire'
 
 # SOMMAIRE DOCKER 📜
 
-### Voici le sommaire de cette formation sur Docker/Ansible:
+### Voici le sommaire de cette formation sur Docker:
 
 <br>
 
@@ -93,7 +93,6 @@ routeAlias: 'sommaire'
 <Link to="commandes-docker-avancees">🔍 Commandes Docker Avancées</Link>
 <Link to="reseaux-docker">🔍 Les réseaux Docker</Link>
 <Link to="volumes-persistants">🔍 Les volumes persistants</Link>
-<Link to="le-rootless">🔍 Le rootless</Link>
 <Link to="kubernetes">🎉 Bonus : Introduction à Kubernetes</Link>
 </div>
 
@@ -525,56 +524,9 @@ media: 'https://wiki.ghr36cloud.com/docker.png'
 
 # Introduction à Docker
 
-Docker est un outil de gestion de conteneurs qui permet de créer, gérer et exécuter des conteneurs sans nécessiter de démon.
+Docker est un outil de gestion de conteneurs qui permet de créer, gérer et exécuter des conteneurs.
 
-Il est compatible avec les commandes Docker, ce qui facilite la transition pour les utilisateurs de Docker.
-
-Docker offre également des fonctionnalités supplémentaires telles que la gestion des pods et une meilleure sécurité grâce à son architecture sans démon (mais nous en reparlerons plus tard dans cette formation).
-
----
-routeAlias: 'quel-est-la-différence-entre-docker-et-Docker'
----
-
-<a name="quel-est-la-différence-entre-docker-et-Docker" id="quel-est-la-différence-entre-docker-et-Docker"></a>
-
-# Différences entre Docker et Docker
-
-<div class="text-[8px]">
-
-| Fonctionnalité       | Docker                                                                 | Docker                                                                 |
-|----------------------|------------------------------------------------------------------------|-----------------------------------------------------------------------|
-| **Démon**            | Nécessite un démon pour fonctionner                                    | N'a pas besoin de démon pour fonctionner                              |
-| **Pods**             | Ne gère pas les pods                                                   | Offre une gestion des pods, permettant de regrouper plusieurs conteneurs |
-| **Sécurité**         | Fonctionne avec un démon, ce qui peut poser des problèmes de sécurité  | Conçu pour une meilleure sécurité grâce à son architecture sans démon |
-| **Compatibilité**    | -                                                                      | Commandes compatibles avec celles de Docker, facilitant la transition |
-| **Rootless**         | Nécessite des privilèges root pour certaines opérations                | Permet l'exécution de conteneurs en tant qu'utilisateur non root par défaut |
-| **Outils standards** | Utilise des outils spécifiques à Docker                                | Utilise des outils standards de Linux pour la gestion des conteneurs, comme systemd |
-| **Images**           | Nécessite un démon d'arrière-plan pour créer des images                | Permet de créer des images de conteneurs sans nécessiter de démon d'arrière-plan |
-
-</div>
-
----
-
-## Explication et définition d'un démon
-
-<br>
-
-> Un démon est un programme qui s'exécute en arrière-plan et qui gère les ressources du système.
-
-<br>
-
-## Explication d'un pod
-
-> Un pod est un groupe de conteneurs qui partagent le même espace de réseau et qui sont déployés ensemble.
-
-<br>
-
-## Qu'est ce que root / rootless ?
-
-<br>
-
-> - **Root** : Un utilisateur avec des privilèges root peut faire tout ce que bon lui semble dans le système.
-> - **Rootless** : Un utilisateur non root ne peut pas faire des choses comme installer des paquets, modifier des fichiers systèmes, etc.
+Docker offre des fonctionnalités telles que la gestion des services et une meilleure sécurité grâce à son architecture.
 
 ---
 routeAlias: 'le-cli-docker'
@@ -2271,7 +2223,9 @@ C'est un système de gestion de conteneurs qui permet de gérer des clusters de 
 
 Même si sur la doc officiel il disent que ce n'est pas un orchestrateur mais un systeme de gestion de conteneurs.
 
-# Comment ça marche ?
+---
+
+# Architecture de Kubernetes
 
 Kubernetes utilise un système de master et de workers.
 
@@ -2292,6 +2246,13 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: my-pod
+```
+
+---
+
+# Exemple de manifeste Kubernetes (suite)
+
+```yaml
 spec:
   containers:
     - name: my-container
