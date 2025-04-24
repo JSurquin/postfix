@@ -68,9 +68,9 @@ routeAlias: 'sommaire'
 
 <a name="SOMMAIRE" id="sommaire"></a>
 
-# SOMMAIRE 📜
+# SOMMAIRE DOCKER 📜
 
-### Voici le sommaire de cette formation sur Docker:
+### Voici le sommaire de cette formation sur Docker/Ansible:
 
 <br>
 
@@ -95,9 +95,41 @@ routeAlias: 'sommaire'
 <Link to="reseaux-docker">🔍 Les réseaux Docker</Link>
 <Link to="volumes-persistants">🔍 Les volumes persistants</Link>
 <Link to="le-rootless">🔍 Le rootless</Link>
-<Link to="introduction-ansible">🔧 Introduction à Ansible</Link>
 <Link to="kubernetes">🎉 Bonus : Introduction à Kubernetes</Link>
 </div>
+
+---
+layout: two-cols
+routeAlias: 'sommaire-ansible'
+---
+
+# SOMMAIRE ANSIBLE 📜
+
+### Voici le sommaire de cette formation sur Ansible:
+
+<br>
+
+<div class="flex flex-col gap-2">
+
+<Link to="introduction-ansible">🔧 Introduction à Ansible</Link>
+<Link to="historique-ansible">📚 Historique d'Ansible</Link>
+<Link to="pourquoi-ansible">❓ Pourquoi utiliser Ansible ?</Link>
+<Link to="installation-ansible">⚙️ Installation et configuration</Link>
+<Link to="fondamentaux-ansible">📝 Les fondamentaux d'Ansible</Link>
+<Link to="modules-ansible">🔧 Modules et fonctionnalités</Link>
+
+</div>
+::right::
+
+<div class="flex flex-col gap-2">
+<Link to="concepts-avances-ansible">🚀 Concepts avancés</Link>
+<Link to="tests-bonnes-pratiques">✅ Tests et bonnes pratiques</Link>
+<Link to="ressources-ansible">📚 Ressources pour aller plus loin</Link>
+<Link to="formation-continue-ansible">🎓 Formation continue</Link>
+<Link to="communaute-support">👥 Communauté et support</Link>
+<Link to="prochaines-etapes-ansible">🔜 Prochaines étapes</Link>
+</div>
+
 
 ---
 routeAlias: 'comprendre-cicd'
