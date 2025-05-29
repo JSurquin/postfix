@@ -25,6 +25,26 @@ export default defineShortcutsSetup(
         fn: () => nav.toggleDrawing(),
         autoRepeat: true,
       },
+      {
+        key: "h",
+        fn: () => nav.goFirst(), // Retourne à la première slide
+        autoRepeat: false,
+      },
+      {
+        key: "p",
+        fn: () => nav.goLast(), // Retourne à la dernière slide
+        autoRepeat: false,
+      },
+      {
+        key: "s",
+        fn: () => nav.downloadPDF(), // Télécharge le PDF
+        autoRepeat: false,
+      },
+      {
+        key: "go",
+        fn: () => nav.showGotoDialog(), // Affiche la boite de dialogue de navigation
+        autoRepeat: false,
+      },
     ];
   },
 );

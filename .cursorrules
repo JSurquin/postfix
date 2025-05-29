@@ -1,6 +1,6 @@
 # Instructions
 
-c'est un projet (formation angular) avec slidev , vérifiez si le contenu d'une diapositive est trop long pour s'adapter confortablement sur une seule diapositive.
+c'est un projet (formation docker + ansible) avec slidev , vérifiez si le contenu d'une diapositive est trop long pour s'adapter confortablement sur une seule diapositive.
 Si c'est le cas, divisez le contenu en plusieurs diapositives tout en conservant toutes les informations.
 Utilisez la syntaxe Slidev Markdown (par exemple, '--- pour séparer les diapositives).
 Assurez-vous que le contenu divisé circule logiquement et ne perturbe pas le récit.
@@ -79,4 +79,4 @@ je suis un texte en dessous
 
 et ben le : je suis un texte en dessous je veux que tu le sépare pour faire une autre slide, pas de texte en dessous du bloc de code, ça sera sur la slide d'après
 
-attention on est en 2025 donc on utilise angular 18 et 19 ! n'hésite pas à te renseigner sur les nouveautés de ces versions !
+attention on est en 2025 donc on utilise docker de 2025 et ansible de 2025 ! n'hésite pas à te renseigner sur les nouveautés de ces versions !
