@@ -1,45 +1,55 @@
 ---
-layout: default
-routeAlias: 'exercice-dockerfile'
+layout: new-section
 ---
 
-<a name="EXERCICE_DOCKERFILE" id="EXERCICE_DOCKERFILE"></a>
+# 🎯 Exercice Unifié : Application Docker Complète
 
-# 🛠️ Exercice Pratique : Maîtriser les Dockerfiles
+---
+routeAlias: 'exercice-unifie-docker'
+---
 
-### Objectif pédagogique
-Créer des Dockerfiles optimisés et sécurisés pour différents types d'applications, en appliquant les bonnes pratiques 2025.
+<a name="EXERCICE_UNIFIE_DOCKER" id="EXERCICE_UNIFIE_DOCKER"></a>
+
+# 🎯 Exercice Unifié : Application Docker Complète
+
+### De zéro à une stack web professionnelle
+
+Cet exercice progressif vous mène **étape par étape** de la création d'une simple page HTML à une application web complète avec base de données, réseau et persistance. **L'application évolue** à chaque étape !
 
 ---
 
-# Exercice 1 : Premier Dockerfile simple 🚀
+# 🚀 ÉTAPE 1 : Premier site web statique
 
-### Mission
-Créer un Dockerfile pour une application web statique simple.
+### Mission : Créer votre premier Dockerfile
 
-### Instructions
+Nous commençons simple : un site web statique avec Nginx.
 
 ```bash
-# 1. Créez la structure du projet
-mkdir mon-premier-dockerfile
-cd mon-premier-dockerfile
+# Créer le projet
+mkdir mon-projet-docker
+cd mon-projet-docker
 ```
 
 ---
 
-# Création du fichier HTML 🚀
+# Création du contenu web 📝
 
 ```bash
-# 2. Créez un fichier HTML simple
+# Créer une page HTML simple
 cat << EOF > index.html
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Mon Premier Docker</title>
+    <title>Mon Projet Docker - V1</title>
+    <style>
+        body { font-family: Arial; text-align: center; padding: 50px; }
+        .version { color: #4CAF50; font-size: 24px; }
+    </style>
 </head>
 <body>
-    <h1>🐳 Hello Docker World!</h1>
-    <p>Cette page est servie depuis un container Docker.</p>
+    <h1>🐳 Mon Premier Site Docker</h1>
+    <div class="version">Version 1.0 - Site Statique</div>
+    <p>Cette page est servie depuis un container Docker !</p>
 </body>
 </html>
 EOF
@@ -47,642 +57,524 @@ EOF
 
 ---
 
-# Dockerfile à créer 🚀
+# Premier Dockerfile 🏗️
 
 ```dockerfile
-# Votre mission : créer ce Dockerfile
+# Dockerfile - Version 1
 FROM nginx:alpine
 
-# Copier votre fichier HTML
+# Copier notre page
 COPY index.html /usr/share/nginx/html/
 
 # Exposer le port
 EXPOSE 80
 
-# La commande est héritée de l'image de base
+# Nginx démarre automatiquement
 ```
 
 ---
 
-# Test du premier Dockerfile 🚀
+# Test de la V1 ✅
 
 ```bash
-# 3. Construisez l'image
-docker build -t mon-site-web:v1 .
+# Construire l'image
+docker build -t mon-projet:v1 .
 
-# 4. Lancez le container
-docker run -d -p 8080:80 --name mon-site mon-site-web:v1
+# Lancer le container
+docker run -d -p 8080:80 --name site-v1 mon-projet:v1
 
-# 5. Testez
+# Tester
 curl http://localhost:8080
-# ou ouvrez dans votre navigateur
+# Ou ouvrir http://localhost:8080 dans le navigateur
+
+# Nettoyage pour la suite
+docker stop site-v1 && docker rm site-v1
+```
+
+**✅ Checkpoint** : Vous avez un site web qui fonctionne !
+
+---
+
+# 🌐 ÉTAPE 2 : Ajouter les réseaux personnalisés
+
+### Mission : Préparer pour une architecture multi-containers
+
+L'application évolue : nous allons préparer le terrain pour ajouter une base de données.
+
+---
+
+# Création du réseau 🔗
+
+```bash
+# Créer un réseau personnalisé
+docker network create mon-projet-net
+
+# Vérifier
+docker network ls
+docker network inspect mon-projet-net
 ```
 
 ---
 
-# Nettoyage Exercice 1 🚀
+# Nouvelle version avec réseau 🌐
 
 ```bash
-# 6. Nettoyage
-docker stop mon-site
-docker rm mon-site
-```
-
----
-
-# Exercice 2 : Application Node.js optimisée 📦
-
-### Mission
-Créer un Dockerfile optimisé pour une application Node.js avec gestion du cache.
-
-### Préparation
-
-```bash
-# 1. Nouveau projet
-mkdir app-nodejs-optimisee
-cd app-nodejs-optimisee
-```
-
----
-
-# Création du package.json 📦
-
-```bash
-# 2. Créez package.json
-cat << EOF > package.json
-{
-  "name": "mon-app-docker",
-  "version": "1.0.0",
-  "description": "Application Node.js pour Docker",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
-  "dependencies": {
-    "express": "^4.18.2"
-  }
-}
+# Mettre à jour la page HTML
+cat << EOF > index.html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mon Projet Docker - V2</title>
+    <style>
+        body { font-family: Arial; text-align: center; padding: 50px; }
+        .version { color: #2196F3; font-size: 24px; }
+        .network { color: #FF9800; }
+    </style>
+</head>
+<body>
+    <h1>🐳 Mon Site avec Réseau</h1>
+    <div class="version">Version 2.0 - Réseau Personnalisé</div>
+    <p class="network">Container sur le réseau 'mon-projet-net'</p>
+    <p>Prêt pour une base de données !</p>
+</body>
+</html>
 EOF
 ```
 
 ---
 
-# Création du server.js 📦
+# Rebuild et test avec réseau 🧪
 
 ```bash
-# 3. Créez server.js
-cat << EOF > server.js
-const express = require('express');
-const app = express();
-const PORT = process.env.PORT || 3000;
+# Reconstruire
+docker build -t mon-projet:v2 .
 
-app.get('/', (req, res) => {
-    res.json({
-        message: '🚀 Application Node.js dans Docker!',
-        timestamp: new Date().toISOString(),
-        version: process.env.NODE_ENV || 'development'
-    });
-});
+# Lancer sur le réseau personnalisé
+docker run -d -p 8080:80 \
+  --name site-v2 \
+  --network mon-projet-net \
+  mon-projet:v2
+
+# Tester
+curl http://localhost:8080
+
+# Vérifier la connectivité réseau
+docker exec site-v2 ping google.com
 ```
+
+**✅ Checkpoint** : Site avec réseau personnalisé opérationnel !
 
 ---
 
-# Suite server.js 📦
+# 💾 ÉTAPE 3 : Ajouter la persistance avec volumes
+
+### Mission : Préparer les logs et données persistantes
+
+L'application évolue encore : nous allons ajouter la gestion des logs.
+
+---
+
+# Création des volumes 📁
 
 ```bash
-app.get('/health', (req, res) => {
-    res.status(200).json({ status: 'healthy' });
-});
+# Créer les volumes
+docker volume create mon-projet-logs
+docker volume create mon-projet-data
 
-app.listen(PORT, () => {
-    console.log(\`🚀 Serveur démarré sur le port \${PORT}\`);
-});
-EOF
+# Vérifier
+docker volume ls
+docker volume inspect mon-projet-logs
 ```
 
 ---
 
-# Dockerfile optimisé - Base 📦
-
-```dockerfile
-# Image de base légère
-FROM node:20-alpine
-
-# Métadonnées
-LABEL maintainer="votre-email@example.com" \
-      version="1.0.0" \
-      description="Application Node.js optimisée"
-
-# Variables d'environnement
-ENV NODE_ENV=production \
-    PORT=3000
-
-# Répertoire de travail
-WORKDIR /app
-```
-
----
-
-# Dockerfile optimisé - Dépendances 📦
-
-```dockerfile
-# Copie des fichiers de dépendances AVANT le code source (cache)
-COPY package*.json ./
-
-# Installation des dépendances de production seulement
-RUN npm ci --only=production && \
-    npm cache clean --force
-
-# Copie du code source
-COPY . .
-```
-
----
-
-# Dockerfile optimisé - Sécurité 📦
-
-```dockerfile
-# Créer un utilisateur non-root
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-RUN chown -R appuser:appgroup /app
-USER appuser
-```
-
----
-
-# Dockerfile optimisé - Healthcheck 📦
-
-```dockerfile
-# Healthcheck
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD node -e "const http = require('http'); \
-    const options = { host: 'localhost', port: process.env.PORT, path: '/health', timeout: 2000 }; \
-    const req = http.get(options, (res) => { \
-        if (res.statusCode === 200) { process.exit(0); } \
-        else { process.exit(1); } \
-    }); \
-    req.on('error', () => process.exit(1)); \
-    req.on('timeout', () => process.exit(1));"
-
-# Port d'exposition
-EXPOSE 3000
-
-# Commande de démarrage
-CMD ["npm", "start"]
-```
-
----
-
-# Test avancé Node.js 📦
+# Configuration Nginx avec logs 📊
 
 ```bash
-# Construire et tester
-docker build -t node-app-optimisee:v1 .
-docker run -d -p 3000:3000 --name node-app node-app-optimisee:v1
-
-# Tester l'application
-curl http://localhost:3000
-curl http://localhost:3000/health
-```
-
----
-
-# Vérifications sécurité 📦
-
-```bash
-# Vérifier le healthcheck
-docker ps  # Le status doit être "healthy"
-
-# Vérifier la sécurité (utilisateur non-root)
-docker exec node-app whoami  # Doit afficher "appuser"
-```
-
----
-
-# Exercice 3 : Multi-stage build Python 🐍
-
-### Mission
-Créer un Dockerfile multi-stage pour optimiser une application Python.
-
-### Préparation
-
-```bash
-# 1. Nouveau projet
-mkdir app-python-multistage
-cd app-python-multistage
-```
-
----
-
-# Création requirements.txt 🐍
-
-```bash
-# 2. Créez requirements.txt
-cat << EOF > requirements.txt
-fastapi==0.104.1
-uvicorn[standard]==0.24.0
-pydantic==2.5.0
-requests==2.31.0
-EOF
-```
-
----
-
-# Création main.py partie 1 🐍
-
-```bash
-# 3. Créez main.py
-cat << EOF > main.py
-from fastapi import FastAPI
-from pydantic import BaseModel
-import uvicorn
-import os
-
-app = FastAPI(title="App Docker Multi-stage", version="1.0.0")
-
-class HealthResponse(BaseModel):
-    status: str
-    message: str
-```
-
----
-
-# Création main.py partie 2 🐍
-
-```bash
-@app.get("/")
-async def root():
-    return {
-        "message": "🐍 Application Python FastAPI dans Docker!",
-        "environment": os.getenv("ENVIRONMENT", "production"),
-        "multi_stage": True
+# Créer une config Nginx personnalisée
+cat << EOF > nginx.conf
+server {
+    listen 80;
+    
+    # Configuration des logs
+    access_log /var/log/nginx/access.log;
+    error_log /var/log/nginx/error.log;
+    
+    root /usr/share/nginx/html;
+    index index.html;
+    
+    location / {
+        try_files \$uri \$uri/ =404;
+        # Ajouter des headers pour debug
+        add_header X-Container-Name "mon-projet-v3";
+        add_header X-Version "3.0";
     }
-
-@app.get("/health", response_model=HealthResponse)
-async def health():
-    return HealthResponse(status="healthy", message="Application fonctionne correctement")
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    
+    # Page de stats simple
+    location /stats {
+        return 200 '{"version": "3.0", "status": "running", "container": "avec volumes"}';
+        add_header Content-Type application/json;
+    }
+}
 EOF
 ```
 
 ---
 
-# Dockerfile multi-stage
+# Dockerfile V3 avec volumes 🏗️
 
 ```dockerfile
-# Stage 1: Build - Image complète avec outils de build
-FROM python:3.11-slim as builder
+# Dockerfile - Version 3
+FROM nginx:alpine
 
-# Installation des outils de build
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        build-essential \
-        && rm -rf /var/lib/apt/lists/*
+# Copier la configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Copie des requirements
-COPY requirements.txt .
+# Copier le site
+COPY index.html /usr/share/nginx/html/
 
-# Installation des dépendances dans un dossier séparé
-RUN pip install --user --no-cache-dir -r requirements.txt
+# Créer le répertoire de logs
+RUN mkdir -p /var/log/nginx
 
-# Stage 2: Runtime - Image minimale pour la production
-FROM python:3.11-slim
+# Exposer le port
+EXPOSE 80
 
-# Métadonnées
-LABEL maintainer="votre-email@example.com" \
-      description="Application FastAPI multi-stage optimisée"
-
-# Variables d'environnement
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PATH=/home/appuser/.local/bin:$PATH \
-    ENVIRONMENT=production
-
-# Création de l'utilisateur non-root
-RUN useradd -m -u 1000 appuser
-
-# Copie des dépendances depuis le stage builder
-COPY --from=builder /root/.local /home/appuser/.local
-
-# Répertoire de travail
-WORKDIR /app
-
-# Copie du code source
-COPY --chown=appuser:appuser . .
-
-# Changement vers utilisateur non-root
-USER appuser
-
-# Healthcheck
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD python -c "import requests; requests.get('http://localhost:8000/health', timeout=5)"
-
-# Port d'exposition
-EXPOSE 8000
-
-# Commande de démarrage
-CMD ["python", "main.py"]
-```
-
-### Comparaison des tailles
-
-```bash
-# Construire et comparer
-docker build -t python-app-multistage:v1 .
-
-# Vérifier la taille de l'image finale
-docker images python-app-multistage:v1
-
-# Tester l'application
-docker run -d -p 8000:8000 --name python-app python-app-multistage:v1
-curl http://localhost:8000
-curl http://localhost:8000/health
+# Nginx démarre automatiquement
 ```
 
 ---
 
-# Exercice 4 : Dockerfile Go ultra-optimisé ⚡
-
-### Mission
-Créer l'image Docker la plus légère possible pour une application Go.
-
-### Préparation
+# Page HTML V3 avec stats 📈
 
 ```bash
-# 1. Nouveau projet
-mkdir app-go-minimal
-cd app-go-minimal
-
-# 2. Créez go.mod
-cat << EOF > go.mod
-module docker-app
-
-go 1.21
-EOF
-
-# 3. Créez main.go
-cat << EOF > main.go
-package main
-
-import (
-    "encoding/json"
-    "fmt"
-    "log"
-    "net/http"
-    "time"
-)
-
-type Response struct {
-    Message   string \`json:"message"\`
-    Timestamp string \`json:"timestamp"\`
-    Language  string \`json:"language"\`
-}
-
-type HealthResponse struct {
-    Status string \`json:"status"\`
-}
-
-func main() {
-    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-        w.Header().Set("Content-Type", "application/json")
-        response := Response{
-            Message:   "⚡ Application Go ultra-légère dans Docker!",
-            Timestamp: time.Now().Format(time.RFC3339),
-            Language:  "Go",
-        }
-        json.NewEncoder(w).Encode(response)
-    })
-
-    http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-        w.Header().Set("Content-Type", "application/json")
-        w.WriteHeader(http.StatusOK)
-        json.NewEncoder(w).Encode(HealthResponse{Status: "healthy"})
-    })
-
-    fmt.Println("🚀 Serveur Go démarré sur le port 8080")
-    log.Fatal(http.ListenAndServe(":8080", nil))
-}
+# Mettre à jour la page
+cat << EOF > index.html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mon Projet Docker - V3</title>
+    <style>
+        body { font-family: Arial; text-align: center; padding: 50px; }
+        .version { color: #9C27B0; font-size: 24px; }
+        .feature { color: #4CAF50; margin: 10px; }
+        button { padding: 10px 20px; font-size: 16px; margin: 10px; }
+    </style>
+</head>
+<body>
+    <h1>🐳 Mon Site avec Volumes</h1>
+    <div class="version">Version 3.0 - Persistance des Données</div>
+    
+    <div class="feature">🌐 Réseau personnalisé</div>
+    <div class="feature">💾 Volumes persistants</div>
+    <div class="feature">📊 Logs sauvegardés</div>
+    
+    <button onclick="fetch('/stats').then(r=>r.json()).then(d=>alert(JSON.stringify(d)))">
+        Voir les stats
+    </button>
+    
+    <p>Prêt pour une base de données !</p>
+</body>
+</html>
 EOF
 ```
 
-### Dockerfile ultra-optimisé
+---
 
-```dockerfile
-# Stage 1: Build
-FROM golang:1.21-alpine AS builder
-
-# Installation des certificats SSL (nécessaires pour les requêtes HTTPS)
-RUN apk --no-cache add ca-certificates
-
-# Répertoire de travail
-WORKDIR /app
-
-# Copie des fichiers Go
-COPY go.mod go.sum* ./
-RUN go mod download
-
-COPY . .
-
-# Build statique sans dépendances dynamiques
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags '-extldflags "-static"' -o main .
-
-# Stage 2: Runtime minimal avec scratch
-FROM scratch
-
-# Copie des certificats SSL
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-
-# Copie de l'exécutable
-COPY --from=builder /app/main /main
-
-# Port d'exposition
-EXPOSE 8080
-
-# Point d'entrée
-ENTRYPOINT ["/main"]
-```
-
-### Test de l'optimisation
+# Test V3 avec volumes 🧪
 
 ```bash
-# Construire l'image ultra-légère
-docker build -t go-app-minimal:v1 .
+# Arrêter V2
+docker stop site-v2 && docker rm site-v2
 
-# Vérifier la taille (devrait être < 20MB!)
-docker images go-app-minimal:v1
+# Construire V3
+docker build -t mon-projet:v3 .
 
-# Tester l'application
-docker run -d -p 8080:8080 --name go-app go-app-minimal:v1
+# Lancer avec volumes
+docker run -d -p 8080:80 \
+  --name site-v3 \
+  --network mon-projet-net \
+  -v mon-projet-logs:/var/log/nginx \
+  -v mon-projet-data:/data \
+  mon-projet:v3
+
+# Tester
 curl http://localhost:8080
-curl http://localhost:8080/health
+curl http://localhost:8080/stats
 
-# Comparer avec une version non-optimisée
-# (créez un Dockerfile avec FROM golang:1.21 sans multi-stage)
+# Générer des logs
+for i in {1..10}; do curl http://localhost:8080; done
 ```
 
 ---
 
-# 🏆 Défi Final : Application Full-Stack
-
-### Mission
-Créer un Dockerfile pour une application full-stack avec frontend et backend.
-
-### Structure du projet
+# Vérification de la persistance 🔍
 
 ```bash
-mkdir app-fullstack-docker
-cd app-fullstack-docker
+# Voir les logs générés
+docker exec site-v3 cat /var/log/nginx/access.log
 
-# Frontend (React simple)
-mkdir frontend
-cat << EOF > frontend/package.json
-{
-  "name": "frontend",
-  "version": "1.0.0",
-  "scripts": {
-    "build": "echo 'Build simulé' && mkdir -p build && echo '<h1>Frontend React</h1><p>Build via Docker</p>' > build/index.html"
-  }
-}
-EOF
+# Redémarrer le container
+docker restart site-v3
 
-# Backend (Node.js)
-mkdir backend
-cat << EOF > backend/package.json
-{
-  "name": "backend",
-  "version": "1.0.0",
-  "dependencies": {
-    "express": "^4.18.2"
-  }
-}
-EOF
+# Vérifier que les logs persistent
+docker exec site-v3 cat /var/log/nginx/access.log
 
-cat << EOF > backend/server.js
-const express = require('express');
-const path = require('path');
-const app = express();
-
-// Servir les fichiers statiques du frontend
-app.use(express.static('/app/frontend'));
-
-app.get('/api/health', (req, res) => {
-    res.json({ status: 'healthy', service: 'fullstack' });
-});
-
-app.get('/api/info', (req, res) => {
-    res.json({
-        message: 'Full-stack app dans Docker!',
-        frontend: 'React (simulé)',
-        backend: 'Node.js + Express'
-    });
-});
-
-app.listen(3000, () => {
-    console.log('🚀 Full-stack app sur le port 3000');
-});
-EOF
+# Les logs sont toujours là ! 🎉
 ```
 
-### Dockerfile Full-Stack
+**✅ Checkpoint** : Application avec persistance des données !
 
-```dockerfile
-# Stage 1: Build Frontend
-FROM node:20-alpine AS frontend-builder
-WORKDIR /app/frontend
-COPY frontend/package.json ./
-RUN npm install
-COPY frontend/ ./
-RUN npm run build
+---
 
-# Stage 2: Build Backend
-FROM node:20-alpine AS backend-builder
-WORKDIR /app/backend
-COPY backend/package.json ./
-RUN npm ci --only=production
+# 🗄️ ÉTAPE 4 : Ajouter une base de données
 
-# Stage 3: Production
-FROM node:20-alpine
-LABEL description="Application Full-Stack optimisée"
+### Mission : Stack complète avec PostgreSQL
 
-# Variables d'environnement
-ENV NODE_ENV=production
+L'application finale : site web + base de données + tout ce qu'on a appris !
 
-# Création utilisateur non-root
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+---
 
-# Répertoire de travail
-WORKDIR /app
+# Lancement de PostgreSQL 🐘
 
-# Copie du backend
-COPY --from=backend-builder /app/backend /app/backend
-COPY --from=backend-builder /app/backend/node_modules /app/backend/node_modules
+```bash
+# Créer un volume pour la DB
+docker volume create postgres-data
 
-# Copie du frontend build
-COPY --from=frontend-builder /app/frontend/build /app/frontend
+# Lancer PostgreSQL sur notre réseau
+docker run -d \
+  --name database \
+  --network mon-projet-net \
+  -v postgres-data:/var/lib/postgresql/data \
+  -e POSTGRES_PASSWORD=monmotdepasse \
+  -e POSTGRES_DB=monprojet \
+  postgres:15-alpine
 
-# Changement des permissions
-RUN chown -R appuser:appgroup /app
-USER appuser
-
-# Healthcheck
-HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
-    CMD node -e "require('http').get('http://localhost:3000/api/health', (res) => process.exit(res.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"
-
-EXPOSE 3000
-
-# Démarrage
-CMD ["node", "/app/backend/server.js"]
+# Vérifier que ça fonctionne
+docker logs database
 ```
 
 ---
 
-# 📝 Auto-évaluation avancée
+# Test de connectivité DB 🔗
 
-### Checklist des compétences Dockerfile
+```bash
+# Tester la connexion depuis notre site
+docker exec site-v3 ping database
 
-**Optimisation** :
-- [ ] J'utilise des images de base appropriées (alpine, slim)
-- [ ] J'applique le principe des multi-stage builds
-- [ ] Je gère correctement le cache des layers
-- [ ] Je minimise le nombre d'instructions RUN
+# Se connecter à la DB pour créer une table
+docker exec -it database psql -U postgres -d monprojet
 
-**Sécurité** :
-- [ ] Je crée des utilisateurs non-root
-- [ ] Je gère les permissions correctement
-- [ ] J'évite d'exposer des informations sensibles
-- [ ] J'utilise des images officielles vérifiées
+# Dans psql, créer une table simple :
+# CREATE TABLE visiteurs (id SERIAL PRIMARY KEY, ip VARCHAR(50), timestamp TIMESTAMP DEFAULT NOW());
+# \q pour quitter
+```
 
-**Bonnes pratiques** :
-- [ ] Je structure logiquement mon Dockerfile
-- [ ] J'ajoute des métadonnées (LABEL)
-- [ ] J'implémente des healthchecks
-- [ ] Je gère les variables d'environnement
+---
 
-**Performance** :
-- [ ] Mes images sont de taille optimale
-- [ ] Les temps de build sont raisonnables
-- [ ] Le cache Docker est efficace
-- [ ] Les applications démarrent rapidement
+# Application finale avec DB 🏆
 
-### Résultats attendus
+```bash
+# Page HTML finale avec simulation DB
+cat << EOF > index.html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mon Projet Docker - FINAL</title>
+    <style>
+        body { font-family: Arial; text-align: center; padding: 50px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .version { color: #FFD700; font-size: 28px; font-weight: bold; }
+        .feature { background: rgba(255,255,255,0.2); margin: 10px; padding: 15px; border-radius: 10px; }
+        .stack { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+        .component { background: rgba(255,255,255,0.3); padding: 20px; border-radius: 15px; min-width: 150px; }
+        button { padding: 15px 30px; font-size: 18px; margin: 10px; border: none; border-radius: 25px; background: #FFD700; color: #333; cursor: pointer; }
+        button:hover { background: #FFA500; }
+    </style>
+</head>
+<body>
+    <h1>🏆 Projet Docker Complet</h1>
+    <div class="version">Version FINALE - Stack Complète</div>
+    
+    <div class="stack">
+        <div class="component">
+            <h3>🌐 Nginx</h3>
+            <p>Serveur Web</p>
+        </div>
+        <div class="component">
+            <h3>🐘 PostgreSQL</h3>
+            <p>Base de Données</p>
+        </div>
+        <div class="component">
+            <h3>🌉 Réseau</h3>
+            <p>Communication</p>
+        </div>
+        <div class="component">
+            <h3>💾 Volumes</h3>
+            <p>Persistance</p>
+        </div>
+    </div>
+    
+    <div class="feature">✅ Dockerfile optimisé</div>
+    <div class="feature">✅ Réseau personnalisé</div>
+    <div class="feature">✅ Volumes persistants</div>
+    <div class="feature">✅ Base de données connectée</div>
+    
+    <button onclick="fetch('/stats').then(r=>r.json()).then(d=>alert('Stack complète opérationnelle!\\n' + JSON.stringify(d, null, 2)))">
+        🎯 Voir le statut complet
+    </button>
+    
+    <p>🎉 Félicitations ! Vous maîtrisez Docker !</p>
+</body>
+</html>
+EOF
+```
 
-- **Image simple** : ~10-50 MB
-- **Image Node.js optimisée** : ~100-200 MB  
-- **Image Python multi-stage** : ~150-300 MB
-- **Image Go minimal** : ~10-20 MB
-- **Image Full-stack** : ~200-400 MB
+---
+
+# Déploiement final 🚀
+
+```bash
+# Construire la version finale
+docker build -t mon-projet:final .
+
+# Arrêter l'ancienne version
+docker stop site-v3 && docker rm site-v3
+
+# Lancer la version finale
+docker run -d -p 8080:80 \
+  --name site-final \
+  --network mon-projet-net \
+  -v mon-projet-logs:/var/log/nginx \
+  -v mon-projet-data:/data \
+  mon-projet:final
+
+# Test complet
+curl http://localhost:8080
+curl http://localhost:8080/stats
+```
+
+---
+
+# 🐳 BONUS : Docker Compose pour tout automatiser
+
+### Une seule commande pour déployer toute la stack !
+
+```yaml
+# docker-compose.yml
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8080:80"
+    networks:
+      - mon-projet-net
+    volumes:
+      - mon-projet-logs:/var/log/nginx
+      - mon-projet-data:/data
+    depends_on:
+      - database
+
+  database:
+    image: postgres:15-alpine
+    networks:
+      - mon-projet-net
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: monmotdepasse
+      POSTGRES_DB: monprojet
+
+networks:
+  mon-projet-net:
+    driver: bridge
+
+volumes:
+  mon-projet-logs:
+  mon-projet-data:
+  postgres-data:
+```
+
+---
+
+# Déploiement avec Compose 🎼
+
+```bash
+# Tout arrêter
+docker stop site-final database
+docker rm site-final database
+
+# Déployer avec Compose
+docker compose up -d
+
+# Voir les logs
+docker compose logs
+
+# Tester
+curl http://localhost:8080
+
+# Tout arrêter proprement
+docker compose down
+```
+
+---
+
+# 🎯 Récapitulatif de votre parcours
+
+### Ce que vous avez accompli
+
+**Étape 1** ✅ : Premier Dockerfile + Container web  
+**Étape 2** ✅ : Réseaux personnalisés + Communication  
+**Étape 3** ✅ : Volumes + Persistance des données  
+**Étape 4** ✅ : Stack complète avec base de données  
+**Bonus** ✅ : Orchestration avec Docker Compose  
+
+---
+
+# 🧪 Tests de validation
+
+### Checklist finale
+
+```bash
+# Votre application doit répondre à tous ces tests :
+
+# 1. Le site web fonctionne
+curl -s http://localhost:8080 | grep "Stack Complète"
+
+# 2. Les stats API fonctionnent
+curl -s http://localhost:8080/stats | jq .
+
+# 3. La DB est accessible depuis le web
+docker exec $(docker ps -q -f name=web) ping database
+
+# 4. Les volumes persistent
+docker restart $(docker ps -q -f name=web)
+docker exec $(docker ps -q -f name=web) ls -la /var/log/nginx/
+
+# 5. Le réseau isole bien
+docker network inspect mon-projet-net | grep -A 5 "Containers"
+```
+
+---
+
+# 🏆 Félicitations !
+
+### Compétences acquises
+
+🎓 **Dockerfile** : Création d'images personnalisées  
+🎓 **Réseaux** : Communication inter-containers  
+🎓 **Volumes** : Persistance des données  
+🎓 **Orchestration** : Gestion de stacks complexes  
+🎓 **Debug** : Diagnostiquer et résoudre les problèmes  
 
 ---
 
 # 🚀 Prochaines étapes
 
-Maîtrisez maintenant :
-- **Docker Compose** : Orchestrer plusieurs containers
-- **Réseaux Docker** : Communication inter-containers  
-- **Volumes** : Persistance avancée
-- **Optimisation** : Techniques de production
-- **Sécurité** : Hardening et scanning
+Vous êtes maintenant prêt(e) pour :
+- **Ansible** : Automatiser le déploiement de vos stacks
+- **Kubernetes** : Orchestration à grande échelle
+- **CI/CD** : Automatisation complète des déploiements
+- **Monitoring** : Surveiller vos applications en production
 
-**Pro tip** : Gardez ces Dockerfiles comme templates pour vos futurs projets ! 
+**Pro tip** : Gardez ce projet comme template pour vos futurs développements ! 🌟 

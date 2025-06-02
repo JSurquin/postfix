@@ -1,5 +1,10 @@
 ---
-layout: default
+layout: new-section
+---
+
+# QCM : Maîtrise d'Ansible
+
+---
 routeAlias: 'qcm-ansible'
 ---
 

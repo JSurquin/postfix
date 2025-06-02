@@ -1,4 +1,16 @@
 ---
+layout: new-section
+---
+
+
+# QCM : Micro-services et CI/CD
+
+---
+routeAlias: 'qcm-microservices-cicd'
+---
+
+<a name="QCM_MICROSERVICES_CICD" id="QCM_MICROSERVICES_CICD"></a>
+
 <small>
 
 ## QCM sur les micro-services et le CI/CD
@@ -26,6 +38,7 @@
 - [ ] Microservice de gestion des utilisateurs
 
 </small>
+
 
 ---
 

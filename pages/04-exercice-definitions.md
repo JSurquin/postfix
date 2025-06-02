@@ -1,5 +1,10 @@
 ---
-layout: default
+layout: new-section
+---
+
+# Exercice de définitions Docker
+
+---
 routeAlias: 'exercice-definitions'
 ---
 

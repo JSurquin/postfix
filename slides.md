@@ -70,30 +70,26 @@ routeAlias: 'sommaire'
 
 # SOMMAIRE DOCKER 📜
 
-### Voici le sommaire de cette formation sur Docker:
+### Formation pratique en 3 jours
 
 <br>
 
 <div class="flex flex-col gap-2">
-<Link to="comprendre-cicd">🔧 Comprendre le CI/CD</Link>
-<Link to="utiliser-des-pipelines-cicd">🔄 Utiliser des pipelines CI/CD</Link>
-<Link to="comprendre-les-microservices">🔍 Comprendre les micro-services</Link>
-<Link to="pourquoi-utiliser-les-microservices">❓ Pourquoi utiliser les micro-services?</Link>
-<Link to="des-definitions-avant-tout">🔧 Des définitions avant tout</Link>
+<Link to="comprendre-cicd">🔧 CI/CD & Microservices</Link>
 <Link to="virtualisation-vs-conteneurisation">💻 Virtualisation vs conteneurisation</Link>
+<Link to="des-definitions-avant-tout">📚 Définitions essentielles</Link>
 <Link to="intro-Docker">🚀 Introduction à Docker</Link>
+<Link to="le-cli-docker">⌨️ Le CLI Docker</Link>
+<Link to="dockerfile">📝 Dockerfile et images</Link>
 </div>
 ::right::
 
 <div class="flex flex-col gap-2">
-<Link to="le-cli-docker">🔄 Le CLI Docker</Link>
-<Link to="images-Docker">🔍 Les images Docker</Link>
-<Link to="creer-son-premier-conteneur">🚀 Créer son premier conteneur</Link>
-<Link to="le-cli-docker">🔄 Autres Commandes Docker</Link>
-<Link to="commandes-docker-avancees">🔍 Commandes Docker Avancées</Link>
-<Link to="reseaux-docker">🔍 Les réseaux Docker</Link>
-<Link to="volumes-persistants">🔍 Les volumes persistants</Link>
-<Link to="kubernetes">🎉 Bonus : Introduction à Kubernetes</Link>
+<Link to="reseaux-volumes-docker">🌐💾 Réseaux & Volumes</Link>
+<Link to="exercice-unifie-docker">🎯 Exercice unifié</Link>
+<Link to="fondamentaux-ansible">🤖 Fondamentaux Ansible</Link>
+<Link to="ansible-docker">🔗 Ansible + Docker</Link>
+<Link to="qcm-ansible">✅ QCM Ansible</Link>
 </div>
 
 ---
@@ -101,32 +97,45 @@ layout: two-cols
 routeAlias: 'sommaire-ansible'
 ---
 
-# SOMMAIRE ANSIBLE 📜
+# PROGRAMME 3 JOURS 📅
 
-### Voici le sommaire de cette formation sur Ansible:
+### Structure pédagogique optimisée
 
 <br>
 
-<div class="flex flex-col gap-2">
-
-<Link to="introduction-ansible">🔧 Introduction à Ansible</Link>
-<Link to="historique-ansible">📚 Historique d'Ansible</Link>
-<Link to="pourquoi-ansible">❓ Pourquoi utiliser Ansible ?</Link>
-<Link to="installation-ansible">⚙️ Installation et configuration</Link>
-<Link to="fondamentaux-ansible">📝 Les fondamentaux d'Ansible</Link>
-<Link to="modules-ansible">🔧 Modules et fonctionnalités</Link>
-
+**Jour 1 - Fondamentaux Docker**
+<div class="flex flex-col gap-1 text-sm">
+- CI/CD et microservices
+- Virtualisation vs conteneurisation
+- Docker CLI et premiers containers
+- Images et registries
 </div>
+
+**Jour 2 - Docker avancé**
+<div class="flex flex-col gap-1 text-sm">
+- Dockerfile et builds
+- Réseaux et communication
+- Volumes et persistance
+- Exercices pratiques
+</div>
+
 ::right::
 
-<div class="flex flex-col gap-2">
-<Link to="concepts-avances-ansible">🚀 Concepts avancés</Link>
-<Link to="tests-bonnes-pratiques">✅ Tests et bonnes pratiques</Link>
-<Link to="ressources-ansible">📚 Ressources pour aller plus loin</Link>
-<Link to="formation-continue-ansible">🎓 Formation continue</Link>
-<Link to="communaute-support">👥 Communauté et support</Link>
-<Link to="ansible-docker">🎉 Ansible et Docker</Link>
-<Link to="prochaines-etapes-ansible">🔜 Prochaines étapes</Link>
+**Jour 3 - Ansible et intégration**
+<div class="flex flex-col gap-1 text-sm">
+- Introduction à Ansible
+- Playbooks et inventaires
+- Modules essentiels
+- Ansible + Docker
+- Projet final
+</div>
+
+**Méthode pédagogique**
+<div class="flex flex-col gap-1 text-sm">
+- 80% pratique, 20% théorie
+- Exercices progressifs
+- QCM de validation
+- Projet fil rouge
 </div>
 
 ---
@@ -166,19 +175,11 @@ src: './pages/08-dockerfile.md'
 ---
 
 ---
-src: './pages/08-exercice-dockerfile.md'
----
-
----
 src: './pages/09-reseaux.md'
 ---
 
 ---
-src: './pages/10-volumes.md'
----
-
----
-src: './pages/ansible-intro.md'
+src: './pages/08-exercice-dockerfile.md'
 ---
 
 ---
@@ -191,8 +192,4 @@ src: './pages/ansible-qcm.md'
 
 ---
 src: './pages/ansible-docker.md'
----
-
----
-src: './pages/docker-2024-2025.md'
 ---

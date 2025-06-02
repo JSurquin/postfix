@@ -1,4 +1,10 @@
 ---
+layout: new-section
+---
+
+# Vocabulaire Docker Essentiel 📚
+
+---
 routeAlias: 'des-definitions-avant-tout'
 ---
 

@@ -1,4 +1,10 @@
 ---
+layout: new-section
+---
+
+# Comprendre le CI/CD & les micro-services
+
+---
 routeAlias: 'comprendre-cicd'
 ---
 
@@ -20,6 +26,79 @@ Le **CI/CD** (Continuous Integration / Continuous Deployment) est devenu l'épin
 - **Déploiements plus fréquents** : Livraison continue de nouvelles fonctionnalités
 - **Feedback rapide** : Retour immédiat sur la qualité du code
 - **Collaboration améliorée** : Synchronisation automatique entre les équipes
+
+---
+
+# CI/CD & IA en 2025 🤖
+
+### L'impact de l'intelligence artificielle sur le CI/CD et la conteneurisation
+
+En 2025, l'**IA** révolutionne la façon dont on met en place des pipelines CI/CD et des environnements Docker. De nombreux outils assistés par l'IA permettent de gagner un temps précieux et d'automatiser des tâches complexes.
+
+---
+
+# Génération automatique de Dockerfile 🐳⚡
+
+- **Outils IA** : Des plateformes comme [Docker AI](https://www.docker.com/products/docker-ai/), [GitHub Copilot](https://github.com/features/copilot),ou [ChatGPT](https://openai.com/) génèrent des Dockerfile optimisés à partir de simples descriptions de projet.
+- Liste non exhaustive d'outils IA pour le CI/CD :
+
+Pour générer du code , à utiliser avec la précaution de comprendre à 100% ce que vous générez.
+
+  - [Cursor](https://www.cursor.com/)
+  - [Claude](https://www.anthropic.com/products/claude)
+  - [Gemini](https://gemini.google.com/)
+  - [Grok](https://grok.com/)
+  - [Perplexity](https://www.perplexity.ai/)
+
+---
+
+Pour simplifier Docker, il existe des outils qui génèrent des Dockerfile optimisés à partir de simples descriptions de projet.
+
+- [nixpacks](https://nixpacks.com/) : Génère un Dockerfile à partir de la description d'un projet.
+- [coolify](https://coolify.io/) : Gère en grosse partie lui même l'intégration continue et le déploiement.
+- [railway](https://railway.app/) : Créez vous même votre Dockerfile, il vous propose d'heberger gratuitement votre container en quelques clics.
+
+---
+
+### Plateformes de déploiement simplifié 🚀
+
+- [render](https://render.com/) : Créez vous même votre Dockerfile, il vous propose d'heberger gratuitement votre container en quelques clics.
+- [netlify](https://netlify.com/) : Gère en grosse partie lui même l'intégration continue et le déploiement.
+- [vercel](https://vercel.com/) : Gère en grosse partie lui même l'intégration continue et le déploiement.
+
+- **Avantages** :
+  - Génération instantanée de Dockerfile adaptés à votre stack
+  - Suggestions de bonnes pratiques de sécurité et d’optimisation
+  - Détection automatique des dépendances et des ports à exposer
+
+---
+
+# Plateformes de déploiement simplifié 🚀
+
+- **Coolify** : Plateforme open-source qui permet de déployer des applications Docker, Node.js, PHP, etc. en quelques clics, avec gestion automatique des certificats SSL, des bases de données et du scaling.
+- **Netlify** : Déploiement ultra-rapide de sites statiques et d’APIs serverless, intégration continue native, preview automatiques.
+- **Vercel** : Déploiement instantané d’applications front-end et back-end, preview automatiques pour chaque pull request.
+- **Render, Railway, Fly.io** : Alternatives modernes pour déployer des containers ou des microservices sans gestion manuelle de l’infrastructure.
+
+---
+
+# L’IA pour automatiser et sécuriser le pipeline 🛡️
+
+- **Détection automatique de failles** dans les images Docker grâce à des outils comme Snyk, Trivy, ou les scanners intégrés aux plateformes CI/CD modernes.
+- **Optimisation des builds** : L’IA propose des étapes de build plus rapides, détecte les redondances et suggère des améliorations.
+- **Monitoring intelligent** : Analyse prédictive des incidents, alertes proactives, et recommandations de scaling automatique.
+
+---
+
+# En résumé
+
+L’IA et les plateformes modernes transforment le CI/CD et la conteneurisation en 2025 :
+- Génération de Dockerfile et de pipelines en quelques secondes
+- Déploiement simplifié sur des plateformes comme Coolify, Netlify, Vercel, etc.
+- Sécurité et optimisation automatisées
+- Plus de temps pour l’innovation, moins pour la configuration manuelle !
+
+
 
 ---
 
@@ -95,17 +174,6 @@ graph LR
 - **Jenkins** : Solution open-source extensible et mature
 - **Azure DevOps** : Écosystème Microsoft complet
 - **CircleCI** : Pipeline cloud optimisé pour la vitesse
-
----
-
-# Nouveautés 2025 ✨
-
-### Nouveautés 2025
-
-- **AI-Powered Testing** : Tests automatiques générés par IA
-- **Progressive Deployment** : Déploiements graduels avec rollback automatique
-- **GitOps** : Gestion d'infrastructure déclarative via Git
-- **Supply Chain Security** : Sécurisation complète de la chaîne de build
 
 ---
 routeAlias: 'comprendre-les-microservices'

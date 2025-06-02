@@ -1,4 +1,10 @@
 ---
+layout: new-section
+---
+
+# Introduction à Docker
+
+---
 routeAlias: 'intro-Docker'
 ---
 
@@ -176,9 +182,11 @@ graph LR
 curl -fsSL https://get.docker.com | sh
 sudo usermod -aG docker $USER
 
-# macOS/Windows : Docker Desktop
-# Téléchargement depuis docker.com
+# macOS/Windows : Docker Desktop sur leur site ou :
+wsl --install
 ```
+
+Puis à nouveau la 1ère commande pour installer docker
 
 ---
 
@@ -191,7 +199,8 @@ sudo usermod -aG docker $USER
 docker --version
 docker info
 
-# Test classique
+# Test classique, vous allez créer un container avec l'image hello-world
+# pour vérifier que docker est bien installé et tout est ok
 docker run hello-world
 ```
 

@@ -1,4 +1,10 @@
 ---
+layout: new-section
+---
+
+# Les Images Docker & Dockerfile
+
+---
 routeAlias: 'images-Docker'
 ---
 
@@ -218,38 +224,6 @@ RUN apt-get update && \
 
 ---
 
-# Optimisation des commandes RUN 🔧
-
-### Optimisation des commandes RUN
-
-```dockerfile
-# Installation Python avec nettoyage
-RUN pip install --no-cache-dir -r requirements.txt && \
-    pip cache purge
-```
-
----
-
-# Optimisation RUN - Node.js 🔧
-
-```dockerfile
-# Installation Node.js avec cache clean
-RUN npm ci --only=production && \
-    npm cache clean --force
-```
-
----
-
-# Optimisation RUN - Go 🔧
-
-```dockerfile
-# Compilation Go avec suppression des sources
-RUN go build -o app . && \
-    rm -rf /go/src/*
-```
-
----
-
 # Configuration et sécurité 🔒
 
 ### ENV - Variables d'environnement
@@ -381,9 +355,9 @@ Les **multi-stage builds** permettent d'optimiser la taille des images en sépar
 
 ---
 
-# Exemple multi-stage Node.js - Stage 1 🏗️
+# Exemple multi-stage Node.js 🏗️
 
-### Exemple multi-stage Node.js
+### De 1GB à 200MB !
 
 ```dockerfile
 # Stage 1: Build (image lourde avec outils de dev)
@@ -394,15 +368,7 @@ RUN npm install
 COPY . .
 RUN npm run build
 RUN npm prune --production
-```
 
----
-
-# Exemple multi-stage Node.js - Stage 2 🏗️
-
-### Suite multi-stage Node.js
-
-```dockerfile
 # Stage 2: Production (image légère)
 FROM node:20-alpine AS production
 WORKDIR /app
@@ -411,157 +377,13 @@ WORKDIR /app
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./
-```
 
----
-
-# Multi-stage Node.js - Configuration finale 🏗️
-
-```dockerfile
 # Configuration production
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 USER appuser
 
 EXPOSE 3000
 CMD ["node", "dist/server.js"]
-```
-
----
-
-# Exemple Go ultra-optimisé 🔥
-
-### De 800MB à 15MB !
-
-```dockerfile
-# Stage 1: Build
-FROM golang:1.21-alpine AS builder
-WORKDIR /app
-
-# Installation des dépendances SSL pour les requêtes HTTPS
-RUN apk --no-cache add ca-certificates
-```
-
----
-
-# Go ultra-optimisé - Build 🔥
-
-```dockerfile
-# Copie et build
-COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
-```
-
----
-
-# Go ultra-optimisé - Runtime minimal 🔥
-
-```dockerfile
-# Stage 2: Runtime minimal
-FROM scratch
-
-# Copier les certificats SSL
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-
-# Copier seulement l'exécutable
-COPY --from=builder /app/main /main
-```
-
----
-
-# Go ultra-optimisé - Configuration finale 🔥
-
-```dockerfile
-# Exposer le port
-EXPOSE 8080
-
-# Point d'entrée
-ENTRYPOINT ["/main"]
-```
-
----
-
-# Résultat de l'optimisation Go 🎯
-
-### Résultat de l'optimisation Go
-
-**Résultat** : Image finale de seulement ~15MB au lieu des 800MB+ de l'image Go complète !
-
----
-
-# Dockerfile Python optimisé 🐍
-
-### Bonnes pratiques pour Python
-
-```dockerfile
-# Image de base slim
-FROM python:3.11-slim
-
-# Métadonnées
-LABEL maintainer="team@myapp.com"
-LABEL description="Application Python optimisée"
-```
-
----
-
-# Python - Variables d'environnement 🐍
-
-```dockerfile
-# Variables d'environnement Python
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1
-```
-
----
-
-# Python - Dépendances système 🐍
-
-```dockerfile
-# Installation des dépendances système
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        build-essential \
-        && rm -rf /var/lib/apt/lists/*
-```
-
----
-
-# Python - Installation dépendances 🐍
-
-```dockerfile
-# Répertoire de travail
-WORKDIR /app
-
-# Installation des dépendances Python
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-```
-
----
-
-# Python - Finalisation 🐍
-
-```dockerfile
-# Copie de l'application
-COPY . .
-
-# Utilisateur non-root
-RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
-USER appuser
-```
-
----
-
-# Python - Configuration finale 🐍
-
-```dockerfile
-# Configuration
-EXPOSE 8000
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8000/health || exit 1
-
-CMD ["python", "app.py"]
 ```
 
 ---
@@ -574,47 +396,10 @@ CMD ["python", "app.py"]
 # Healthcheck HTTP simple
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:3000/health || exit 1
-```
 
----
-
-# HEALTHCHECK avec wget 🩺
-
-```dockerfile
 # Healthcheck avec wget (si curl n'est pas disponible)
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
     CMD wget --no-verbose --tries=1 --spider http://localhost:8080/ping || exit 1
-```
-
----
-
-# Script healthcheck personnalisé 🩺
-
-### Script healthcheck personnalisé
-
-```dockerfile
-# Healthcheck custom script
-COPY healthcheck.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/healthcheck.sh
-HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
-    CMD /usr/local/bin/healthcheck.sh
-```
-
----
-
-# Contenu du script healthcheck.sh 📝
-
-### Contenu du script healthcheck.sh
-
-```bash
-#!/bin/sh
-# Vérifier que l'application répond
-response=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/health)
-if [ $response -eq 200 ]; then
-    exit 0
-else
-    exit 1
-fi
 ```
 
 ---
@@ -624,50 +409,20 @@ fi
 ### Anti-patterns courants
 
 ```dockerfile
-# ❌ Image de base trop lourde
+# ❌ Image de base trop lourde ou sans version
 FROM ubuntu:latest
 
-# ❌ Pas de version spécifique (instabilité)
-FROM node:latest
-
-# ❌ Instructions obsolètes
-MAINTAINER "dev@example.com"  # Utiliser LABEL
-```
-
----
-
-# Autres erreurs courantes ❌
-
-```dockerfile
-# ❌ Multiples RUN inutiles
+# ❌ Multiples RUN inutiles (chaque RUN = une layer)
 RUN apt-get update
 RUN apt-get install -y curl
 RUN apt-get install -y git
-```
 
----
-
-# Erreurs de workflow ❌
-
-```dockerfile
-# ❌ Copie avant installation des dépendances
+# ❌ Copie avant installation des dépendances (cache inefficace)
 COPY . .
 RUN npm install
 
-# ❌ Rester en root
+# ❌ Rester en root (sécurité)
 USER root
-
-# ❌ Exposition de ports inutiles
-EXPOSE 22 3306 5432
-```
-
----
-
-# Erreur de CMD ❌
-
-```dockerfile
-# ❌ CMD qui ne démarre pas l'application
-CMD ["echo", "Hello World"]
 ```
 
 ---
@@ -684,24 +439,12 @@ FROM node:20-alpine
 LABEL maintainer="dev@example.com" \
       version="1.0.0" \
       description="Mon application Node.js"
-```
 
----
-
-# Bonnes pratiques - Variables ✅
-
-```dockerfile
 # ✅ Variables d'environnement regroupées
 ENV NODE_ENV=production \
     PORT=3000 \
     LOG_LEVEL=info
-```
 
----
-
-# Bonnes pratiques - Workflow ✅
-
-```dockerfile
 # ✅ Répertoire de travail défini
 WORKDIR /app
 
@@ -712,13 +455,7 @@ RUN npm ci --only=production && \
 
 # ✅ Copie du code après les dépendances
 COPY . .
-```
 
----
-
-# Bonnes pratiques - Sécurité ✅
-
-```dockerfile
 # ✅ Utilisateur non-root pour la sécurité
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 USER appuser
@@ -726,13 +463,7 @@ USER appuser
 # ✅ Healthcheck pour le monitoring
 HEALTHCHECK --interval=30s --timeout=3s \
     CMD curl -f http://localhost:3000/health || exit 1
-```
 
----
-
-# Bonnes pratiques - Finalisation ✅
-
-```dockerfile
 # ✅ Port applicatif seulement
 EXPOSE 3000
 
@@ -752,33 +483,10 @@ docker build -t mon-app:1.0 .
 
 # Build avec arguments
 docker build --build-arg NODE_ENV=production -t mon-app:prod .
-```
 
----
-
-# Build multi-plateforme 🔧
-
-```bash
 # Build multi-plateforme (ARM + x86)
 docker buildx build --platform linux/amd64,linux/arm64 -t mon-app:multi .
-```
 
----
-
-# Commandes avancées de build 🔧
-
-### Commandes avancées de build
-
-```bash
-# Build avec cache externe
-docker build --cache-from mon-app:cache -t mon-app:latest .
-```
-
----
-
-# Analyse des images 🔧
-
-```bash
 # Analyse de l'historique des couches
 docker history mon-app:latest
 
@@ -829,3 +537,9 @@ my-app/
 - Intégration d'un reverse proxy Nginx
 - Gestion des logs structurés
 - Optimisation pour Kubernetes
+
+    HOST[Host: 192.168.1.100]
+    BRIDGE[Bridge Network<br/>172.17.0.0/16]
+
+    HOST --> BRIDGE
+    BRIDGE --> C1[Container 1<br/>172.17.0.2]

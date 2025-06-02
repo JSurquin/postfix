@@ -1,9 +1,14 @@
 ---
-layout: default
+layout: new-section
+---
+
+# QCM : Introduction à Docker
+
+---
 routeAlias: 'qcm-docker-intro'
 ---
 
-<a name="QCM_DOCKER_INTRO" id="QCM_DOCKER_INTRO"></a>
+<a name="QCM_DOCKER_INTRO" id="QCM_DOCKER_INTRO"></a>   
 
 # 📝 QCM : Introduction à Docker
 

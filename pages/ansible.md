@@ -1,4 +1,10 @@
 ---
+layout: new-section
+---
+
+# Ansible - Les Fondamentaux 🎯
+
+---
 routeAlias: 'fondamentaux-ansible'
 ---
 
@@ -8,127 +14,57 @@ routeAlias: 'fondamentaux-ansible'
 
 ### Maîtriser l'automatisation d'infrastructure moderne
 
-Ansible est l'outil d'automatisation de référence qui révolutionne la gestion d'infrastructure. Cette formation couvre les aspects essentiels pour devenir autonome avec Ansible.
+Ansible est l'outil d'automatisation de référence qui révolutionne la gestion d'infrastructure. **Simple, puissant, sans agent** - découvrez pourquoi 89% des entreprises l'utilisent en 2025.
 
 ---
 
-# Pourquoi cette formation ? 💡
+# Qu'est-ce qu'Ansible ? 🤔
 
-### Pourquoi cette formation est essentielle ?
-
-- **Demande du marché** : 89% des entreprises utilisent Ansible en 2025
-- **Efficacité** : Réduction de 75% du temps de déploiement
-
----
-
-# Bénéfices concrets 💡
-
-- **Fiabilité** : Élimination des erreurs manuelles
-- **Évolutivité** : Gestion de milliers de serveurs simultanément
-
----
-
-# Historique d'Ansible 📚
-
-### Évolution d'Ansible
-
-```mermaid
-graph LR
-    2012[2012<br/>Création par<br/>Michael DeHaan]
-    2015[2015<br/>Acquisition<br/>Red Hat]
-    2020[2020<br/>Ansible 3.0<br/>Collections]
-    2025[2025<br/>Ansible 8.0<br/>AI Integration]
-
-    2012 --> 2015
-    2015 --> 2020
-    2020 --> 2025
-```
-
----
-
-# Adoption massive 2025 📈
-
-### Chiffres clés
-
-- **+50,000 contributeurs** sur GitHub
-- **+2,000 entreprises** utilisatrices
-
----
-
-# Adoption suite 📈
-
-- **+30M téléchargements** par mois
-- **Top 3** des outils DevOps les plus populaires
-
----
-
-# Architecture Ansible 🏗️
-
-### Architecture simple et puissante
+### Infrastructure as Code simplifiée
 
 ```mermaid
 graph TB
-    subgraph "Control Node"
-        ANSIBLE[Ansible Engine]
-        PLAYBOOKS[Playbooks YAML]
-        INVENTORY[Inventory]
-        VAULT[Ansible Vault]
-    end
-
-    subgraph "Managed Nodes"
-        LINUX[Linux Servers]
-        WINDOWS[Windows Servers]
-        CLOUD[Cloud Resources]
-        NETWORK[Network Equipment]
-    end
-
-    ANSIBLE -->|SSH/WinRM| LINUX
-    ANSIBLE -->|WinRM/SSH| WINDOWS
-    ANSIBLE -->|API Calls| CLOUD
-    ANSIBLE -->|SSH/API| NETWORK
-
-    ANSIBLE -.->|No Agent| LINUX
-    ANSIBLE -.->|No Agent| WINDOWS
-    ANSIBLE -.->|No Agent| NETWORK
+    CONTROL[Control Node<br/>Votre machine]
+    
+    CONTROL -->|SSH| LINUX[Linux Servers]
+    CONTROL -->|WinRM| WINDOWS[Windows Servers]
+    CONTROL -->|API| CLOUD[Cloud Services]
+    
+    CONTROL -.->|❌ Aucun agent requis| LINUX
+    CONTROL -.->|❌ Aucun agent requis| WINDOWS
+    CONTROL -.->|❌ Aucun agent requis| CLOUD
 ```
 
----
-
-# Principes fondamentaux 📋
-
-### Les 4 piliers d'Ansible
-
-- **Agentless** : Aucun agent à installer sur les cibles
-- **Idempotent** : Même résultat à chaque exécution
+**Révolutionnaire** : Aucun agent à installer ! Juste SSH, WinRM ou APIs.
 
 ---
 
-# Principes suite 📋
+# Pourquoi Ansible ? 💡
 
-- **Déclaratif** : Décrire l'état désiré, pas les étapes
-- **Simple** : YAML lisible par humains et machines
+### Les super-pouvoirs d'Ansible
+
+🎯 **Simple** : Configuration en YAML lisible  
+🔄 **Idempotent** : Même résultat à chaque exécution  
+🚀 **Rapide** : Parallélisation automatique  
+🔒 **Sécurisé** : Utilise vos connexions existantes  
+📈 **Scalable** : De 1 à 10,000 serveurs  
 
 ---
 
-# Installation 2025 ⚙️
+# Installation rapide 2025 ⚙️
 
-### Installation recommandée
+### Installation en 2 minutes
 
 ```bash
-# Méthode pip (recommandée)
+# Méthode recommandée : pip
 python3 -m pip install --user ansible
-```
-
----
-
-# Vérification installation ⚙️
-
-```bash
-# Installation complète avec collections
-pip install ansible ansible-core
 
 # Vérification
 ansible --version
+# ansible [core 2.16.2] - Python 3.11.6
+
+# Collections essentielles
+ansible-galaxy collection install community.general ansible.posix
 ```
 
 ---
@@ -138,26 +74,28 @@ ansible --version
 ### Configuration optimisée
 
 ```ini
-# ansible.cfg
+# ansible.cfg (optionnel)
 [defaults]
 inventory = ./inventory
 remote_user = ansible
 host_key_checking = False
+timeout = 30
+gathering = smart
 ```
 
 ---
 
-# Inventaire simple 📋
+# Inventaire : Lister vos serveurs 📋
 
-### Inventaire statique YAML
+### Inventaire YAML simple
 
 ```yaml
 # inventory/hosts.yml
 all:
   vars:
-    ansible_user: ansible
+    ansible_user: ubuntu
     ansible_python_interpreter: /usr/bin/python3
-
+    
   children:
     webservers:
       hosts:
@@ -165,18 +103,42 @@ all:
           ansible_host: 10.0.1.10
         web-02:
           ansible_host: 10.0.1.11
+    
+    databases:
+      hosts:
+        db-01:
+          ansible_host: 10.0.1.20
 ```
 
 ---
 
-# Premier playbook 🎭
+# Test de connectivité ✅
 
-### Structure d'un playbook simple
+### Vérifier la connexion
+
+```bash
+# Ping tous les serveurs
+ansible all -m ping
+
+# Résultat attendu :
+# web-01 | SUCCESS => {"ping": "pong"}
+# web-02 | SUCCESS => {"ping": "pong"}
+# db-01 | SUCCESS => {"ping": "pong"}
+
+# Commande simple sur tous les serveurs
+ansible all -a "uptime"
+```
+
+---
+
+# Premier Playbook 🎭
+
+### Structure d'un playbook
 
 ```yaml
-# deploy-web.yml
+# site.yml
 ---
-- name: Installation serveur web
+- name: Installation serveur web 🌐
   hosts: webservers
   become: true
 
@@ -185,6 +147,13 @@ all:
       apt:
         name: nginx
         state: present
+        update_cache: true
+
+    - name: Démarrage du service
+      systemd:
+        name: nginx
+        state: started
+        enabled: true
 ```
 
 ---
@@ -192,156 +161,261 @@ all:
 # Exécution du playbook 🚀
 
 ```bash
-# Lancer le playbook
-ansible-playbook -i inventory/hosts.yml deploy-web.yml
+# Exécuter le playbook
+ansible-playbook site.yml
+
+# Avec options utiles
+ansible-playbook site.yml --check --diff --verbose
+
+# Options expliquées :
+# --check : Mode dry-run (teste sans appliquer)
+# --diff : Montre les changements
+# --verbose : Plus de détails
 ```
 
 ---
 
-# Variables essentielles 🔧
+# Modules essentiels 📦
 
-### Variables dans un playbook
+### Les modules indispensables
 
 ```yaml
----
-- name: Configuration avec variables
-  hosts: webservers
-  become: true
-
-  vars:
-    nginx_port: 80
-    site_name: "mon-site"
-
-  tasks:
-    - name: Installation Nginx
-      apt:
-        name: nginx
-        state: present
-```
-
----
-
-# Template simple 📝
-
-### Template Jinja2 basique
-
-```nginx
-# templates/nginx.conf.j2
-server {
-    listen {{ nginx_port }};
-    server_name {{ site_name }};
-    root /var/www/html;
-    index index.html;
-}
-```
-
----
-
-# Utilisation du template 📝
-
-```yaml
-- name: Configuration Nginx
-  template:
-    src: nginx.conf.j2
-    dest: /etc/nginx/sites-available/default
-  notify: restart nginx
-```
-
----
-
-# Handlers 🔄
-
-### Gestion des services
-
-```yaml
-handlers:
-  - name: restart nginx
-    systemd:
-      name: nginx
-      state: restarted
-```
-
----
-
-# Rôles - Concept 🏗️
-
-### Qu'est-ce qu'un rôle ?
-
-Un **rôle** Ansible est une façon d'organiser et de réutiliser du code. C'est comme une "recette" pour configurer un type de serveur.
-
----
-
-# Structure d'un rôle 🏗️
-
-```
-roles/webserver/
-├── tasks/
-│   └── main.yml        # Actions à exécuter
-├── templates/
-│   └── nginx.conf.j2   # Fichiers de configuration
-├── vars/
-│   └── main.yml        # Variables du rôle
-└── handlers/
-    └── main.yml        # Services à redémarrer
-```
-
----
-
-# Rôle simple - Tasks 🏗️
-
-```yaml
-# roles/webserver/tasks/main.yml
----
-- name: Installation Nginx
-  apt:
-    name: nginx
+# Gestion des packages
+- name: Installer des packages
+  apt:  # ou yum, dnf selon la distrib
+    name: [nginx, git, curl]
     state: present
 
-- name: Démarrage Nginx
+# Gestion des fichiers
+- name: Copier un fichier
+  copy:
+    src: nginx.conf
+    dest: /etc/nginx/nginx.conf
+    backup: true
+  notify: restart nginx
+
+# Gestion des services
+- name: Gérer un service
   systemd:
     name: nginx
-    state: started
+    state: restarted
     enabled: true
 ```
 
 ---
 
-# Utilisation d'un rôle 🏗️
+# Variables : La puissance 💪
+
+### Variables dans les playbooks
 
 ```yaml
-# site.yml
 ---
-- name: Configuration serveurs web
+- name: Déploiement avec variables
   hosts: webservers
-  become: true
+  vars:
+    app_name: "mon-app"
+    app_version: "1.2.3"
+    nginx_port: 80
 
-  roles:
-    - webserver
+  tasks:
+    - name: Créer le répertoire {{ app_name }}
+      file:
+        path: /opt/{{ app_name }}
+        state: directory
+    
+    - name: Template de configuration
+      template:
+        src: app.conf.j2
+        dest: /etc/nginx/sites-available/{{ app_name }}.conf
+      notify: reload nginx
 ```
 
 ---
 
-# Modules essentiels 🔧
+# Templates Jinja2 📝
 
-### Module apt/yum
+### Templates pour la configuration
 
 ```yaml
-# Installation de paquets
-- name: Installation des paquets
+# templates/app.conf.j2
+server {
+    listen {{ nginx_port }};
+    server_name {{ ansible_fqdn }};
+    
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host $host;
+    }
+    
+    # Configuration générée pour {{ app_name }} v{{ app_version }}
+}
+```
+
+Templates = Configuration dynamique ! 🎯
+
+---
+
+# Handlers : Actions conditionnelles 🔄
+
+### Déclencher des actions en cas de changement
+
+```yaml
+tasks:
+  - name: Modifier la config Nginx
+    template:
+      src: nginx.conf.j2
+      dest: /etc/nginx/nginx.conf
+    notify: 
+      - restart nginx
+      - reload firewall
+
+handlers:
+  - name: restart nginx
+    systemd:
+      name: nginx
+      state: restarted
+      
+  - name: reload firewall
+    ufw:
+      rule: allow
+      port: 80
+```
+
+---
+
+# Loops : Automatiser les répétitions 🔁
+
+### Boucles pour éviter la répétition
+
+```yaml
+- name: Installer plusieurs packages
   apt:
-    name:
-      - nginx
-      - git
-      - curl
+    name: "{{ item }}"
     state: present
+  loop:
+    - nginx
+    - git
+    - htop
+    - curl
+
+- name: Créer plusieurs utilisateurs
+  user:
+    name: "{{ item.name }}"
+    groups: "{{ item.groups }}"
+  loop:
+    - { name: "alice", groups: "sudo,www-data" }
+    - { name: "bob", groups: "www-data" }
 ```
 
 ---
 
-# Module systemd 🔧
+# Conditionals : Logique intelligente 🧠
+
+### Conditions pour adapter aux environnements
 
 ```yaml
-# Gestion des services
+- name: Installation selon la distribution
+  package:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - "{{ 'nginx' if ansible_os_family == 'Debian' else 'httpd' }}"
+  when: ansible_os_family in ['Debian', 'RedHat']
+
+- name: Configuration spécifique production
+  template:
+    src: prod.conf.j2
+    dest: /etc/app/config.yml
+  when: environment == "production"
+```
+
+---
+
+# Ansible Vault : Sécurité 🔐
+
+### Chiffrer les données sensibles
+
+```bash
+# Créer un fichier chiffré
+ansible-vault create secrets.yml
+
+# Éditer un fichier chiffré
+ansible-vault edit secrets.yml
+
+# Chiffrer un fichier existant
+ansible-vault encrypt passwords.txt
+```
+
+```yaml
+# secrets.yml (exemple)
+database_password: "super_secret_password"
+api_key: "sk-1234567890abcdef"
+ssl_certificate: |
+  -----BEGIN CERTIFICATE-----
+  ...
+```
+
+---
+
+# Utiliser Vault dans les playbooks 🔑
+
+```yaml
+# Charger les secrets
+- name: Déploiement avec secrets
+  hosts: all
+  vars_files:
+    - secrets.yml
+
+  tasks:
+    - name: Configuration DB
+      template:
+        src: database.conf.j2
+        dest: /etc/app/db.conf
+      vars:
+        db_pass: "{{ database_password }}"
+```
+
+```bash
+# Exécuter avec mot de passe Vault
+ansible-playbook site.yml --ask-vault-pass
+```
+
+---
+
+# Rôles : Organiser son code 📁
+
+### Structure d'un rôle Ansible
+
+```
+roles/
+  nginx/
+    ├── tasks/main.yml      # Tâches principales
+    ├── handlers/main.yml   # Actions conditionnelles
+    ├── templates/          # Templates Jinja2
+    ├── files/              # Fichiers statiques
+    ├── vars/main.yml       # Variables du rôle
+    └── defaults/main.yml   # Variables par défaut
+```
+
+---
+
+# Exemple de rôle Nginx 📋
+
+```yaml
+# roles/nginx/tasks/main.yml
+---
+- name: Installation Nginx
+  apt:
+    name: nginx
+    state: present
+    update_cache: true
+
+- name: Configuration personnalisée
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+  notify: restart nginx
+
 - name: Démarrage du service
   systemd:
     name: nginx
@@ -351,200 +425,303 @@ roles/webserver/
 
 ---
 
-# Module copy 🔧
+# Utiliser le rôle 🎯
 
 ```yaml
-# Copie de fichiers
-- name: Copie du fichier
-  copy:
-    src: index.html
-    dest: /var/www/html/index.html
-    owner: www-data
-    group: www-data
-    mode: '0644'
-```
-
+# site.yml
 ---
-
-# Module file 🔧
-
-```yaml
-# Création de répertoires
-- name: Création du répertoire
-  file:
-    path: /var/www/monsite
-    state: directory
-    owner: www-data
-    group: www-data
-    mode: '0755'
-```
-
----
-
-# Stack LAMP simple 🚀
-
-### Déploiement d'une application web
-
-```yaml
----
-- name: Installation stack LAMP
+- name: Configuration serveurs web
   hosts: webservers
   become: true
-
-  tasks:
-    - name: Installation des paquets
-      apt:
-        name:
-          - apache2
-          - mysql-server
-          - php
-          - php-mysql
-        state: present
+  
+  roles:
+    - nginx
+    - { role: php, php_version: "8.2" }
+    - ssl-certificates
 ```
 
----
-
-# Configuration MySQL 🗄️
-
-```yaml
-- name: Sécurisation MySQL
-  mysql_user:
-    name: root
-    password: "{{ mysql_root_password }}"
-    host: localhost
-
-- name: Création base de données
-  mysql_db:
-    name: webapp
-    state: present
-```
+Rôles = Réutilisabilité et organisation ! 📦
 
 ---
 
-# Ansible et Docker 🐳
+# Collections : L'écosystème 🌐
 
-### Installation Docker
-
-```yaml
----
-- name: Installation Docker
-  hosts: docker_hosts
-  become: true
-
-  tasks:
-    - name: Installation Docker
-      apt:
-        name:
-          - docker.io
-          - docker-compose
-        state: present
-
-    - name: Démarrage Docker
-      systemd:
-        name: docker
-        state: started
-        enabled: true
-```
-
----
-
-# Déploiement container 🐳
-
-```yaml
-- name: Lancement container web
-  docker_container:
-    name: webapp
-    image: nginx:alpine
-    ports:
-      - "80:80"
-    state: started
-    restart_policy: always
-```
-
----
-
-# Bonnes pratiques 🛡️
-
-### Sécurité SSH
-
-```yaml
-- name: Configuration SSH sécurisée
-  lineinfile:
-    path: /etc/ssh/sshd_config
-    regexp: '^PermitRootLogin'
-    line: 'PermitRootLogin no'
-  notify: restart ssh
-```
-
----
-
-# Firewall basique 🔒
-
-```yaml
-- name: Configuration firewall
-  ufw:
-    rule: allow
-    port: "{{ item }}"
-    proto: tcp
-  loop:
-    - 22
-    - 80
-    - 443
-```
-
----
-
-# Tests avec check mode 🧪
+### Collections populaires 2025
 
 ```bash
-# Test sans modification
-ansible-playbook --check playbook.yml
+# Collections essentielles
+ansible-galaxy collection install community.general
+ansible-galaxy collection install ansible.posix
+ansible-galaxy collection install community.crypto
 
-# Test avec différences
-ansible-playbook --check --diff playbook.yml
+# Collections cloud
+ansible-galaxy collection install amazon.aws
+ansible-galaxy collection install azure.azcollection
+ansible-galaxy collection install google.cloud
 ```
 
 ---
 
-# Exercice pratique 🎯
+# Exemple avec collections 🚀
 
-### Mission : Serveur web complet
-
-**Objectif** : Déployer un serveur web sécurisé avec Ansible
-
-**Étapes** :
-1. Installer Nginx
-2. Configurer le firewall
-3. Déployer un site HTML simple
-4. Sécuriser SSH
-
----
-
-# Contraintes de l'exercice 🎯
-
-**Contraintes** :
-- Utiliser un rôle réutilisable
-- Gérer les variables proprement
-- Inclure des handlers pour les services
-- Tester en mode check avant application
+```yaml
+- name: Gestion Docker avec collections
+  hosts: docker_hosts
+  tasks:
+    - name: Installation Docker
+      community.general.docker_container:
+        name: webapp
+        image: nginx:alpine
+        ports:
+          - "80:80"
+        state: started
+```
 
 ---
 
-# Ressources pour aller plus loin 📚
+# Stratégies d'exécution 🎭
 
-### Documentation officielle
+### Contrôler l'exécution
 
-- **Ansible Docs** : https://docs.ansible.com
-- **Ansible Galaxy** : https://galaxy.ansible.com
-- **Communauté** : https://github.com/ansible/ansible
+```yaml
+---
+- name: Déploiement progressif
+  hosts: webservers
+  strategy: free  # Exécution parallèle libre
+  serial: 2       # 2 serveurs à la fois
+  max_fail_percentage: 25  # Arrêt si 25% d'échecs
+
+  tasks:
+    - name: Mise à jour application
+      git:
+        repo: https://github.com/company/webapp.git
+        dest: /opt/webapp
+        version: "{{ app_version | default('main') }}"
+```
 
 ---
 
-# Formation continue 🎓
+# Debug et troubleshooting 🔍
 
-### Prochaines étapes
+### Techniques de débogage
 
-- **Ansible Tower/AWX** : Interface graphique
-- **Ansible Vault** : Gestion des secrets
-- **Ansible Collections** : Modules spécialisés
-- **CI/CD avec Ansible** : Intégration continue 
+```yaml
+- name: Debug des variables
+  debug:
+    var: ansible_facts
+
+- name: Debug conditionnel
+  debug:
+    msg: "Le serveur {{ inventory_hostname }} a {{ ansible_memtotal_mb }}MB de RAM"
+  when: ansible_memtotal_mb < 2048
+
+- name: Assertion pour validation
+  assert:
+    that:
+      - ansible_os_family == "Debian"
+      - ansible_distribution_version is version('20.04', '>=')
+    fail_msg: "Ubuntu 20.04+ requis"
+```
+
+---
+
+# Tags : Exécution sélective 🏷️
+
+### Organiser avec des tags
+
+```yaml
+- name: Configuration complète
+  hosts: all
+  tasks:
+    - name: Installation packages
+      apt:
+        name: [nginx, git]
+      tags: [install, nginx]
+
+    - name: Configuration Nginx
+      template:
+        src: nginx.conf.j2
+        dest: /etc/nginx/nginx.conf
+      tags: [config, nginx]
+
+    - name: Backup databases
+      shell: mysqldump --all-databases > /backup/db.sql
+      tags: [backup, never]
+```
+
+```bash
+# Exécuter seulement certains tags
+ansible-playbook site.yml --tags "nginx,config"
+ansible-playbook site.yml --skip-tags "backup"
+```
+
+---
+
+# Ansible en production 🏭
+
+### Bonnes pratiques
+
+```yaml
+# ansible.cfg production
+[defaults]
+host_key_checking = False
+callback_whitelist = timer, profile_tasks
+stdout_callback = yaml
+timeout = 60
+forks = 20
+
+[inventory]
+enable_plugins = ini, yaml, auto
+
+[ssh_connection]
+ssh_args = -o ControlMaster=auto -o ControlPersist=60s
+pipelining = True
+```
+
+---
+
+# Structure projet recommandée 📂
+
+### Organisation professionnelle
+
+```
+ansible-project/
+├── ansible.cfg
+├── inventory/
+│   ├── production/
+│   └── staging/
+├── group_vars/
+│   ├── all.yml
+│   └── webservers.yml
+├── host_vars/
+├── playbooks/
+│   ├── site.yml
+│   └── deploy.yml
+├── roles/
+└── collections/
+    requirements.yml
+```
+
+---
+
+# CI/CD avec Ansible 🔄
+
+### Intégration GitLab CI
+
+```yaml
+# .gitlab-ci.yml
+deploy_staging:
+  stage: deploy
+  image: ansible/ansible-runner:latest
+  script:
+    - ansible-playbook -i inventory/staging playbooks/deploy.yml
+  only:
+    - develop
+
+deploy_production:
+  stage: deploy
+  image: ansible/ansible-runner:latest
+  script:
+    - ansible-playbook -i inventory/production playbooks/deploy.yml --check
+    - ansible-playbook -i inventory/production playbooks/deploy.yml
+  only:
+    - master
+  when: manual
+```
+
+---
+
+# Monitoring et logging 📊
+
+### Callbacks utiles
+
+```yaml
+# ansible.cfg
+[defaults]
+callback_whitelist = timer, profile_tasks, log_plays
+
+# Exemple de callback personnalisé
+stdout_callback = json
+```
+
+```bash
+# Exécution avec logs détaillés
+ansible-playbook site.yml -vvv | tee deploy.log
+
+# Métriques de performance
+ANSIBLE_CALLBACKS_ENABLED=profile_tasks ansible-playbook site.yml
+```
+
+---
+
+# Sécurité avancée 🔒
+
+### Hardening et sécurité
+
+```yaml
+- name: Sécurisation serveurs
+  hosts: all
+  become: true
+  tasks:
+    - name: Désactiver SSH root
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^PermitRootLogin'
+        line: 'PermitRootLogin no'
+      notify: restart ssh
+
+    - name: Configuration fail2ban
+      apt:
+        name: fail2ban
+        state: present
+
+    - name: Mise à jour sécurité auto
+      unattended_upgrades:
+        unattended_upgrades_automatic_reboot: true
+```
+
+---
+
+# Performance et optimisation ⚡
+
+### Ansible rapide et efficace
+
+```yaml
+# ansible.cfg
+[defaults]
+forks = 50                    # Parallélisme
+gathering = smart             # Cache des facts
+fact_caching = jsonfile       # Mise en cache
+fact_caching_connection = /tmp/ansible_facts_cache
+
+[ssh_connection]
+pipelining = True             # Réduction des connexions SSH
+ssh_args = -o ControlMaster=auto -o ControlPersist=300s
+```
+
+---
+
+# 🎯 Récapitulatif des fondamentaux
+
+### Ce que vous maîtrisez maintenant
+
+✅ **Installation et configuration** Ansible 2025  
+✅ **Inventaires** et gestion des serveurs  
+✅ **Playbooks** et syntaxe YAML  
+✅ **Modules** essentiels pour l'administration  
+✅ **Variables et templates** Jinja2  
+✅ **Rôles** pour l'organisation du code  
+✅ **Vault** pour la sécurité  
+✅ **Bonnes pratiques** de production  
+
+---
+
+# 🚀 Prochaines étapes
+
+Vous êtes maintenant prêt(e) pour :
+- **Ansible + Docker** : Orchestrer des containers
+- **Ansible + Kubernetes** : Déploiements cloud-native  
+- **Ansible Tower/AWX** : Interface graphique d'entreprise
+- **Ansible + Terraform** : Infrastructure complète IaC
+
+**Pro tip** : Commencez petit, automatisez progressivement ! 🌟 

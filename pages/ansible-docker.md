@@ -1,5 +1,10 @@
 ---
-layout: default
+layout: new-section
+---
+
+# Ansible avec Docker 🐳
+
+---
 routeAlias: 'ansible-docker'
 ---
 
@@ -7,9 +12,9 @@ routeAlias: 'ansible-docker'
 
 # Ansible avec Docker 🐳
 
-## Intégration Ansible-Docker
+### Intégration et orchestration de containers
 
-Ansible et Docker sont des outils complémentaires qui permettent d'automatiser le déploiement et la gestion des conteneurs. Ansible peut être utilisé pour installer Docker, gérer les conteneurs et orchestrer les déploiements.
+Ansible et Docker sont des outils complémentaires parfaits. Ansible automatise l'installation, la configuration et l'orchestration de vos containers Docker de manière idempotente et scalable.
 
 ---
 
