@@ -1,130 +1,252 @@
 ---
 layout: new-section
----
-
-# QCM : Maîtrise d'Ansible
-
----
 routeAlias: 'qcm-ansible'
 ---
 
 <a name="QCM_ANSIBLE" id="QCM_ANSIBLE"></a>
 
-# 📝 QCM : Maîtrise d'Ansible
-
-### Validez vos compétences Ansible 2025 !
-
-Ce QCM évalue votre compréhension des concepts Ansible, des playbooks aux bonnes pratiques en production.
+# QCM : Maîtrise d'Ansible
 
 ---
 
-# Question 1 : Philosophie Ansible 🎯
+<small>
 
-**Quel est le principe fondamental d'Ansible ?**
+## QCM sur la maîtrise d'Ansible
 
-A) Ansible nécessite des agents sur tous les serveurs cibles  
-B) Ansible fonctionne en mode "push" sans agent  
-C) Ansible utilise uniquement le protocole HTTP  
-D) Ansible remplace complètement SSH  
+<br>
 
----
+### 1. Quel est le principe fondamental d'Ansible ?
 
-# Question 2 : Architecture Ansible 🏗️
+<br>
 
-**Quels sont les composants principaux d'Ansible ?**
+- [ ]  Ansible nécessite des agents sur tous les serveurs cibles
+- [ ]  Ansible fonctionne en mode "push" sans agent
+- [ ]  Ansible utilise uniquement le protocole HTTP
+- [ ]  Ansible remplace complètement SSH
 
-A) Control Node, Managed Nodes, Playbooks  
-B) Master, Workers, Registry  
-C) Client, Server, Database  
-D) Controller, Executors, Storage  
+<br>
 
----
+### 2. Quels sont les composants principaux d'Ansible ?
 
-# Question 3 : Idempotence 🔄
+<br>
 
-**Que signifie "idempotent" dans le contexte Ansible ?**
+- [ ]  Control Node, Managed Nodes, Playbooks
+- [ ]  Master, Workers, Registry
+- [ ]  Client, Server, Database
+- [ ]  Controller, Executors, Storage
 
-A) Les tâches s'exécutent toujours plus rapidement à la deuxième fois  
-B) Exécuter un playbook plusieurs fois produit le même résultat  
-C) Les erreurs sont automatiquement corrigées  
-D) Les tâches sont executées en parallèle  
+<br>
 
----
+### 3. Que signifie "idempotent" dans le contexte Ansible ?
 
-# Question 4 : Format des Playbooks 📄
+<br>
 
-**Dans quel format sont écrits les playbooks Ansible ?**
+- [ ]  Les tâches s'exécutent toujours plus rapidement à la deuxième fois
+- [ ]  Exécuter un playbook plusieurs fois produit le même résultat
+- [ ]  Les erreurs sont automatiquement corrigées
+- [ ]  Les tâches sont executées en parallèle
 
-A) JSON  
-B) XML  
-C) YAML  
-D) TOML  
+<br>
 
----
+### 4. Dans quel format sont écrits les playbooks Ansible ?
 
-# Question 5 : Inventaire Ansible 📋
+<br>
 
-**Qu'est-ce qu'un inventaire Ansible ?**
+- [ ]  JSON
+- [ ]  XML
+- [ ]  YAML
+- [ ]  TOML
 
-A) La liste des playbooks disponibles  
-B) La liste des serveurs et groupes gérés par Ansible  
-C) L'historique des exécutions  
-D) Le catalogue des modules disponibles  
+<br>
 
----
+### 5. Qu'est-ce qu'un inventaire Ansible ?
 
-# Question 6 : Variables Ansible 🔧
+<br>
 
-**Quel est l'ordre de priorité des variables (du plus faible au plus fort) ?**
+- [ ]  La liste des playbooks disponibles
+- [ ]  La liste des serveurs et groupes gérés par Ansible
+- [ ]  L'historique des exécutions
+- [ ]  Le catalogue des modules disponibles
 
-A) group_vars → host_vars → playbook vars → command line  
-B) command line → playbook vars → host_vars → group_vars  
-C) playbook vars → group_vars → host_vars → command line  
-D) host_vars → group_vars → playbook vars → command line  
+<br>
 
----
+### 6. Quel est l'ordre de priorité des variables (du plus faible au plus fort) ?
 
-# Question 7 : Ansible Vault 🔐
+<br>
 
-**À quoi sert Ansible Vault ?**
+- [ ]  group_vars → host_vars → playbook vars → command line
+- [ ]  command line → playbook vars → host_vars → group_vars
+- [ ]  playbook vars → group_vars → host_vars → command line
+- [ ]  host_vars → group_vars → playbook vars → command line
 
-A) Stocker les playbooks de manière sécurisée  
-B) Chiffrer les données sensibles comme les mots de passe  
-C) Sauvegarder l'inventaire  
-D) Gérer les versions des playbooks  
+</small>
 
 ---
 
-# Question 8 : Modules vs Rôles 🧩
+<small>
 
-**Quelle est la différence entre un module et un rôle ?**
+### 7. À quoi sert Ansible Vault ?
 
-A) Un module est réutilisable, un rôle ne l'est pas  
-B) Un module exécute une tâche spécifique, un rôle est un ensemble de tâches organisées  
-C) Un rôle est plus rapide qu'un module  
-D) Il n'y a pas de différence  
+<br>
+
+- [ ]  Stocker les playbooks de manière sécurisée
+- [ ]  Chiffrer les données sensibles comme les mots de passe
+- [ ]  Sauvegarder l'inventaire
+- [ ]  Gérer les versions des playbooks
+
+<br>
+
+### 8. Quelle est la différence entre un module et un rôle ?
+
+<br>
+
+- [ ]  Un module est réutilisable, un rôle ne l'est pas
+- [ ]  Un module exécute une tâche spécifique, un rôle est un ensemble de tâches organisées
+- [ ]  Un rôle est plus rapide qu'un module
+- [ ]  Il n'y a pas de différence
+
+<br>
+
+### 9. Quand les handlers sont-ils exécutés ?
+
+<br>
+
+- [ ]  Immédiatement après chaque tâche
+- [ ]  Uniquement à la fin du playbook, et seulement si notifiés
+- [ ]  Au début de chaque play
+- [ ]  En cas d'erreur uniquement
+
+<br>
+
+### 10. Quelle commande exécute une tâche ad-hoc sur tous les serveurs web ?
+
+<br>
+
+- [ ]  `ansible webservers -m ping`
+- [ ]  `ansible-playbook -i webservers ping.yml`
+- [ ]  `ansible all -m webservers -a ping`
+- [ ]  `ansible run webservers ping`
+
+<br>
+
+### 11. Quelle est la structure standard d'un rôle Ansible ?
+
+<br>
+
+- [ ]  `tasks/, handlers/, vars/, files/`
+- [ ]  `src/, build/, test/, deploy/`
+- [ ]  `main/, config/, scripts/, docs/`
+- [ ]  `playbooks/, inventories/, modules/, plugins/`
+
+<br>
+
+### 12. Comment ignorer les erreurs pour une tâche spécifique ?
+
+<br>
+
+- [ ]  `ignore_errors: true`
+- [ ]  `failed_when: false`
+- [ ]  `error_handling: ignore`
+- [ ]  `skip_errors: yes`
+
+</small>
 
 ---
 
-# Question 9 : Handlers 🔔
+<small>
 
-**Quand les handlers sont-ils exécutés ?**
+### 13. Comment itérer sur une liste avec Ansible moderne ?
 
-A) Immédiatement après chaque tâche  
-B) Uniquement à la fin du playbook, et seulement si notifiés  
-C) Au début de chaque play  
-D) En cas d'erreur uniquement  
+<br>
+
+- [ ]   `with_items:`
+- [ ]   `loop:`
+- [ ]   `for_each:`
+- [ ]   `iterate:`
+
+<br>
+
+### 14. Comment exécuter une tâche seulement sur Ubuntu ?
+
+<br>
+
+- [ ]   `when: ansible_os_family == "Ubuntu"`
+- [ ]   `when: ansible_distribution == "Ubuntu"`
+- [ ]   `if: ansible_system == "Ubuntu"`
+- [ ]   `only_if: ubuntu == true`
+
+<br>
+
+### 15. À quoi servent les tags dans Ansible ?
+
+<br>
+
+- [ ]  Identifier les versions des playbooks
+- [ ]  Exécuter seulement certaines tâches d'un playbook
+- [ ]  Catégoriser les serveurs dans l'inventaire
+- [ ]  Marquer les erreurs dans les logs
+
+<br>
+
+### 16. Comment implémenter un déploiement blue-green avec Ansible ?
+
+<br>
+
+- [ ]  Utiliser des groupes d'inventaire distincts et des variables conditionnelles
+- [ ]  Créer deux playbooks séparés
+- [ ]  Utiliser uniquement des rôles
+- [ ]  Impossible avec Ansible seul
+
+<br>
+
+### 17. Quelle n'est PAS une bonne pratique de sécurité avec Ansible ?
+
+<br>
+
+- [ ]  Utiliser Ansible Vault pour les secrets
+- [ ]  Stocker les clés SSH dans les playbooks
+- [ ]  Limiter les privilèges avec `become_user`
+- [ ]  Utiliser des connexions SSH avec clés
+
+<br>
+
+### 18. Comment optimiser les performances d'exécution d'Ansible ?
+
+<br>
+
+- [ ]  Augmenter `forks` et utiliser `strategy: free`
+- [ ]  Réduire le nombre de tâches
+- [ ]  Utiliser uniquement des modules built-in
+- [ ]  Exécuter en mode séquentiel
+
+</small>
 
 ---
 
-# Question 10 : Commande ad-hoc 🚀
+# Réponses
 
-**Quelle commande exécute une tâche ad-hoc sur tous les serveurs web ?**
+<small>
 
-A) `ansible webservers -m ping`  
-B) `ansible-playbook -i webservers ping.yml`  
-C) `ansible all -m webservers -a ping`  
-D) `ansible run webservers ping`  
+1. Ansible fonctionne en mode "push" sans agent
+2. Control Node, Managed Nodes, Playbooks
+3. Exécuter un playbook plusieurs fois produit le même résultat
+4. YAML
+5. La liste des serveurs et groupes gérés par Ansible
+6. group_vars → host_vars → playbook vars → command line
+7. Chiffrer les données sensibles comme les mots de passe
+8. Un module exécute une tâche spécifique, un rôle est un ensemble de tâches organisées
+9. Uniquement à la fin du playbook, et seulement si notifiés
+10. `ansible webservers -m ping`
+11. `tasks/, handlers/, vars/, files/`
+12. `ignore_errors: true`
+13. `loop:`
+14. `when: ansible_distribution == "Ubuntu"`
+15. Exécuter seulement certaines tâches d'un playbook
+16. Utiliser des groupes d'inventaire distincts et des variables conditionnelles
+17. Stocker les clés SSH dans les playbooks
+18. Augmenter `forks` et utiliser `strategy: free`
+
+</small>
 
 ---
 

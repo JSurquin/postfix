@@ -1,14 +1,13 @@
 ---
 layout: new-section
----
-
-# Virtualisation vs conteneurisation
-
----
 routeAlias: 'virtualisation-vs-conteneurisation'
 ---
 
 <a name="VIRTUALISATION" id="VIRTUALISATION"></a>
+
+# Virtualisation vs conteneurisation
+
+---
 
 # Virtualisation vs Conteneurisation 🏗️
 

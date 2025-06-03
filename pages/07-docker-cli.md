@@ -1,348 +1,257 @@
 ---
 layout: new-section
----
-
-# Le CLI Docker
-
----
 routeAlias: 'le-cli-docker'
 ---
 
 <a name="le-cli-docker" id="le-cli-docker"></a>
 
+# Le CLI Docker
+
+---
+
 # Le CLI Docker 🖥️
 
 ### Votre outil de travail quotidien
 
-Le **Docker CLI** (Command Line Interface) est votre interface principale pour interagir avec Docker. C'est un outil puissant qui vous permet de gérer containers, images, volumes et réseaux avec des commandes simples et intuitives.
+Le **Docker CLI** est votre interface principale pour interagir avec Docker. Maîtrisons les commandes essentielles pour être productifs au quotidien.
 
 ---
 
 # Structure des commandes 📋
 
-### Structure des commandes Docker
+### Syntaxe de base
 
 ```bash
 docker [OPTIONS] COMMAND [ARG...]
 ```
 
----
-
-# Exemples de commandes 💡
-
-**Exemples** :
-- `docker run nginx` : Lance un container Nginx
+**Exemples pratiques** :
+- `docker run -d -p 80:80 nginx` : Lance un serveur web
 - `docker ps -a` : Liste tous les containers
-- `docker build -t myapp .` : Construit une image depuis le répertoire courant
+- `docker build -t myapp .` : Construit une image
 
 ---
 
-# Commandes essentielles pour débuter 🚀
+# Gestion des containers - Essentiel 🚀
 
-### Gestion des containers
+### Commandes incontournables
 
 | Commande | Description | Exemple |
 |----------|-------------|---------|
-| `docker run` | Crée et démarre un nouveau container | `docker run -d -p 80:80 nginx` |
-| `docker ps` | Liste les containers en cours | `docker ps` |
-| `docker ps -a` | Liste tous les containers | `docker ps -a` |
+| `docker run` | Créer et démarrer | `docker run -d -p 80:80 --name web nginx` |
+| `docker ps` | Containers actifs | `docker ps` |
+| `docker ps -a` | Tous les containers | `docker ps -a` |
+| `docker stop` | Arrêter | `docker stop web` |
+| `docker start` | Redémarrer | `docker start web` |
+| `docker rm` | Supprimer | `docker rm web` |
 
 ---
 
-# Suite gestion containers 📦
+# Options run les plus utiles 🔧
 
-| Commande | Description | Exemple |
-|----------|-------------|---------|
-| `docker stop` | Arrête un container | `docker stop mon_container` |
-| `docker start` | Démarre un container arrêté | `docker start mon_container` |
-| `docker rm` | Supprime un container | `docker rm mon_container` |
-
----
-
-# Exemples pratiques containers 🎯
-
-### Exemples pratiques
+### Paramètres essentiels pour docker run
 
 ```bash
-# Lancer un serveur web Nginx
-docker run -d -p 8080:80 --name mon-nginx nginx
+# Détaché avec nom et port
+docker run -d --name mon-app -p 8080:80 nginx
 
-# Voir les containers actifs
-docker ps
+# Variables d'environnement
+docker run -e NODE_ENV=production -e PORT=3000 node-app
 
-# Arrêter le container
-docker stop mon-nginx
+# Volumes et répertoire de travail
+docker run -v $(pwd):/app -w /app node:18 npm install
+
+# Limite de ressources
+docker run --memory=512m --cpus=1 mon-app
 ```
 
 ---
 
-# Gestion des images Docker 📦
+# Gestion des images 📦
 
-### Commandes de base pour les images
-
-| Commande | Description | Exemple |
-|----------|-------------|---------|
-| `docker pull` | Télécharge une image | `docker pull ubuntu:22.04` |
-| `docker images` | Liste les images locales | `docker images` |
-| `docker rmi` | Supprime une image | `docker rmi ubuntu:22.04` |
-
----
-
-# Suite gestion images 🏗️
+### Images : télécharger, construire, gérer
 
 | Commande | Description | Exemple |
 |----------|-------------|---------|
-| `docker build` | Construit une image | `docker build -t myapp:v1.0 .` |
-| `docker tag` | Ajoute un tag à une image | `docker tag myapp:v1.0 myapp:latest` |
-
----
-
-# Workflow typique images 🔄
-
-### Workflow typique
-
-```bash
-# 1. Télécharger une image de base
-docker pull node:18-alpine
-
-# 2. Lister les images disponibles
-docker images
-
-# 3. Construire votre application
-docker build -t mon-app:1.0 .
-
-# 4. Tagger pour la production
-docker tag mon-app:1.0 mon-app:latest
-```
+| `docker pull` | Télécharger | `docker pull nginx:alpine` |
+| `docker build` | Construire | `docker build -t myapp:v1.0 .` |
+| `docker images` | Lister | `docker images` |
+| `docker tag` | Tagger | `docker tag myapp:v1.0 myapp:latest` |
+| `docker rmi` | Supprimer | `docker rmi myapp:v1.0` |
 
 ---
 
 # Inspection et débogage 🔍
 
-### Commandes d'analyse
+### Comprendre ce qui se passe
 
-| Commande | Description | Utilisation |
-|----------|-------------|-------------|
-| `docker logs` | Affiche les logs d'un container | `docker logs -f mon_container` |
-| `docker inspect` | Détails complets d'un objet | `docker inspect mon_container` |
-| `docker exec` | Exécute une commande dans un container | `docker exec -it mon_container bash` |
-
----
-
-# Suite débogage 🔧
-
-| Commande | Description | Utilisation |
-|----------|-------------|-------------|
-| `docker top` | Processus en cours dans un container | `docker top mon_container` |
-| `docker stats` | Utilisation des ressources | `docker stats mon_container` |
+| Commande | Usage | Exemple |
+|----------|--------|---------|
+| `docker logs` | Voir les logs | `docker logs -f --tail 100 mon-app` |
+| `docker exec` | Exécuter dans le container | `docker exec -it mon-app bash` |
+| `docker inspect` | Détails complets | `docker inspect mon-app` |
+| `docker stats` | Utilisation ressources | `docker stats` |
 
 ---
 
-# Débogage en action 🎯
+# Commandes d'inspection pratiques 🎯
 
-### Débogage en action
+### Débogage rapide
 
 ```bash
-# Accéder au shell d'un container
-docker exec -it mon-nginx /bin/bash
+# Accès shell interactif
+docker exec -it mon-container bash
 
-# Surveiller les logs en temps réel
-docker logs -f mon-nginx
+# Logs en temps réel
+docker logs -f mon-container
 
-# Voir l'utilisation CPU/Mémoire
-docker stats mon-nginx
+# Monitoring des ressources
+docker stats --no-stream
+
+# Processus dans le container
+docker top mon-container
 ```
 
 ---
 
-# Commandes avancées et utilitaires 🔧
+# Volumes et réseaux 🌐
 
-### Gestion des volumes
+### Gestion des ressources
 
+**Volumes** :
 ```bash
-# Créer un volume persistant
 docker volume create mon-volume
-
-# Lister les volumes
 docker volume ls
-
-# Inspecter un volume
 docker volume inspect mon-volume
-
-# Supprimer un volume
 docker volume rm mon-volume
 ```
 
----
-
-# Gestion des réseaux 🌐
-
-### Gestion des réseaux
-
+**Réseaux** :
 ```bash
-# Créer un réseau custom
 docker network create mon-reseau
-
-# Lister les réseaux
 docker network ls
-
-# Connecter un container à un réseau
 docker network connect mon-reseau mon-container
 ```
 
 ---
 
-# Maintenance et nettoyage 🧹
+# Nettoyage et maintenance 🧹
 
-### Commandes de nettoyage
+### Libérer l'espace disque
 
-| Commande | Description | Impact |
-|----------|-------------|--------|
-| `docker system prune` | Supprime les ressources inutilisées | Containers arrêtés, réseaux, images dangling |
-| `docker container prune` | Supprime les containers arrêtés | Libère l'espace des containers |
-
----
-
-# Suite nettoyage 🗑️
-
-| Commande | Description | Impact |
-|----------|-------------|--------|
-| `docker image prune` | Supprime les images non utilisées | Nettoie les images dangling |
-| `docker volume prune` | Supprime les volumes non utilisés | Libère l'espace des volumes |
+| Commande | Action | Impact |
+|----------|--------|--------|
+| `docker system prune` | Nettoyage général | Containers arrêtés, réseaux, images dangling |
+| `docker container prune` | Containers arrêtés | Libère l'espace containers |
+| `docker image prune` | Images non utilisées | Nettoie les images orphelines |
+| `docker volume prune` | Volumes non utilisés | Supprime les volumes inutiles |
 
 ---
 
-# Surveillance espace disque 📊
+# Nettoyage avancé 🗑️
 
-### Surveillance de l'espace disque
+### Surveillance et nettoyage
 
 ```bash
-# Voir l'utilisation de l'espace Docker
+# Voir l'utilisation de l'espace
 docker system df
-
-# Informations détaillées du système
-docker info
 
 # Nettoyage complet (ATTENTION !)
 docker system prune -a --volumes
+
+# Forcer la suppression
+docker rm -f $(docker ps -aq)
+docker rmi -f $(docker images -q)
 ```
 
 ---
 
-# Docker Compose : Nouvelle syntaxe 2025 🎯
+# Docker Compose - Syntaxe 2025 ✨
 
-### Évolution de la commande
+### Évolution importante
 
-**Ancienne syntaxe** (encore supportée) :
-```bash
-docker-compose up -d
-docker-compose down
-docker-compose logs
-```
-
----
-
-# Nouvelle syntaxe Compose ✨
-
-**Nouvelle syntaxe** (recommandée depuis Docker 2.0) :
+**Nouvelle syntaxe** (recommandée) :
 ```bash
 docker compose up -d
 docker compose down
-docker compose logs
+docker compose logs -f
+docker compose restart
+```
+
+**Ancienne syntaxe** (deprecated) :
+```bash
+docker-compose up -d
 ```
 
 ---
 
-# Commandes Compose essentielles 📋
+# Workflow quotidien optimal 🔄
 
-### Commandes Compose essentielles
-
-| Commande | Description | Exemple |
-|----------|-------------|---------|
-| `docker compose up` | Démarre tous les services | `docker compose up -d` |
-| `docker compose down` | Arrête et supprime les services | `docker compose down` |
-| `docker compose ps` | État des services | `docker compose ps` |
-
----
-
-# Suite Compose 🔄
-
-| Commande | Description | Exemple |
-|----------|-------------|---------|
-| `docker compose logs` | Logs des services | `docker compose logs -f web` |
-| `docker compose exec` | Commande dans un service | `docker compose exec web bash` |
-
----
-
-# Astuces et bonnes pratiques 💡
-
-### Raccourcis utiles
+### Séquence type de développement
 
 ```bash
-# Forcer l'arrêt d'un container
-docker kill mon_container
+# 1. Build de l'image
+docker build -t mon-app:dev .
 
-# Copier des fichiers container ↔ hôte
-docker cp mon_container:/app/logs.txt ./logs.txt
-docker cp ./config.json mon_container:/app/
+# 2. Lancement en mode développement
+docker run -d -p 3000:3000 -v $(pwd):/app --name dev-app mon-app:dev
 
-# Sauvegarder une image
-docker save -o mon-image.tar mon_image:tag
+# 3. Monitoring
+docker logs -f dev-app
 
-# Restaurer une image
-docker load -i mon-image.tar
+# 4. Debug si besoin
+docker exec -it dev-app bash
+
+# 5. Nettoyage
+docker stop dev-app && docker rm dev-app
 ```
 
 ---
 
-# Variables d'environnement 🔧
+# Aliases utiles pour développeurs 💡
 
-### Variables d'environnement et formatage
+### Optimiser votre productivité
 
 ```bash
-# Obtenir l'IP d'un container
-docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' mon_container
-
-# Lister les ports exposés
-docker port mon_container
-
-# Filtrer les containers par statut
-docker ps -f "status=running"
+# Ajoutez dans votre .bashrc ou .zshrc
+alias dps='docker ps'
+alias dpsf='docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"'
+alias di='docker images'
+alias dlog='docker logs -f'
+alias dexec='docker exec -it'
+alias dclean='docker system prune -f'
 ```
 
 ---
 
-# Surveillance et monitoring 📊
+# Commandes avancées pour pros 🚀
 
-### Métriques en temps réel
+### Techniques avancées
 
 ```bash
-# Statistiques détaillées de tous les containers
-docker stats
+# Copier fichiers container ↔ hôte
+docker cp mon-file.txt mon-container:/app/
+docker cp mon-container:/app/result.txt ./
 
-# Statistiques d'un container spécifique
-docker stats mon_container --no-stream
+# Créer image depuis container
+docker commit mon-container mon-image:v2
 
-# Événements Docker en temps réel
-docker events
-
-# Historique d'une image
-docker history mon_image:tag
+# Export/Import d'images
+docker save -o mon-app.tar mon-app:latest
+docker load -i mon-app.tar
 ```
 
 ---
 
-# Diagnostic avancé 🔬
+# Bonnes pratiques CLI 📋
 
-### Commandes de diagnostic avancées
+### Conseils pour être efficace
 
-```bash
-# Vérifier la santé d'un container
-docker inspect --format='{{.State.Health.Status}}' mon_container
+✅ **Utilisez des noms explicites** : `--name web-frontend`  
+✅ **Toujours spécifier les tags** : `nginx:1.25-alpine`  
+✅ **Nettoyez régulièrement** : `docker system prune`  
+✅ **Utilisez les aliases** pour les commandes fréquentes  
+✅ **Logs avec limites** : `docker logs --tail 50`  
 
-# Voir les processus dans tous les containers
-docker exec mon_container ps aux
-
-# Analyser les changements dans un container
-docker diff mon_container
-```
+❌ Évitez `latest` en production  
+❌ N'oubliez pas de supprimer les containers de test

@@ -1,26 +1,23 @@
 ---
 layout: new-section
+routeAlias: 'dockerfile'
 ---
 
-# Les Images Docker & Dockerfile
+<a name="dockerfile" id="dockerfile"></a>
+
+# Dockerfile & Images Docker
 
 ---
-routeAlias: 'images-Docker'
----
 
-<a name="images-Docker" id="images-Docker"></a>
+# Dockerfile & Images Docker 🏗️
 
-# Les Images Docker & Dockerfile 🏗️
+### Créer vos propres images personnalisées
 
-### Comprendre les images et leur construction
-
-Une **image Docker** est un template en lecture seule qui contient tout ce dont votre application a besoin pour s'exécuter. Le **Dockerfile** est le fichier de recette qui permet de construire ces images de manière automatisée et reproductible.
+Un **Dockerfile** est un fichier de recette qui automatise la création d'images Docker. Maîtrisons la création d'images optimisées pour la production.
 
 ---
 
 # Relation Image ↔ Container 🔄
-
-### Relation Image ↔ Container
 
 ```mermaid
 graph TB
@@ -34,351 +31,188 @@ graph TB
 
 ---
 
-# Explication du diagramme 📊
-
-- **Dockerfile** : Les instructions de construction
-- **Image** : Le résultat compilé et prêt à l'emploi
-- **Container** : L'instance en cours d'exécution
-
----
-
-# Qu'est-ce qu'un Dockerfile ? 📋
-
-### Définition et utilité
-
-Un **Dockerfile** est un fichier texte qui contient une série d'instructions pour automatiser la création d'une image Docker. Il décrit étape par étape comment construire l'environnement d'exécution de votre application.
-
----
-
-# Structure type d'un Dockerfile moderne 📝
-
-### Structure type d'un Dockerfile moderne
+# Dockerfile moderne - Structure type 📝
 
 ```dockerfile
-# 1. Image de base
+# 1. Image de base optimisée
 FROM node:20-alpine
 
 # 2. Métadonnées
-LABEL maintainer="dev@monapp.com"
-LABEL version="1.0.0"
+LABEL maintainer="dev@myapp.com" version="1.0.0"
 
-# 3. Répertoire de travail
+# 3. Variables d'environnement
+ENV NODE_ENV=production \
+    PORT=3000
+
+# 4. Répertoire de travail
 WORKDIR /app
-```
 
----
-
-# Structure Dockerfile - Suite 📝
-
-```dockerfile
-# 4. Copie des dépendances
+# 5. Dépendances (ordre optimal pour le cache)
 COPY package*.json ./
+RUN npm ci --only=production && npm cache clean --force
 
-# 5. Installation des dépendances
-RUN npm ci --only=production
-
-# 6. Copie du code source
+# 6. Code source
 COPY . .
-```
 
----
-
-# Structure Dockerfile - Finalisation 📝
-
-```dockerfile
-# 7. Configuration utilisateur
+# 7. Sécurité : utilisateur non-root
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 USER appuser
 
-# 8. Exposition des ports
+# 8. Configuration
 EXPOSE 3000
+HEALTHCHECK --interval=30s CMD curl -f http://localhost:3000/health || exit 1
 
-# 9. Commande de démarrage
+# 9. Démarrage
 CMD ["npm", "start"]
 ```
 
 ---
 
-# Instructions fondamentales 🔧
+# Instructions essentielles 🔧
 
-### FROM - L'image de base
-
-L'instruction **FROM** définit l'image de base à partir de laquelle votre image sera construite. Elle doit toujours être la première instruction.
-
----
-
-# FROM - Exemples d'images 🔧
+### FROM - Images de base recommandées 2025
 
 ```dockerfile
-# Images officielles recommandées
-FROM node:20-alpine          # Node.js sur Alpine Linux (léger)
-FROM python:3.11-slim        # Python optimisé
-FROM openjdk:17-jre-slim     # Java Runtime Environment
-FROM nginx:alpine            # Serveur web Nginx
-FROM ubuntu:22.04            # Ubuntu LTS pour cas spéciaux
+FROM node:20-alpine          # Node.js optimisé
+FROM python:3.12-slim        # Python production-ready
+FROM openjdk:21-jre-slim     # Java moderne
+FROM nginx:1.25-alpine       # Serveur web performant
+FROM postgres:16-alpine      # Base de données légère
 ```
 
----
-
-# WORKDIR - Répertoire de travail 📁
-
-### WORKDIR - Répertoire de travail
-
-Définit le répertoire de travail pour toutes les instructions suivantes. Crée le répertoire s'il n'existe pas.
+**Évitez** `ubuntu:latest` - préférez des images spécialisées et taguées !
 
 ---
 
-# WORKDIR - Exemples 📁
+# COPY vs ADD - Bonnes pratiques 📁
+
+### COPY (recommandé dans 95% des cas)
 
 ```dockerfile
-WORKDIR /app                 # Standard pour applications
-WORKDIR /usr/src/app         # Convention Node.js
-WORKDIR /opt/myapp           # Applications custom
-```
-
----
-
-# Gestion des fichiers 📁
-
-### COPY vs ADD - Différences importantes
-
-**COPY** (recommandé dans la plupart des cas) :
-
----
-
-# COPY - Exemples pratiques 📁
-
-```dockerfile
-COPY package*.json ./        # Copie fichiers package
-COPY src/ ./src/             # Copie répertoire source
-COPY --chown=appuser:appgroup . .  # Copie avec permissions
-```
-
----
-
-# ADD - Cas spéciaux 📁
-
-**ADD** (pour cas spéciaux) :
-
-```dockerfile
-ADD archive.tar.gz /app/     # Extrait automatiquement les archives
-ADD https://example.com/file.txt /app/  # Télécharge depuis URL
-```
-
----
-
-# Bonnes pratiques de copie ✅
-
-### Bonnes pratiques de copie
-
-```dockerfile
-# ✅ Bon : Copier d'abord les dépendances pour optimiser le cache
-COPY package*.json ./
+# ✅ Ordre optimal pour le cache Docker
+COPY package*.json ./        # Dépendances d'abord
 RUN npm install
+COPY . .                     # Code source après
 
-# ✅ Ensuite copier le code source
-COPY . .
+# ✅ Copie avec permissions
+COPY --chown=appuser:appgroup . .
+```
+
+### ADD (cas spéciaux uniquement)
+
+```dockerfile
+# Pour extraire des archives automatiquement
+ADD release.tar.gz /app/
 ```
 
 ---
 
-# Mauvaises pratiques de copie ❌
+# RUN - Optimisation des couches ⚡
+
+### Mauvais exemple ❌
 
 ```dockerfile
-# ❌ Éviter : Copier tout en une fois
-# COPY . .
-# RUN npm install
-```
-
----
-
-# Exécution de commandes 🚀
-
-### RUN - Commandes de build
-
-L'instruction **RUN** exécute des commandes pendant la construction de l'image. Chaque RUN crée une nouvelle couche.
-
----
-
-# RUN - Mauvais exemple ❌
-
-```dockerfile
-# ❌ Mauvais : Plusieurs couches
 RUN apt-get update
 RUN apt-get install -y curl
 RUN apt-get install -y git
 RUN rm -rf /var/lib/apt/lists/*
 ```
 
----
-
-# RUN - Bon exemple ✅
+### Bon exemple ✅
 
 ```dockerfile
-# ✅ Bon : Une seule couche optimisée
 RUN apt-get update && \
     apt-get install -y curl git && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean
 ```
 
----
-
-# Configuration et sécurité 🔒
-
-### ENV - Variables d'environnement
-
-```dockerfile
-# Variables de production
-ENV NODE_ENV=production
-ENV PORT=3000
-ENV DATABASE_URL=""
-```
+**Une seule couche = image plus légère !**
 
 ---
 
-# ENV - Variables avec ARG 🔒
+# ENV et ARG - Configuration 🔧
 
 ```dockerfile
-# Variables de build avec ARG
-ARG BUILD_VERSION
-ENV VERSION=$BUILD_VERSION
-```
+# ARG : Variables de build uniquement
+ARG BUILD_VERSION=1.0.0
+ARG NODE_ENV=production
 
----
+# ENV : Variables disponibles au runtime
+ENV VERSION=$BUILD_VERSION \
+    NODE_ENV=$NODE_ENV \
+    PORT=3000 \
+    DATABASE_URL=""
 
-# ENV - Configuration multi-lignes 🔒
-
-```dockerfile
-# Configuration multi-lignes
+# Configuration multi-environnements
 ENV TZ=Europe/Paris \
-    LANG=fr_FR.UTF-8 \
-    DEBIAN_FRONTEND=noninteractive
+    LANG=en_US.UTF-8
 ```
 
 ---
 
-# USER - Sécurité avec utilisateur non-root 🔒
+# Sécurité avec USER 🔒
 
-### USER - Sécurité avec utilisateur non-root
+### Toujours utiliser un utilisateur non-root
 
 ```dockerfile
-# ✅ Créer un utilisateur non-root (Alpine)
+# Alpine Linux
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 USER appuser
-```
 
----
-
-# USER - Debian/Ubuntu 🔒
-
-```dockerfile
-# ✅ Créer un utilisateur non-root (Debian/Ubuntu)
+# Debian/Ubuntu
 RUN groupadd -r appuser && useradd -r -g appuser appuser
 USER appuser
 ```
 
+**Jamais de `USER root` en production !**
+
 ---
 
-# USER - Éviter le root ❌
+# CMD vs ENTRYPOINT 🚀
+
+### CMD - Peut être surchargé
 
 ```dockerfile
-# ❌ Éviter de rester en root
-# USER root  # Risque de sécurité !
+CMD ["npm", "start"]              # Défaut
+CMD ["python", "app.py"]          # Surchargeable avec docker run
 ```
 
----
-
-# Exposition et démarrage 🌐
-
-### EXPOSE - Documentation des ports
-
-```dockerfile
-# Exposition de ports standard
-EXPOSE 3000              # Application Node.js
-EXPOSE 8080              # Application Java
-EXPOSE 80 443           # Serveur web HTTP/HTTPS
-```
-
----
-
-# EXPOSE - Protocoles spéciaux 🌐
-
-```dockerfile
-# Exposition avec protocole
-EXPOSE 53/udp           # DNS
-EXPOSE 3000/tcp         # HTTP (par défaut)
-```
-
----
-
-# CMD vs ENTRYPOINT 🌐
-
-### CMD vs ENTRYPOINT - Commandes de démarrage
-
-**CMD** (peut être surchargé) :
-
-```dockerfile
-CMD ["npm", "start"]              # Format tableau (recommandé)
-CMD ["python", "app.py"]          # Application Python
-CMD ["java", "-jar", "app.jar"]   # Application Java
-```
-
----
-
-# ENTRYPOINT - Point d'entrée fixe 🌐
-
-**ENTRYPOINT** (point d'entrée fixe) :
+### ENTRYPOINT - Point d'entrée fixe
 
 ```dockerfile
 ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD ["--help"]                    # Arguments par défaut
-```
 
----
-
-# ENTRYPOINT + CMD 🌐
-
-```dockerfile
-# Combinaison ENTRYPOINT + CMD
+# Ou combinaison
 ENTRYPOINT ["java", "-jar", "app.jar"]
 CMD ["--spring.profiles.active=prod"]
 ```
 
 ---
 
-# Multi-stage builds avancés 🏭
+# Multi-stage builds 🏭
 
-### Principe et avantages
-
-Les **multi-stage builds** permettent d'optimiser la taille des images en séparant les phases de build et de runtime.
-
----
-
-# Exemple multi-stage Node.js 🏗️
-
-### De 1GB à 200MB !
+### Optimisation drastique : de 1GB à 200MB
 
 ```dockerfile
-# Stage 1: Build (image lourde avec outils de dev)
+# Stage 1: Build (image lourde avec outils)
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
-RUN npm run build
-RUN npm prune --production
+RUN npm run build && npm prune --production
 
-# Stage 2: Production (image légère)
+# Stage 2: Production (image minimale)
 FROM node:20-alpine AS production
 WORKDIR /app
 
-# Copier seulement les fichiers nécessaires du stage précédent
+# Copie sélective depuis le stage précédent
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./
 
-# Configuration production
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 USER appuser
 
@@ -388,158 +222,165 @@ CMD ["node", "dist/server.js"]
 
 ---
 
-# HEALTHCHECK et monitoring 🩺
-
-### Vérification de l'état des containers
+# HEALTHCHECK - Monitoring intégré 🩺
 
 ```dockerfile
-# Healthcheck HTTP simple
+# HTTP healthcheck
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:3000/health || exit 1
 
-# Healthcheck avec wget (si curl n'est pas disponible)
+# Avec wget (si curl indisponible)
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
     CMD wget --no-verbose --tries=1 --spider http://localhost:8080/ping || exit 1
 ```
 
----
-
-# Les erreurs à éviter ❌
-
-### Anti-patterns courants
-
-```dockerfile
-# ❌ Image de base trop lourde ou sans version
-FROM ubuntu:latest
-
-# ❌ Multiples RUN inutiles (chaque RUN = une layer)
-RUN apt-get update
-RUN apt-get install -y curl
-RUN apt-get install -y git
-
-# ❌ Copie avant installation des dépendances (cache inefficace)
-COPY . .
-RUN npm install
-
-# ❌ Rester en root (sécurité)
-USER root
-```
+**Les containers avec healthcheck redémarrent automatiquement !**
 
 ---
 
-# Les bonnes pratiques ✅
-
-### Checklist pour un Dockerfile optimal
+# Dockerfile optimal - Template 2025 ✅
 
 ```dockerfile
-# ✅ Image de base légère et versionnée
 FROM node:20-alpine
 
-# ✅ Métadonnées modernes
 LABEL maintainer="dev@example.com" \
       version="1.0.0" \
-      description="Mon application Node.js"
+      description="Production-ready Node.js app"
 
-# ✅ Variables d'environnement regroupées
 ENV NODE_ENV=production \
     PORT=3000 \
     LOG_LEVEL=info
 
-# ✅ Répertoire de travail défini
 WORKDIR /app
 
-# ✅ Installation des dépendances en premier (cache optimisé)
+# Optimisation cache : dépendances d'abord
 COPY package*.json ./
 RUN npm ci --only=production && \
     npm cache clean --force
 
-# ✅ Copie du code après les dépendances
 COPY . .
 
-# ✅ Utilisateur non-root pour la sécurité
+# Sécurité obligatoire
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 USER appuser
 
-# ✅ Healthcheck pour le monitoring
+# Monitoring intégré
 HEALTHCHECK --interval=30s --timeout=3s \
     CMD curl -f http://localhost:3000/health || exit 1
 
-# ✅ Port applicatif seulement
 EXPOSE 3000
-
-# ✅ Commande de démarrage appropriée
 CMD ["npm", "start"]
 ```
 
 ---
 
-# Construction et optimisation 🔧
+# Construction et analyse 🔧
 
-### Commandes de build essentielles
+### Commandes de build avancées
 
 ```bash
-# Build simple
-docker build -t mon-app:1.0 .
+# Build optimisé avec cache
+docker build --no-cache -t mon-app:latest .
 
 # Build avec arguments
 docker build --build-arg NODE_ENV=production -t mon-app:prod .
 
-# Build multi-plateforme (ARM + x86)
+# Multi-plateforme (ARM + x86)
 docker buildx build --platform linux/amd64,linux/arm64 -t mon-app:multi .
 
-# Analyse de l'historique des couches
+# Analyse des couches
 docker history mon-app:latest
 
-# Inspection détaillée de l'image
+# Inspection complète
 docker inspect mon-app:latest
 ```
 
 ---
 
-# Exercice pratique : Application complète 🎯
+# .dockerignore - Performance ⚡
 
-### Mission : Dockeriser une app Node.js/React
+### Exclure les fichiers inutiles
 
-**Objectif** : Créer un Dockerfile multi-stage pour une application full-stack
-
----
-
-# Structure du projet 🎯
-
-**Structure du projet** :
-```
-my-app/
-├── frontend/          # Application React
-│   ├── package.json
-│   └── src/
-├── backend/           # API Node.js
-│   ├── package.json
-│   └── src/
-└── Dockerfile
+```bash
+# .dockerignore
+node_modules
+npm-debug.log
+.git
+.gitignore
+README.md
+.env
+.nyc_output
+coverage
+.vscode
+*.log
 ```
 
----
-
-# Contraintes techniques 🎯
-
-**Contraintes** :
-- Image finale < 100MB
-- Utilisateur non-root
-- Healthcheck intégré
-- Variables d'environnement configurables
-- Support multi-architecture
+**Un .dockerignore optimal = builds plus rapides !**
 
 ---
 
-# Bonus de l'exercice 🎯
+# Erreurs courantes à éviter ❌
 
-**Bonus** :
-- Intégration d'un reverse proxy Nginx
-- Gestion des logs structurés
-- Optimisation pour Kubernetes
+### Anti-patterns
 
-    HOST[Host: 192.168.1.100]
-    BRIDGE[Bridge Network<br/>172.17.0.0/16]
+```dockerfile
+# ❌ Image sans version
+FROM ubuntu:latest
 
-    HOST --> BRIDGE
-    BRIDGE --> C1[Container 1<br/>172.17.0.2]
+# ❌ Installation inutile
+RUN apt-get update && apt-get install -y vim nano
+
+# ❌ Copie inefficace
+COPY . .
+RUN npm install
+
+# ❌ Pas de nettoyage
+RUN apt-get install -y curl
+# (laisse les caches)
+
+# ❌ Reste en root
+# USER root
+```
+
+---
+
+# Bonnes pratiques résumées 📋
+
+### Checklist pour un Dockerfile professionnel
+
+✅ **Image de base** : Alpine, slim, ou spécialisée avec version  
+✅ **Ordre des COPY** : Dépendances avant code source  
+✅ **RUN optimisé** : Une seule couche avec nettoyage  
+✅ **USER non-root** : Sécurité obligatoire  
+✅ **HEALTHCHECK** : Monitoring automatique  
+✅ **.dockerignore** : Exclusions optimisées  
+✅ **Multi-stage** : Images de production minimales  
+
+---
+
+# Exemples par stack technique 💻
+
+### Python Flask
+
+```dockerfile
+FROM python:3.12-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+RUN adduser --disabled-password appuser
+USER appuser
+EXPOSE 5000
+CMD ["python", "app.py"]
+```
+
+### Java Spring Boot
+
+```dockerfile
+FROM openjdk:21-jre-slim
+WORKDIR /app
+COPY target/*.jar app.jar
+RUN addgroup --system spring && adduser --system --group spring
+USER spring
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]

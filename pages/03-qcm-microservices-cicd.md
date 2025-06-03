@@ -1,15 +1,13 @@
 ---
 layout: new-section
----
-
-
-# QCM : Micro-services et CI/CD
-
----
 routeAlias: 'qcm-microservices-cicd'
 ---
 
 <a name="QCM_MICROSERVICES_CICD" id="QCM_MICROSERVICES_CICD"></a>
+
+# QCM : Micro-services et CI/CD
+
+---
 
 <small>
 
@@ -21,10 +19,10 @@ routeAlias: 'qcm-microservices-cicd'
 
 <br>
 
-- [ ] Ils permettent de créer des applications monolithiques.
-- [ ] Ils permettent de découper une application en plusieurs services indépendants.
-- [ ] Ils nécessitent moins de ressources que les applications traditionnelles.
-- [ ] Ils sont plus difficiles à maintenir.
+- [ ]  Ils permettent de créer des applications monolithiques.
+- [ ]  Ils permettent de découper une application en plusieurs services indépendants.
+- [ ]  Ils nécessitent moins de ressources que les applications traditionnelles.
+- [ ]  Ils sont plus difficiles à maintenir.
 
 <br>
 
@@ -32,10 +30,10 @@ routeAlias: 'qcm-microservices-cicd'
 
 <br>
 
-- [ ] Microservice de gestion de produits
-- [ ] Microservice de gestion de commandes
-- [ ] Microservice de gestion de paiement
-- [ ] Microservice de gestion des utilisateurs
+- [ ]  Microservice de gestion de produits
+- [ ]  Microservice de gestion de commandes
+- [ ]  Microservice de gestion de paiement
+- [ ]  Microservice de gestion des utilisateurs
 
 </small>
 
@@ -48,10 +46,10 @@ routeAlias: 'qcm-microservices-cicd'
 
 <br>
 
-- [ ] Pour rendre l'application plus modulaire, plus facile à maintenir et plus scalable.
-- [ ] Pour augmenter la complexité de l'application.
-- [ ] Pour réduire le nombre de développeurs nécessaires.
-- [ ] Pour éviter l'utilisation de conteneurs.
+- [ ]  Pour rendre l'application plus modulaire, plus facile à maintenir et plus scalable.
+- [ ]  Pour augmenter la complexité de l'application.
+- [ ]  Pour réduire le nombre de développeurs nécessaires.
+- [ ]  Pour éviter l'utilisation de conteneurs.
 
 <br>
 
@@ -65,10 +63,10 @@ routeAlias: 'qcm-microservices-cicd'
 
 <br>
 
-- [ ] Augmenter la complexité du développement logiciel.
-- [ ] Automatiser le processus de développement, de test et de déploiement.
-- [ ] Réduire la qualité du code.
-- [ ] Remplacer les développeurs par des machines.
+- [ ]  Augmenter la complexité du développement logiciel.
+- [ ]  Automatiser le processus de développement, de test et de déploiement.
+- [ ]  Réduire la qualité du code.
+- [ ]  Remplacer les développeurs par des machines.
 
 <br>
 
@@ -76,10 +74,10 @@ routeAlias: 'qcm-microservices-cicd'
 
 <br>
 
-- [ ] Docker Hub
-- [ ] Jenkins
-- [ ] GitHub Packages
-- [ ] Quay.io
+- [ ]  Docker Hub
+- [ ]  Jenkins
+- [ ]  GitHub Packages
+- [ ]  Quay.io
 
 </small>
 

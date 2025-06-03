@@ -1,14 +1,13 @@
 ---
 layout: new-section
----
-
-# Comprendre le CI/CD & les micro-services
-
----
 routeAlias: 'comprendre-cicd'
 ---
 
 <a name="CI/CD" id="CI/CD"></a>
+
+# Comprendre le CI/CD & les micro-services
+
+---
 
 # Comprendre le CI/CD 🔄
 
@@ -34,6 +33,30 @@ Le **CI/CD** (Continuous Integration / Continuous Deployment) est devenu l'épin
 ### L'impact de l'intelligence artificielle sur le CI/CD et la conteneurisation
 
 En 2025, l'**IA** révolutionne la façon dont on met en place des pipelines CI/CD et des environnements Docker. De nombreux outils assistés par l'IA permettent de gagner un temps précieux et d'automatiser des tâches complexes.
+
+---
+
+# Métaphore automobile du CI/CD 🚗
+
+### Intégration Continue (CI) 🔧
+
+Imaginez que vous dirigez une usine automobile moderne produisant 500 voitures par jour. L'**Intégration Continue** consiste à :
+
+- **Contrôler chaque pièce** avant de l'installer sur la chaîne de montage
+- **Tester chaque assemblage** au fur et à mesure (moteur, freins, électronique)
+- **Valider la qualité** à chaque poste de travail, pas seulement à la fin
+- **Détecter immédiatement** si une pièce est défectueuse ou incompatible
+
+---
+
+# Déploiement Continu (CD) 🚀
+
+Une fois que tous les composants sont validés et l'assemblage perfectionné, le **Déploiement Continu** permet de :
+
+- **Finaliser automatiquement** la voiture sans intervention manuelle
+- **Livrer immédiatement** dès que tous les tests sont passés
+- **Maintenir la qualité** constante pour chaque véhicule produit
+- **Répéter le processus** de manière fiable sur toute la chaîne de production
 
 ---
 
@@ -98,32 +121,6 @@ L’IA et les plateformes modernes transforment le CI/CD et la conteneurisation 
 - Sécurité et optimisation automatisées
 - Plus de temps pour l’innovation, moins pour la configuration manuelle !
 
-
-
----
-
-# Métaphore automobile du CI/CD 🚗
-
-### Intégration Continue (CI) 🔧
-
-Imaginez que vous dirigez une usine automobile moderne produisant 500 voitures par jour. L'**Intégration Continue** consiste à :
-
-- **Contrôler chaque pièce** avant de l'installer sur la chaîne de montage
-- **Tester chaque assemblage** au fur et à mesure (moteur, freins, électronique)
-- **Valider la qualité** à chaque poste de travail, pas seulement à la fin
-- **Détecter immédiatement** si une pièce est défectueuse ou incompatible
-
----
-
-# Déploiement Continu (CD) 🚀
-
-Une fois que tous les composants sont validés et l'assemblage perfectionné, le **Déploiement Continu** permet de :
-
-- **Finaliser automatiquement** la voiture sans intervention manuelle
-- **Livrer immédiatement** dès que tous les tests sont passés
-- **Maintenir la qualité** constante pour chaque véhicule produit
-- **Répéter le processus** de manière fiable sur toute la chaîne de production
-
 ---
 routeAlias: 'utiliser-des-pipelines-cicd'
 ---
@@ -176,10 +173,15 @@ graph LR
 - **CircleCI** : Pipeline cloud optimisé pour la vitesse
 
 ---
+layout: new-section
 routeAlias: 'comprendre-les-microservices'
 ---
 
 <a name="MICROSERVICES" id="MICROSERVICES"></a>
+
+# Les microservices ⚙️
+
+---
 
 # Architecture Microservices 🏗️
 

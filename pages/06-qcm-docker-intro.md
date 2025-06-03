@@ -1,154 +1,210 @@
 ---
 layout: new-section
----
-
-# QCM : Introduction à Docker
-
----
 routeAlias: 'qcm-docker-intro'
 ---
 
 <a name="QCM_DOCKER_INTRO" id="QCM_DOCKER_INTRO"></a>   
 
-# 📝 QCM : Introduction à Docker
-
-### Testez vos connaissances acquises !
-
-Ce QCM vous permet de valider votre compréhension des concepts fondamentaux de Docker. Prenez le temps de réfléchir à chaque question.
+# QCM : Parlons de Docker
 
 ---
 
-# Question 1 : Définition de Docker 🤔
+<small>
 
-**Qu'est-ce que Docker principalement ?**
+## QCM sur l'introduction à Docker
 
-A) Un langage de programmation pour créer des applications  
-B) Une plateforme de conteneurisation pour isoler et déployer des applications  
-C) Un système d'exploitation léger pour serveurs  
-D) Un outil de versioning comme Git  
+<br>
 
----
+### 1. Qu'est-ce que Docker principalement ?
 
-# Question 2 : Architecture Docker 🏗️
+<br>
 
-**Quels sont les trois composants principaux de l'architecture Docker ?**
+- [ ] Un langage de programmation pour créer des applications
+- [ ] Une plateforme de conteneurisation pour isoler et déployer des applications
+- [ ] Un système d'exploitation léger pour serveurs
+- [ ] Un outil de versioning comme Git
 
-A) Image, Container, Registry  
-B) Client, Daemon, Hub  
-C) Client, Daemon, Registry  
-D) Image, Volume, Network  
+<br>
 
----
+### 2. Quels sont les trois composants principaux de l'architecture Docker ?
 
-# Question 3 : Images vs Containers 📦
+<br>
 
-**Quelle est la différence principale entre une image et un container Docker ?**
+- [ ] Image, Container, Registry
+- [ ] Client, Daemon, Hub
+- [ ] Client, Daemon, Registry
+- [ ] Image, Volume, Network
 
-A) Une image est en lecture seule, un container est l'instance exécutable  
-B) Une image est temporaire, un container est permanent  
-C) Une image est locale, un container est distant  
-D) Aucune différence, ce sont des synonymes  
+<br>
 
----
-
-# Question 4 : Avantages de Docker 💡
-
-**Quel n'est PAS un avantage de Docker ?**
-
-A) Isolation des applications  
-B) Portabilité entre environnements  
-C) Amélioration automatique des performances  
-D) Facilité de déploiement  
+</small>
 
 ---
 
-# Question 5 : Docker vs Machines Virtuelles ⚖️
+<small>
 
-**Quelle est la principale différence entre Docker et les VMs ?**
+### 3. Quelle est la différence principale entre une image et un container Docker ?
 
-A) Docker partage le kernel de l'hôte, les VMs ont leur propre OS  
-B) Docker est plus lourd que les VMs  
-C) Les VMs sont plus sécurisées par défaut  
-D) Docker ne peut pas fonctionner sur Windows  
+<br>
 
----
+- [ ] Une image est en lecture seule, un container est l'instance exécutable
+- [ ] Une image est temporaire, un container est permanent
+- [ ] Une image est locale, un container est distant
+- [ ] Aucune différence, ce sont des synonymes
 
-# Question 6 : Docker Hub 🌐
+<br>
 
-**Qu'est-ce que Docker Hub ?**
+### 4. Quel n'est PAS un avantage de Docker ?
 
-A) L'interface graphique de Docker  
-B) Le registry public officiel pour les images Docker  
-C) L'outil de monitoring de Docker  
-D) Le système de fichiers de Docker  
+<br>
 
----
+- [ ] Isolation des applications
+- [ ] Portabilité entre environnements
+- [ ] Amélioration automatique des performances
+- [ ] Facilité de déploiement
 
-# Question 7 : Commande Docker Run 🚀
-
-**Que fait la commande `docker run -it ubuntu bash` ?**
-
-A) Lance un container Ubuntu en arrière-plan  
-B) Télécharge l'image Ubuntu sans la lancer  
-C) Lance un container Ubuntu interactif avec terminal  
-D) Supprime un container Ubuntu existant  
+</small>
 
 ---
 
-# Question 8 : Persistance des données 💾
+<small>
 
-**Comment conserver des données après la suppression d'un container ?**
+### 5. Quelle est la principale différence entre Docker et les VMs ?
 
-A) Les données sont automatiquement sauvegardées  
-B) Utiliser des volumes Docker  
-C) Redémarrer le container  
-D) Impossible, les données sont toujours perdues  
+<br>
 
----
+- [ ] Docker partage le kernel de l'hôte, les VMs ont leur propre OS
+- [ ] Docker est plus lourd que les VMs
+- [ ] Les VMs sont plus sécurisées par défaut
+- [ ] Docker ne peut pas fonctionner sur Windows
 
-# Question 9 : Layers Docker 🍰
+<br>
 
-**Qu'est-ce qu'une "layer" dans une image Docker ?**
-
-A) Un fichier de configuration  
-B) Une instruction du Dockerfile qui crée une couche  
-C) Un container en cours d'exécution  
-D) Une sauvegarde automatique  
+</small>
 
 ---
 
-# Question 10 : Philosophie DevOps 🔄
+<small>
 
-**Comment Docker s'intègre-t-il dans la philosophie DevOps ?**
+### 6. Qu'est-ce que Docker Hub ?
 
-A) Il remplace complètement les pratiques DevOps  
-B) Il facilite l'intégration continue et la livraison continue  
-C) Il est uniquement destiné aux développeurs  
-D) Il n'a aucun rapport avec DevOps  
+<br>
+
+- [ ] L'interface graphique de Docker
+- [ ] Le registry public officiel pour les images Docker
+- [ ] L'outil de monitoring de Docker
+- [ ] Le système de fichiers de Docker
+
+<br>
+
+### 7. Que fait la commande `docker run -it ubuntu bash` ?
+
+<br>
+
+- [ ] Lance un container Ubuntu en arrière-plan
+- [ ] Télécharge l'image Ubuntu sans la lancer
+- [ ] Lance un container Ubuntu interactif avec terminal
+- [ ] Supprime un container Ubuntu existant
+
+<br>
+
+</small>
 
 ---
 
-# 🎯 Scénario Pratique
+<small>
 
-### Question 11 : Diagnostic d'erreur 🔧
+### 8. Comment conserver des données après la suppression d'un container ?
 
-**Un développeur vous dit : "Mon application fonctionne sur ma machine mais pas en production". Comment Docker peut-il résoudre ce problème ?**
+<br>
 
-A) Docker ne peut pas résoudre ce type de problème  
-B) En standardisant l'environnement d'exécution avec des containers  
-C) En installant automatiquement les bonnes versions  
-D) En accélérant l'application  
+- [ ] Les données sont automatiquement sauvegardées
+- [ ] Utiliser des volumes Docker
+- [ ] Redémarrer le container
+- [ ] Impossible, les données sont toujours perdues
+
+</small>
 
 ---
 
-# Question 12 : Architecture microservices 🏗️
+<small>
 
-**Pourquoi Docker est-il particulièrement adapté aux architectures microservices ?**
+### 9. Qu'est-ce qu'une "layer" dans une image Docker ?
 
-A) Il rend les applications plus rapides  
-B) Il permet d'isoler, déployer et mettre à l'échelle chaque service indépendamment  
-C) Il supprime le besoin de bases de données  
-D) Il automatise le code  
+<br>
+
+- [ ] Un fichier de configuration
+- [ ] Une instruction du Dockerfile qui crée une couche
+- [ ] Un container en cours d'exécution
+- [ ] Une sauvegarde automatique
+
+<br>
+
+</small>
+
+---
+
+<small>
+
+### 10. Comment Docker s'intègre-t-il dans la philosophie DevOps ?
+
+<br>
+
+- [ ] Il remplace complètement les pratiques DevOps
+- [ ] Il facilite l'intégration continue et la livraison continue
+- [ ] Il est uniquement destiné aux développeurs
+- [ ] Il n'a aucun rapport avec DevOps
+
+<br>
+
+</small>
+
+---
+
+<small>
+
+### 11. Un développeur dit : "Mon application fonctionne sur ma machine mais pas en production". Comment Docker peut-il résoudre ce problème ?
+
+<br>
+
+- [ ] Docker ne peut pas résoudre ce type de problème
+- [ ] En standardisant l'environnement d'exécution avec des containers
+- [ ] En installant automatiquement les bonnes versions
+- [ ] En accélérant l'application
+
+<br>
+
+### 12. Pourquoi Docker est-il particulièrement adapté aux architectures microservices ?
+
+<br>
+
+- [ ] Il rend les applications plus rapides
+- [ ] Il permet d'isoler, déployer et mettre à l'échelle chaque service indépendamment
+- [ ] Il supprime le besoin de bases de données
+- [ ] Il automatise le code
+
+</small>
+
+---
+
+# Réponses
+
+<small>
+
+1. Une plateforme de conteneurisation pour isoler et déployer des applications
+2. Client, Daemon, Registry
+3. Une image est en lecture seule, un container est l'instance exécutable
+4. Amélioration automatique des performances
+5. Docker partage le kernel de l'hôte, les VMs ont leur propre OS
+6. Le registry public officiel pour les images Docker
+7. Lance un container Ubuntu interactif avec terminal
+8. Utiliser des volumes Docker
+9. Une instruction du Dockerfile qui crée une couche
+10. Il facilite l'intégration continue et la livraison continue
+11. En standardisant l'environnement d'exécution avec des containers
+12. Il permet d'isoler, déployer et mettre à l'échelle chaque service indépendamment
+
+</small>
 
 ---
 

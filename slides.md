@@ -17,10 +17,8 @@ title: Formation Docker & Ansible 2025
 download: "https://docker.andromed.fr/slides.pdf"
 themeConfig:
   logoHeader: "/avatar.png"
-  eventLogo: "https://img2.storyblok.com/352x0/f/84560/2388x414/23d8eb4b8d/vue-amsterdam-with-name.png"
+  eventLogo: "https://img2.storyblok.com/352x414/f/84560/2388x414/23d8eb4b8d/vue-amsterdam-with-name.png"
   eventUrl: "https://vuejs.amsterdam/"
-  twitter: "@jimmylan"
-  twitterUrl: "https://twitter.com/jimmylansrq"
 ---
 
 # Docker & Ansible 2025
@@ -77,18 +75,21 @@ routeAlias: 'sommaire'
 <div class="flex flex-col gap-2">
 <Link to="comprendre-cicd">🔧 CI/CD & Microservices</Link>
 <Link to="virtualisation-vs-conteneurisation">💻 Virtualisation vs conteneurisation</Link>
-<Link to="des-definitions-avant-tout">📚 Définitions essentielles</Link>
-<Link to="intro-Docker">🚀 Introduction à Docker</Link>
+<Link to="intro-docker">🚀 Introduction & Définitions Docker</Link>
+<Link to="premier-contact-docker">🎯 Premier contact Docker</Link>
 <Link to="le-cli-docker">⌨️ Le CLI Docker</Link>
+<Link to="reseaux-volumes-docker">🌐💾 Réseaux & Volumes</Link>
+<Link to="exercices-cli-docker">🎯 Exercices CLI Docker</Link>
 <Link to="dockerfile">📝 Dockerfile et images</Link>
 </div>
 ::right::
 
 <div class="flex flex-col gap-2">
-<Link to="reseaux-volumes-docker">🌐💾 Réseaux & Volumes</Link>
-<Link to="exercice-unifie-docker">🎯 Exercice unifié</Link>
+<Link to="exercices-dockerfile">🎯 Exercices Dockerfile</Link>
+<Link to="docker-compose-orchestration">🎼 Docker Compose</Link>
+<Link to="exercices-docker-compose">🎯 Exercices Compose</Link>
 <Link to="fondamentaux-ansible">🤖 Fondamentaux Ansible</Link>
-<Link to="ansible-docker">🔗 Ansible + Docker</Link>
+<Link to="exercices-ansible">🎯 Exercices Ansible</Link>
 <Link to="qcm-ansible">✅ QCM Ansible</Link>
 </div>
 
@@ -97,46 +98,37 @@ layout: two-cols
 routeAlias: 'sommaire-ansible'
 ---
 
-# PROGRAMME 3 JOURS 📅
+## PROGRAMME 3 JOURS 📅
 
 ### Structure pédagogique optimisée
 
-<br>
-
 **Jour 1 - Fondamentaux Docker**
-<div class="flex flex-col gap-1 text-sm">
+
 - CI/CD et microservices
 - Virtualisation vs conteneurisation
-- Docker CLI et premiers containers
-- Images et registries
-</div>
-
-**Jour 2 - Docker avancé**
-<div class="flex flex-col gap-1 text-sm">
-- Dockerfile et builds
-- Réseaux et communication
-- Volumes et persistance
-- Exercices pratiques
-</div>
+- Introduction & définitions Docker
+- CLI Docker et commandes essentielles
+- Exercices CLI pratiques (3 niveaux)
+- Premier contact pratique
 
 ::right::
 
+**Jour 2 - Docker avancé**
+
+- Dockerfile et bonnes pratiques
+- Exercices Dockerfile (3 niveaux)
+- Réseaux et communication
+- Volumes et persistance
+- Docker Compose multi-containers
+- Exercices Compose (3 niveaux)
+
 **Jour 3 - Ansible et intégration**
-<div class="flex flex-col gap-1 text-sm">
+
 - Introduction à Ansible
 - Playbooks et inventaires
 - Modules essentiels
 - Ansible + Docker
 - Projet final
-</div>
-
-**Méthode pédagogique**
-<div class="flex flex-col gap-1 text-sm">
-- 80% pratique, 20% théorie
-- Exercices progressifs
-- QCM de validation
-- Projet fil rouge
-</div>
 
 ---
 src: './pages/02-cicd-microservices.md'
@@ -151,19 +143,7 @@ src: './pages/05-virtualisation.md'
 ---
 
 ---
-src: './pages/04-definitions.md'
----
-
----
 src: './pages/06-docker-intro.md'
----
-
----
-src: './pages/06-qcm-docker-intro.md'
----
-
----
-src: './pages/07-docker-cli.md'
 ---
 
 ---
@@ -171,7 +151,7 @@ src: './pages/04-exercice-definitions.md'
 ---
 
 ---
-src: './pages/08-dockerfile.md'
+src: './pages/07-docker-cli.md'
 ---
 
 ---
@@ -179,7 +159,27 @@ src: './pages/09-reseaux.md'
 ---
 
 ---
-src: './pages/08-exercice-dockerfile.md'
+src: './pages/06-qcm-docker-intro.md'
+---
+
+---
+src: './pages/11-exercices-cli-docker.md'
+---
+
+---
+src: './pages/08-dockerfile.md'
+---
+
+---
+src: './pages/12-exercices-dockerfile.md'
+---
+
+---
+src: './pages/10-docker-compose.md'
+---
+
+---
+src: './pages/13-exercices-docker-compose.md'
 ---
 
 ---
@@ -187,9 +187,9 @@ src: './pages/ansible.md'
 ---
 
 ---
-src: './pages/ansible-qcm.md'
+src: './pages/14-exercices-ansible.md'
 ---
 
 ---
-src: './pages/ansible-docker.md'
+src: './pages/ansible-qcm.md'
 ---
