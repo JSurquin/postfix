@@ -102,8 +102,6 @@ docker-compose down
 
 ---
 
-# Structure d'un docker-compose.yml 📋
-
 ### Anatomie d'un fichier Compose
 
 ```yaml
@@ -114,13 +112,6 @@ services: # Définition des containers
     build: .
     ports:
       - '3000:3000'
-```
-
----
-
-# Structure docker-compose.yml (réseaux et volumes) 🔧
-
-```yaml
 networks: # Réseaux personnalisés
   app-network:
     driver: bridge
@@ -128,14 +119,7 @@ networks: # Réseaux personnalisés
 volumes: # Volumes partagés
   db-data:
     driver: local
-```
-
----
-
-# Structure docker-compose.yml (secrets) 🔐
-
-```yaml
-secrets: # Gestion des secrets (optionnel)
+secrets: # Gestion des secrets
   db-password:
     file: ./secrets/db_password.txt
 ```
@@ -164,9 +148,7 @@ secrets: # Gestion des secrets (optionnel)
 
 ---
 
-# Exemple Pratique : Stack Web 🌐
-
-### Application complète Node.js + PostgreSQL + Redis
+### Application complète Next.js + PostgreSQL + Nginx
 
 ```yaml
 version: '3.8'
@@ -181,59 +163,38 @@ services:
       POSTGRES_PASSWORD: secret123
     volumes:
       - postgres_data:/var/lib/postgresql/data
-```
-
----
-
-# Exemple Pratique : Stack Web (healthcheck) 🏥
-
-```yaml
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U app']
       interval: 30s
       timeout: 10s
       retries: 3
 
-  # Cache Redis
-  cache:
-    image: redis:7-alpine
-    volumes:
-      - redis_data:/data
-```
-
----
-
-# Exemple Pratique : Stack Web (application) 📝
-
-```yaml
-  # Application Node.js
+  # Application Next.js
   web:
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - '3000:3000'
     environment:
       NODE_ENV: production
       DATABASE_URL: postgresql://app:secret123@db:5432/webapp
-      REDIS_URL: redis://cache:6379
-```
-
----
-
-# Exemple Pratique : Stack Web (dépendances) 🔗
-
-```yaml
     depends_on:
       db:
         condition: service_healthy
-      cache:
-        condition: service_started
+    restart: unless-stopped
+
+  # Nginx reverse proxy
+  nginx:
+    image: nginx:alpine
+    ports:
+      - '80:80'
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - web
     restart: unless-stopped
 
 volumes:
   postgres_data:
-  redis_data:
 
 networks:
   default:
@@ -242,111 +203,123 @@ networks:
 
 ---
 
-# Cas Concret : Build Custom 🛠️
-
-### Application Express.js personnalisée
-
-**Dockerfile** pour notre app :
+**Dockerfile** pour notre app Next.js :
 
 ```dockerfile
-FROM node:18-alpine
+FROM node:18-alpine AS base
+
+# Installer les dépendances seulement quand nécessaire
+FROM base AS deps
 WORKDIR /app
-COPY package*.json ./
-RUN npm install
+
+# Installer les dépendances basées sur le gestionnaire de packages préféré
+COPY package.json package-lock.json ./
+RUN npm ci; 
+# npm install
+
+# Rebuild le code source seulement quand nécessaire
+# 2 eme stage, permet de différencier le build de l'app et le runner
+FROM base AS builder
+# je me base sur base et je crée un stage builder
+WORKDIR /app
+# on copie les dépendances de l'app
+COPY --from=deps /app/node_modules ./node_modules
+# on copie le code source de l'app
 COPY . .
+
+RUN npm run build
+
+# Image de production
+FROM base AS runner
+WORKDIR /app
+
+ENV NODE_ENV production
+
+# on crée un user et un group
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+# on copie les fichiers public de l'app
+COPY --from=builder /app/public ./public
+# on copie les fichiers de build de l'app
+# Copier les fichiers de build Next.js
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# on change de user
+USER nextjs
+
+# on expose le port 3000
 EXPOSE 3000
-CMD ["npm", "start"]
+
+# on définit le port et le hostname
+ENV PORT 3000
+ENV HOSTNAME "0.0.0.0"
+
+CMD ["node", "server.js"]
 ```
 
 ---
 
-# Cas Concret : Application Express 📦
+## **nginx.conf** pour le reverse proxy :
 
-**package.json** :
+```nginx
+events {
+    worker_connections 1024;
+}
+#
+# on définit le upstream
+http {
+    upstream nextjs {
+        server web:3000;
+    }
 
-```json
-{
-  "name": "mon-app-express",
-  "version": "1.0.0",
-  "scripts": {
-    "start": "node server.js"
-  },
-  "dependencies": {
-    "express": "^4.18.2",
-    "pg": "^8.11.0"
-  }
+    # on définit le server
+    server {
+        listen 80;
+        server_name localhost;
+
+        # on définit la location
+        location / {
+            # on définit le proxy
+            proxy_pass http://nextjs;
+            proxy_http_version 1.1;
+            # on définit les headers
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection 'upgrade';
+            # on définit le host
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_cache_bypass $http_upgrade;
+        }
+    }
 }
 ```
 
 ---
 
-# Cas Concret : Code de l'application 💻
+# Créer l'application Next.js 🚀
 
-**server.js** :
+**Commandes pour créer et préparer l'app** :
 
-```javascript
-const express = require('express');
-const { Client } = require('pg');
+```bash
+# Créer l'application Next.js avec TypeScript
+npx create-next-app@latest mon-app-nextjs --typescript --tailwind --eslint --app --src-dir --import-alias "@/*"
 
-const app = express();
-const port = 3000;
+# Aller dans le dossier
+cd mon-app-nextjs
 
-const db = new Client({
-  connectionString: process.env.DATABASE_URL
-});
+# Ajouter la configuration pour standalone
+echo 'module.exports = {
+  output: "standalone",
+  experimental: {
+    outputFileTracingRoot: require("path").join(__dirname, "../../"),
+  },
+}' > next.config.js
 
-app.get('/', async (req, res) => {
-  try {
-    await db.connect();
-    const result = await db.query('SELECT NOW()');
-    res.json({
-      message: 'App Express + PostgreSQL',
-      time: result.rows[0].now,
-      environment: process.env.NODE_ENV
-    });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-app.listen(port, () => {
-  console.log(`App running on port ${port}`);
-});
-```
-
----
-
-# Cas Concret : Docker Compose 🐳
-
-**docker-compose.yml** qui build notre app :
-
-```yaml
-version: '3.8'
-
-services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - '3000:3000'
-    environment:
-      NODE_ENV: development
-      DATABASE_URL: postgresql://app:secret@db:5432/webapp
-    depends_on:
-      - db
-
-  db:
-    image: postgres:15-alpine
-    environment:
-      POSTGRES_DB: webapp
-      POSTGRES_USER: app
-      POSTGRES_PASSWORD: secret
-    volumes:
-      - db_data:/var/lib/postgresql/data
-
-volumes:
-  db_data:
+# Ajouter la dépendance PostgreSQL
+npm install pg @types/pg
 ```
 
 ---
@@ -360,49 +333,57 @@ docker compose up --build
 ```
 
 **Compose fait tout automatiquement** :
-1. 🏗️ **Build** l'image à partir du Dockerfile
-2. 🚀 **Lance** PostgreSQL
-3. 🔗 **Connecte** les services via le réseau
-4. ⚡ **Démarre** l'application Express
+1. 🏗️ **Build** l'image Next.js à partir du Dockerfile
+2. 🚀 **Lance** PostgreSQL avec healthcheck
+3. 🔗 **Connecte** l'app à la base via le réseau
+4. 🌐 **Configure** Nginx comme reverse proxy
+5. ⚡ **Démarre** toute la stack sur le port 80
 
-**Résultat** : Stack complète fonctionnelle !
+**Résultat** : Stack complète Next.js + PostgreSQL + Nginx fonctionnelle !
 
 ---
 
 # Variables d'environnement 🔧
 
+<small>
+
 ### Fichier `.env` pour la configuration
+
+</small>
 
 ```bash
 # .env
 NODE_ENV=development
-DB_NAME=webapp
-DB_USER=app
-DB_PASSWORD=secret123
-REDIS_HOST=cache
-WEB_PORT=3000
+POSTGRES_DB=webapp
+POSTGRES_USER=app
+POSTGRES_PASSWORD=secret123
+WEB_PORT=80
 ```
 
----
+<small>
 
-# Variables d'environnement (utilisation) 🔧
+**Utilisation dans docker-compose.yml** :
+
+</small>
 
 ```yaml
-# docker-compose.yml
 services:
   web:
-    ports:
-      - '${WEB_PORT}:3000'
     environment:
       NODE_ENV: ${NODE_ENV}
-      DB_NAME: ${DB_NAME}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+  
+  nginx:
+    ports:
+      - '${WEB_PORT}:80'
 ```
 
----
-
-# Variables d'environnement (automatique) ⚡
+<div class="-mt-2">
 
 **Compose charge automatiquement le fichier `.env` !**
+
+</div>
+
 
 ---
 
@@ -414,7 +395,7 @@ services:
 services:
   web:
     image: mon-app:latest
-    
+
   # Service de développement uniquement
   dev-tools:
     image: adminer
@@ -422,13 +403,7 @@ services:
       - '8080:8080'
     profiles:
       - dev
-```
 
----
-
-# Profiles et environnements (prod) 🎭
-
-```yaml      
   # Service de monitoring en production
   monitoring:
     image: grafana/grafana
@@ -438,7 +413,7 @@ services:
 
 ---
 
-# Profiles et environnements (commandes) 💻
+**Commandes** :
 
 ```bash
 # Développement
@@ -462,54 +437,15 @@ docker compose up --scale web=3
 docker compose up --scale web=3 --scale worker=5
 ```
 
----
-
-# Load Balancing (configuration) ⚖️
+**Configuration Nginx pour load balancing** :
 
 ```nginx
-# nginx.conf pour load balancing
-upstream backend {
+upstream nextjs {
     server web_1:3000;
     server web_2:3000;
     server web_3:3000;
 }
 ```
-
----
-
-# Override et environments 🔄
-
-### Fichiers de surcharge
-
-```yaml
-# docker-compose.yml (base)
-services:
-  web:
-    image: mon-app
-    environment:
-      NODE_ENV: production
-```
-
----
-
-# Override et environments (développement) 🔄
-
-```yaml
-# docker-compose.override.yml (développement)
-services:
-  web:
-    build: .
-    volumes:
-      - .:/app
-    environment:
-      NODE_ENV: development
-```
-
----
-
-# Override et environments (conclusion) 🔄
-
-**Compose merge automatiquement les fichiers !**
 
 ---
 
@@ -531,15 +467,13 @@ services:
 
 ---
 
-# Bonnes Pratiques 2025 (monitoring) ✅
-
 **📊 Monitoring** :
 
 ```yaml
 services:
   web:
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:3000/health']
+      test: [CMD, curl, -f, http://localhost:3000/health]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -563,9 +497,7 @@ docker compose logs -f
 docker compose logs web
 ```
 
----
-
-# Debugging et Troubleshooting (suite) 🔍
+**Suite des commandes** :
 
 ```bash
 # Reconstruire les images
@@ -582,10 +514,9 @@ docker compose down -v --remove-orphans
 
 # Intégration CI/CD 🚀
 
-### Docker Compose en production
+**Production avec secrets externes** :
 
 ```yaml
-# Production avec secrets externes
 services:
   web:
     image: registry.company.com/mon-app:${VERSION}
@@ -600,9 +531,7 @@ services:
           memory: 256M
 ```
 
----
-
-# Intégration CI/CD (déploiement) 🚀
+**Déploiement CI/CD** :
 
 ```bash
 # Déploiement CI/CD
@@ -612,44 +541,22 @@ docker compose -f docker-compose.prod.yml up -d
 
 ---
 
-# Comparaison avec Kubernetes 🆚
-
-### Quand utiliser quoi ?
-
-| Docker Compose | Kubernetes |
-|----------------|------------|
-| **Développement local** | **Production complexe** |
-| **Applications simples** | **Microservices à grande échelle** |
-| **Prototypage rapide** | **Auto-scaling automatique** |
-
----
-
-# Comparaison avec Kubernetes (suite) 🆚
-
-| Docker Compose | Kubernetes |
-|----------------|------------|
-| **Équipes petites/moyennes** | **Équipes DevOps expertes** |
-| **Single host** | **Multi-host/cloud** |
-
-**Compose = simplicité, K8s = puissance** 💡
-
----
-
 # Récapitulatif 📚
 
 ### Ce que vous maîtrisez maintenant
 
 ✅ **Orchestration multi-containers** avec un seul fichier
+
 ✅ **Syntaxe moderne** Docker Compose 2025
+
 ✅ **Gestion des environnements** avec profiles et .env
-✅ **Build d'images personnalisées** avec Dockerfile
 
----
-
-# Récapitulatif (suite) 📚
+✅ **Build d'images personnalisées** avec Dockerfile Next.js
 
 ✅ **Scaling** et load balancing
+
 ✅ **Bonnes pratiques** de sécurité et monitoring
+
 ✅ **Debugging** et troubleshooting
 
 ### 🚀 **Prêt pour l'exercice pratique !**

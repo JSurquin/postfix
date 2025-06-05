@@ -29,8 +29,6 @@ Orchestrez plusieurs containers facilement !
 
 # 🟢 Correction Niveau Simple
 
-### Configuration Docker Compose
-
 ```yaml
 version: '3.8'
 

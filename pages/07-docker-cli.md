@@ -102,6 +102,9 @@ docker run --memory=512m --cpus=1 mon-app
 # Accès shell interactif
 docker exec -it mon-container bash
 
+# exemple en faisant directement la commande dans le container pour la récuperer sur la machine (hôte) :
+docker exec le_nom_du_container /usr/bin/mysqldump -u votre_utilisateur --password=votre_mot_de_passe le_nom_de_la_base_de_donnees > la_base_de_donnees.sql
+
 # Logs en temps réel
 docker logs -f mon-container
 
@@ -163,26 +166,6 @@ docker system prune -a --volumes
 docker rm -f $(docker ps -aq)
 docker rmi -f $(docker images -q)
 ```
-
----
-
-# Docker Compose - Syntaxe 2025 ✨
-
-### Évolution importante
-
-**Nouvelle syntaxe** (recommandée) :
-```bash
-docker compose up -d
-docker compose down
-docker compose logs -f
-docker compose restart
-```
-
-**Ancienne syntaxe** (deprecated) :
-```bash
-docker-compose up -d
-```
-
 ---
 
 # Workflow quotidien optimal 🔄
@@ -208,30 +191,18 @@ docker stop dev-app && docker rm dev-app
 
 ---
 
-# Aliases utiles pour développeurs 💡
-
-### Optimiser votre productivité
-
-```bash
-# Ajoutez dans votre .bashrc ou .zshrc
-alias dps='docker ps'
-alias dpsf='docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"'
-alias di='docker images'
-alias dlog='docker logs -f'
-alias dexec='docker exec -it'
-alias dclean='docker system prune -f'
-```
-
----
-
 # Commandes avancées pour pros 🚀
 
 ### Techniques avancées
 
 ```bash
 # Copier fichiers container ↔ hôte
-docker cp mon-file.txt mon-container:/app/
-docker cp mon-container:/app/result.txt ./
+# concretement cela veut dire que vous pouvez copier un fichier de votre machine vers le container
+docker cp mon-file.txt mon-container:/app/mon-file.txt
+# et inversement
+docker cp mon-container:/app/mon-file.txt ./mon-file.txt
+
+# pratique si vous voulez modifier un fichier ou récuperer un dossier dans le container
 
 # Créer image depuis container
 docker commit mon-container mon-image:v2

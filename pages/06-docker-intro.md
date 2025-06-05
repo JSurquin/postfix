@@ -191,6 +191,7 @@ Les containers Docker suivent le principe **stateless** :
 ```bash
 # Linux (Ubuntu/Debian)
 curl -fsSL https://get.docker.com | sh
+# On ajoute l'utilisateur courant au groupe docker
 sudo usermod -aG docker $USER
 
 # macOS/Windows : Docker Desktop sur leur site ou :

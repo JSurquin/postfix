@@ -125,7 +125,16 @@ docker ps -a
 
 ### Étape 7 : Exercice autonome
 
-**Mission** : Lancez un container Nginx en arrière-plan avec le nom "mon-nginx"
+**Mission** : Lancez un container Nginx, PostGRES en arrière-plan avec le nom "mon-nginx"
+
+Vous pouvez utiliser la commande suivante pour vérifier si vous avez bien réussi l'exercice :
+```bash
+docker ps
+```
+
+Essayez de faire un curl sur le container Nginx depuis votre machine, que se passe t-il ?
+
+---
 
 ```bash
 # À vous de jouer ! Essayez sans regarder la solution...
@@ -133,14 +142,54 @@ docker ps -a
 
 # Solution (ne regardez qu'après avoir essayé) :
 docker run -d --name mon-nginx nginx:alpine
+docker run -d --name mon-postgres postgres:alpine
 
 # Vérification
 docker ps
 docker logs mon-nginx
+docker logs mon-postgres
 
 # Nettoyage
 docker stop mon-nginx && docker rm mon-nginx
+docker stop mon-postgres && docker rm mon-postgres
+
+# si je veux fermer tout les containers en une seule fois :
+docker stop $(docker ps -q)
+docker rm $(docker ps -a -q)
+
+# si je veux fermer tout les containers et images en une seule fois :
+docker stop $(docker ps -q)
+docker rm $(docker ps -a -q)
+docker rmi $(docker images -q)
+
 ```
+
+---
+
+# Est ce que votre curl fonctionne ?
+
+```bash
+curl http://localhost:80
+```
+
+non, car le container Nginx n'as pas été associé au port de votre PC, nous allons très vite en parler dans le prochain module.
+
+---
+
+### Exercice Débutant - Exploration d'images populaires
+
+**Mission** : Testez différentes images Docker populaires
+
+```bash
+# Essayez ces images une par une
+docker run --rm alpine:latest echo "Je suis Alpine Linux!"
+docker run --rm ubuntu:latest cat /etc/os-release
+docker run --rm python:3.12-alpine python --version
+```
+
+**Questions** :
+- Quelle est la différence de taille entre alpine et ubuntu ?
+- Que fait l'option `--rm` ?
 
 ---
 
@@ -155,6 +204,8 @@ docker stop mon-nginx && docker rm mon-nginx
 ✅ **Gérer le cycle de vie** (`docker stop`, `docker rm`)  
 ✅ **Pratiquer** de façon autonome  
 
-### 🚀 **Prêt pour les Dockerfile !**
+### 🚀 **Prêt pour le CLI !**
 
-Vous maîtrisez maintenant les commandes de base. On peut passer aux **images personnalisées** avec les Dockerfile !
+Vous maîtrisez maintenant les commandes de base.
+
+On peut passer aux commandes avancées avec le CLI !

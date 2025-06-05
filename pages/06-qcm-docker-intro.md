@@ -19,10 +19,10 @@ routeAlias: 'qcm-docker-intro'
 
 <br>
 
-- [ ] Un langage de programmation pour créer des applications
-- [ ] Une plateforme de conteneurisation pour isoler et déployer des applications
-- [ ] Un système d'exploitation léger pour serveurs
-- [ ] Un outil de versioning comme Git
+- [ ]   Un langage de programmation pour créer des applications
+- [ ]   Une plateforme de conteneurisation pour isoler et déployer des applications
+- [ ]   Un système d'exploitation léger pour serveurs
+- [ ]   Un outil de versioning comme Git
 
 <br>
 
@@ -30,10 +30,10 @@ routeAlias: 'qcm-docker-intro'
 
 <br>
 
-- [ ] Image, Container, Registry
-- [ ] Client, Daemon, Hub
-- [ ] Client, Daemon, Registry
-- [ ] Image, Volume, Network
+- [ ]   Image, Container, Registry
+- [ ]   Client, Daemon, Hub
+- [ ]   Client, Daemon, Registry
+- [ ]   Image, Volume, Network
 
 <br>
 
@@ -47,10 +47,10 @@ routeAlias: 'qcm-docker-intro'
 
 <br>
 
-- [ ] Une image est en lecture seule, un container est l'instance exécutable
-- [ ] Une image est temporaire, un container est permanent
-- [ ] Une image est locale, un container est distant
-- [ ] Aucune différence, ce sont des synonymes
+- [ ]   Une image est en lecture seule, un container est l'instance exécutable
+- [ ]   Une image est temporaire, un container est permanent
+- [ ]   Une image est locale, un container est distant
+- [ ]   Aucune différence, ce sont des synonymes
 
 <br>
 
@@ -58,10 +58,10 @@ routeAlias: 'qcm-docker-intro'
 
 <br>
 
-- [ ] Isolation des applications
-- [ ] Portabilité entre environnements
-- [ ] Amélioration automatique des performances
-- [ ] Facilité de déploiement
+- [ ]   Isolation des applications
+- [ ]   Portabilité entre environnements
+- [ ]   Amélioration automatique des performances
+- [ ]   Facilité de déploiement
 
 </small>
 
@@ -73,10 +73,10 @@ routeAlias: 'qcm-docker-intro'
 
 <br>
 
-- [ ] Docker partage le kernel de l'hôte, les VMs ont leur propre OS
-- [ ] Docker est plus lourd que les VMs
-- [ ] Les VMs sont plus sécurisées par défaut
-- [ ] Docker ne peut pas fonctionner sur Windows
+- [ ]   Docker partage le kernel de l'hôte, les VMs ont leur propre OS
+- [ ]   Docker est plus lourd que les VMs
+- [ ]   Les VMs sont plus sécurisées par défaut
+- [ ]   Docker ne peut pas fonctionner sur Windows
 
 <br>
 
@@ -90,10 +90,10 @@ routeAlias: 'qcm-docker-intro'
 
 <br>
 
-- [ ] L'interface graphique de Docker
-- [ ] Le registry public officiel pour les images Docker
-- [ ] L'outil de monitoring de Docker
-- [ ] Le système de fichiers de Docker
+- [ ]   L'interface graphique de Docker
+- [ ]   Le registry public officiel pour les images Docker
+- [ ]   L'outil de monitoring de Docker
+- [ ]   Le système de fichiers de Docker
 
 <br>
 
@@ -101,10 +101,10 @@ routeAlias: 'qcm-docker-intro'
 
 <br>
 
-- [ ] Lance un container Ubuntu en arrière-plan
-- [ ] Télécharge l'image Ubuntu sans la lancer
-- [ ] Lance un container Ubuntu interactif avec terminal
-- [ ] Supprime un container Ubuntu existant
+- [ ]   Lance un container Ubuntu en arrière-plan
+- [ ]   Télécharge l'image Ubuntu sans la lancer
+- [ ]   Lance un container Ubuntu interactif avec terminal
+- [ ]   Supprime un container Ubuntu existant
 
 <br>
 
@@ -118,10 +118,10 @@ routeAlias: 'qcm-docker-intro'
 
 <br>
 
-- [ ] Les données sont automatiquement sauvegardées
-- [ ] Utiliser des volumes Docker
-- [ ] Redémarrer le container
-- [ ] Impossible, les données sont toujours perdues
+- [ ]   Les données sont automatiquement sauvegardées
+- [ ]   Utiliser des volumes Docker
+- [ ]   Redémarrer le container
+- [ ]   Impossible, les données sont toujours perdues
 
 </small>
 
@@ -133,10 +133,10 @@ routeAlias: 'qcm-docker-intro'
 
 <br>
 
-- [ ] Un fichier de configuration
-- [ ] Une instruction du Dockerfile qui crée une couche
-- [ ] Un container en cours d'exécution
-- [ ] Une sauvegarde automatique
+- [ ]   Un fichier de configuration
+- [ ]   Une instruction du Dockerfile qui crée une couche
+- [ ]   Un container en cours d'exécution
+- [ ]   Une sauvegarde automatique
 
 <br>
 
@@ -150,10 +150,10 @@ routeAlias: 'qcm-docker-intro'
 
 <br>
 
-- [ ] Il remplace complètement les pratiques DevOps
-- [ ] Il facilite l'intégration continue et la livraison continue
-- [ ] Il est uniquement destiné aux développeurs
-- [ ] Il n'a aucun rapport avec DevOps
+- [ ]   Il remplace complètement les pratiques DevOps
+- [ ]   Il facilite l'intégration continue et la livraison continue
+- [ ]   Il est uniquement destiné aux développeurs
+- [ ]   Il n'a aucun rapport avec DevOps
 
 <br>
 
@@ -167,10 +167,10 @@ routeAlias: 'qcm-docker-intro'
 
 <br>
 
-- [ ] Docker ne peut pas résoudre ce type de problème
-- [ ] En standardisant l'environnement d'exécution avec des containers
-- [ ] En installant automatiquement les bonnes versions
-- [ ] En accélérant l'application
+- [ ]   Docker ne peut pas résoudre ce type de problème
+- [ ]   En standardisant l'environnement d'exécution avec des containers
+- [ ]   En installant automatiquement les bonnes versions
+- [ ]   En accélérant l'application
 
 <br>
 
@@ -178,10 +178,10 @@ routeAlias: 'qcm-docker-intro'
 
 <br>
 
-- [ ] Il rend les applications plus rapides
-- [ ] Il permet d'isoler, déployer et mettre à l'échelle chaque service indépendamment
-- [ ] Il supprime le besoin de bases de données
-- [ ] Il automatise le code
+- [ ]   Il rend les applications plus rapides
+- [ ]   Il permet d'isoler, déployer et mettre à l'échelle chaque service indépendamment
+- [ ]   Il supprime le besoin de bases de données
+- [ ]   Il automatise le code
 
 </small>
 
@@ -205,17 +205,6 @@ routeAlias: 'qcm-docker-intro'
 12. Il permet d'isoler, déployer et mettre à l'échelle chaque service indépendamment
 
 </small>
-
----
-
-# 🏆 Question Bonus : Écosystème Docker
-
-**Quels outils complètent l'écosystème Docker pour la production ?**
-
-A) Docker Compose, Docker Swarm, Kubernetes  
-B) Git, Jenkins, Maven  
-C) Apache, MySQL, PHP  
-D) Visual Studio, IntelliJ, Eclipse  
 
 ---
 
@@ -245,15 +234,6 @@ D) Visual Studio, IntelliJ, Eclipse
 8. **B** - Utiliser des volumes Docker
 9. **B** - Une instruction Dockerfile = une layer
 10. **B** - Facilite CI/CD
-
----
-
-# Réponses avancées 🚀
-
-**Questions 11-13 (Avancé)**
-11. **B** - Standardisation de l'environnement
-12. **B** - Isolation et indépendance des services
-13. **A** - Docker Compose, Swarm, Kubernetes
 
 ---
 

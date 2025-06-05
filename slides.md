@@ -80,14 +80,14 @@ routeAlias: 'sommaire'
 <Link to="le-cli-docker">⌨️ Le CLI Docker</Link>
 <Link to="reseaux-volumes-docker">🌐💾 Réseaux & Volumes</Link>
 <Link to="exercices-cli-docker">🎯 Exercices CLI Docker</Link>
-<Link to="dockerfile">📝 Dockerfile et images</Link>
+<Link to="docker-compose-orchestration">🎼 Docker Compose</Link>
+<Link to="exercices-docker-compose">🎯 Exercices Compose</Link>
 </div>
 ::right::
 
 <div class="flex flex-col gap-2">
+<Link to="dockerfile">📝 Dockerfile et images</Link>
 <Link to="exercices-dockerfile">🎯 Exercices Dockerfile</Link>
-<Link to="docker-compose-orchestration">🎼 Docker Compose</Link>
-<Link to="exercices-docker-compose">🎯 Exercices Compose</Link>
 <Link to="fondamentaux-ansible">🤖 Fondamentaux Ansible</Link>
 <Link to="exercices-ansible">🎯 Exercices Ansible</Link>
 <Link to="qcm-ansible">✅ QCM Ansible</Link>
@@ -167,19 +167,19 @@ src: './pages/11-exercices-cli-docker.md'
 ---
 
 ---
-src: './pages/08-dockerfile.md'
----
-
----
-src: './pages/12-exercices-dockerfile.md'
----
-
----
 src: './pages/10-docker-compose.md'
 ---
 
 ---
 src: './pages/13-exercices-docker-compose.md'
+---
+
+---
+src: './pages/08-dockerfile.md'
+---
+
+---
+src: './pages/12-exercices-dockerfile.md'
 ---
 
 ---

@@ -13,7 +13,7 @@ Automatisez vos déploiements Docker avec Ansible !
 
 ---
 
-# 🟢 Exercice Niveau Simple
+## 🟢 Exercice Niveau Simple
 
 ### Installation Docker avec Ansible
 
@@ -27,7 +27,7 @@ Automatisez vos déploiements Docker avec Ansible !
 
 ---
 
-# 🟢 Correction Niveau Simple - Inventaire
+## 🟢 Correction Niveau Simple - Inventaire
 
 ```bash
 # 1. Créer le projet Ansible
@@ -35,7 +35,6 @@ mkdir ansible-docker
 cd ansible-docker
 
 # 2. Inventaire local
-cat > inventory.yml << 'EOF'
 all:
   hosts:
     localhost:
@@ -48,7 +47,7 @@ EOF
 
 ---
 
-# 🟢 Correction Niveau Simple - Playbook
+## 🟢 Correction Niveau Simple - Playbook
 
 ```yaml
 # 3. Playbook d'installation Docker
@@ -96,7 +95,7 @@ EOF
 
 ---
 
-# 🟢 Correction Niveau Simple - Vérification
+## 🟢 Correction Niveau Simple - Vérification
 
 ```yaml
 # 4. Playbook de vérification
@@ -140,7 +139,7 @@ EOF
 
 ---
 
-# 🟢 Correction Niveau Simple - Exécution
+## 🟢 Correction Niveau Simple - Exécution
 
 ```bash
 # 5. Exécuter l'installation
@@ -162,7 +161,7 @@ echo "✅ Docker installé et configuré avec Ansible !"
 
 ---
 
-# 🟡 Exercice Niveau Intermédiaire
+## 🟡 Exercice Niveau Intermédiaire
 
 ### Déploiement Dockerfile avec Ansible
 
@@ -176,7 +175,7 @@ echo "✅ Docker installé et configuré avec Ansible !"
 
 ---
 
-# 🟡 Correction Niveau Intermédiaire - Structure
+## 🟡 Correction Niveau Intermédiaire - Structure
 
 ```bash
 # 1. Créer la structure de rôle
@@ -200,7 +199,7 @@ EOF
 
 ---
 
-# 🟡 Correction Niveau Intermédiaire - Template
+## 🟡 Correction Niveau Intermédiaire - Template
 
 ```bash
 # 3. Template de page web avec variables Ansible
@@ -240,7 +239,7 @@ EOF
 
 ---
 
-# 🟡 Correction Niveau Intermédiaire - Variables
+## 🟡 Correction Niveau Intermédiaire - Variables
 
 ```yaml
 # 4. Variables du rôle
@@ -264,7 +263,7 @@ EOF
 
 ---
 
-# 🟡 Correction Niveau Intermédiaire - Tâches
+## 🟡 Correction Niveau Intermédiaire - Tâches
 
 ```yaml
 # 5. Tâches principales du rôle
@@ -323,7 +322,7 @@ EOF
 
 ---
 
-# 🟡 Correction Niveau Intermédiaire - Handlers
+## 🟡 Correction Niveau Intermédiaire - Handlers
 
 ```yaml
 # 6. Handlers pour les notifications
@@ -345,7 +344,7 @@ EOF
 
 ---
 
-# 🟡 Correction Niveau Intermédiaire - Playbook
+## 🟡 Correction Niveau Intermédiaire - Playbook
 
 ```yaml
 # 7. Playbook principal
@@ -375,7 +374,7 @@ EOF
 
 ---
 
-# 🟡 Correction Niveau Intermédiaire - Tests
+## 🟡 Correction Niveau Intermédiaire - Tests
 
 ```bash
 # 8. Scripts de déploiement par environnement
@@ -414,7 +413,7 @@ chmod +x deploy.sh
 
 ---
 
-# 🔴 Exercice Niveau Avancé
+## 🔴 Exercice Niveau Avancé
 
 ### Stack Docker Compose avec Ansible
 
@@ -488,7 +487,7 @@ EOF
 
 ---
 
-# 🔴 Correction Niveau Avancé - Templates
+## 🔴 Correction Niveau Avancé - Templates
 
 ```yaml
 # 4. Template docker-compose.yml
@@ -567,7 +566,7 @@ EOF
 
 ---
 
-# 🔴 Correction Niveau Avancé - Configuration Nginx
+## 🔴 Correction Niveau Avancé - Configuration Nginx
 
 ```bash
 # 5. Template nginx proxy
@@ -616,7 +615,7 @@ EOF
 
 ---
 
-# 🔴 Correction Niveau Avancé - Tâches principales
+## 🔴 Correction Niveau Avancé - Tâches principales
 
 ```yaml
 # 6. Tâches de déploiement
@@ -704,7 +703,7 @@ EOF
 
 ---
 
-# 🔴 Correction Niveau Avancé - Scripts de maintenance
+## 🔴 Correction Niveau Avancé - Scripts de maintenance
 
 ```bash
 # 7. Template script de backup
@@ -766,7 +765,7 @@ EOF
 
 ---
 
-# 🔴 Correction Niveau Avancé - Handlers et Playbook
+## 🔴 Correction Niveau Avancé - Handlers et Playbook
 
 ```yaml
 # 9. Handlers
@@ -824,7 +823,7 @@ EOF
 
 ---
 
-# 🔴 Correction Niveau Avancé - Déploiement final
+## 🔴 Correction Niveau Avancé - Déploiement final
 
 ```bash
 # 11. Script de déploiement avancé
@@ -869,7 +868,7 @@ echo "✅ Stack complète déployée avec Ansible !"
 
 ---
 
-# Récapitulatif Exercices Ansible 📋
+## Récapitulatif Exercices Ansible 📋
 
 ### Compétences acquises
 
@@ -887,7 +886,7 @@ echo "✅ Stack complète déployée avec Ansible !"
 
 ---
 
-# Récapitulatif Ansible (suite) 📋
+## Récapitulatif Ansible (suite) 📋
 
 **🔴 Niveau Avancé** :
 - Déploiement Docker Compose

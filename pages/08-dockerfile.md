@@ -17,6 +17,36 @@ Un **Dockerfile** est un fichier de recette qui automatise la création d'images
 
 ---
 
+# Qu'est-ce qu'un Dockerfile ? 📄
+
+### La recette de cuisine pour votre application
+
+Un **Dockerfile** est un fichier texte contenant des instructions :
+
+- 📝 **Recette** : Liste d'étapes pour construire votre application
+- 🔧 **Instructions** : Commandes automatisées (installer, copier, configurer...)
+- 🏗️ **Reproductible** : Même résultat sur n'importe quel serveur
+- 📦 **Packager** : Transforme votre code en image Docker prête à l'emploi
+
+**Analogie** : C'est comme une recette de cuisine détaillée que n'importe qui peut suivre pour obtenir le même plat !
+
+---
+
+# Qu'est-ce qu'une Image Docker ? 📦
+
+### Le modèle prêt à utiliser
+
+Une **Image Docker** est un template immuable :
+
+- 🎯 **Template** : Modèle figé de votre application
+- 📚 **Couches** : Empilage d'instructions du Dockerfile
+- 💾 **Stockage** : Sauvegardée et réutilisable
+- 🚀 **Base** : Sert à créer des containers
+
+**Analogie** : C'est comme un moule à gâteau - une fois créé, vous pouvez faire autant de gâteaux identiques que vous voulez !
+
+---
+
 # Relation Image ↔ Container 🔄
 
 ```mermaid
@@ -28,6 +58,21 @@ graph TB
     DF -->|docker build| IMG
     IMG -->|docker run| CONT
 ```
+
+---
+
+# Qu'est-ce qu'une Couche (Layer) ? 🥞
+
+### L'empilement intelligent
+
+Chaque instruction Dockerfile crée une **couche** :
+
+- 🥞 **Empilement** : Chaque RUN, COPY, ADD = une nouvelle couche
+- 💾 **Cache** : Les couches non modifiées sont réutilisées
+- ⚡ **Performance** : Builds plus rapides grâce au cache
+- 📏 **Taille** : Moins de couches = image plus légère
+
+**Analogie** : C'est comme un mille-feuille - chaque instruction ajoute une couche, et on peut réutiliser les couches du bas !
 
 ---
 
@@ -68,6 +113,21 @@ CMD ["npm", "start"]
 
 ---
 
+# Pourquoi FROM ? 🏠
+
+### La fondation de votre application
+
+**FROM** définit l'image de base sur laquelle construire :
+
+- 🏠 **Fondation** : Le système d'exploitation de base
+- 🧰 **Outils** : Environnement et outils pré-installés
+- 🎯 **Spécialisée** : Choisir selon votre technologie
+- ⚡ **Optimisée** : Images Alpine = plus légères et sécurisées
+
+**Analogie** : C'est comme choisir un terrain avec ou sans maison dessus pour construire !
+
+---
+
 # Instructions essentielles 🔧
 
 ### FROM - Images de base recommandées 2025
@@ -81,6 +141,21 @@ FROM postgres:16-alpine      # Base de données légère
 ```
 
 **Évitez** `ubuntu:latest` - préférez des images spécialisées et taguées !
+
+---
+
+# Pourquoi COPY vs ADD ? 📁
+
+### La différence importante
+
+**COPY** et **ADD** transfèrent des fichiers, mais différemment :
+
+- 📋 **COPY** : Simple transfert de fichiers (recommandé)
+- 🎁 **ADD** : Transfert + fonctions spéciales (archives, URLs)
+- 🎯 **Clarté** : COPY est plus explicite et prévisible
+- 🔒 **Sécurité** : COPY évite les surprises
+
+**Analogie** : COPY = photocopieuse simple, ADD = photocopieuse avec scanner et fax intégrés !
 
 ---
 
@@ -104,6 +179,21 @@ COPY --chown=appuser:appgroup . .
 # Pour extraire des archives automatiquement
 ADD release.tar.gz /app/
 ```
+
+---
+
+# Pourquoi optimiser RUN ? ⚡
+
+### L'importance des couches
+
+Chaque **RUN** crée une nouvelle couche :
+
+- 🥞 **Multiplication** : Plus de RUN = plus de couches = image plus lourde
+- 💾 **Cache** : Grouper les commandes optimise le cache
+- 🧹 **Nettoyage** : Supprimer les fichiers temporaires dans la même couche
+- ⚡ **Performance** : Images plus légères = déploiements plus rapides
+
+**Analogie** : C'est comme ranger sa chambre - mieux vaut tout faire d'un coup que laisser traîner !
 
 ---
 
@@ -131,6 +221,21 @@ RUN apt-get update && \
 
 ---
 
+# Pourquoi ENV et ARG ? 🔧
+
+### La configuration flexible
+
+**ENV** et **ARG** permettent la personnalisation :
+
+- 🔧 **ARG** : Variables temporaires pour le build uniquement
+- 🌍 **ENV** : Variables persistantes dans le container
+- 🎯 **Flexibilité** : Même Dockerfile pour différents environnements
+- 🔄 **Réutilisabilité** : Paramétrer sans modifier le code
+
+**Analogie** : ARG = note temporaire pour le cuisinier, ENV = réglage permanent du four !
+
+---
+
 # ENV et ARG - Configuration 🔧
 
 ```dockerfile
@@ -151,6 +256,21 @@ ENV TZ=Europe/Paris \
 
 ---
 
+# Pourquoi USER non-root ? 🔒
+
+### La sécurité avant tout
+
+Utiliser **USER** pour la sécurité :
+
+- 🔒 **Principe** : Moindre privilège = meilleure sécurité
+- 🚫 **Root = Danger** : Accès total au système en cas de faille
+- 👤 **Utilisateur limité** : Accès restreint aux ressources
+- 🛡️ **Production** : Obligation pour la sécurité en production
+
+**Analogie** : C'est comme donner un badge visiteur au lieu des clés de la maison !
+
+---
+
 # Sécurité avec USER 🔒
 
 ### Toujours utiliser un utilisateur non-root
@@ -166,6 +286,21 @@ USER appuser
 ```
 
 **Jamais de `USER root` en production !**
+
+---
+
+# Pourquoi CMD vs ENTRYPOINT ? 🚀
+
+### Les deux façons de démarrer
+
+**CMD** et **ENTRYPOINT** définissent le démarrage :
+
+- 🔄 **CMD** : Commande par défaut, surchargeable facilement
+- 🔒 **ENTRYPOINT** : Point d'entrée fixe, plus difficile à modifier
+- 🎯 **Flexibilité** : CMD pour des containers polyvalents
+- 🛡️ **Sécurité** : ENTRYPOINT pour forcer un comportement
+
+**Analogie** : CMD = suggestion de menu, ENTRYPOINT = plat du jour imposé !
 
 ---
 
@@ -188,6 +323,21 @@ CMD ["--help"]                    # Arguments par défaut
 ENTRYPOINT ["java", "-jar", "app.jar"]
 CMD ["--spring.profiles.active=prod"]
 ```
+
+---
+
+# Qu'est-ce qu'un Multi-stage Build ? 🏭
+
+### L'art de l'optimisation
+
+Le **multi-stage build** sépare construction et production :
+
+- 🏗️ **Stage Build** : Image lourde avec tous les outils de développement
+- 🚀 **Stage Production** : Image légère avec seulement l'application
+- 📏 **Taille** : Réduction drastique (de 1GB à 200MB possible)
+- 🔒 **Sécurité** : Pas d'outils de build en production
+
+**Analogie** : C'est comme construire dans un atelier et ne livrer que le produit fini !
 
 ---
 
@@ -219,6 +369,21 @@ USER appuser
 EXPOSE 3000
 CMD ["node", "dist/server.js"]
 ```
+
+---
+
+# Pourquoi HEALTHCHECK ? 🩺
+
+### Le monitoring automatique
+
+**HEALTHCHECK** surveille la santé du container :
+
+- 🩺 **Surveillance** : Vérification automatique de l'état
+- 🔄 **Auto-repair** : Redémarrage automatique si problème
+- 📊 **Monitoring** : Intégration avec les orchestrateurs
+- ⚡ **Réactivité** : Détection rapide des pannes
+
+**Analogie** : C'est comme un détecteur de fumée qui appelle automatiquement les pompiers !
 
 ---
 
@@ -297,6 +462,21 @@ docker inspect mon-app:latest
 
 ---
 
+# Qu'est-ce qu'un .dockerignore ? 🚫
+
+### Le filtre intelligent
+
+Le **.dockerignore** exclut les fichiers inutiles :
+
+- 🚫 **Exclusion** : Évite de copier des fichiers non nécessaires
+- ⚡ **Performance** : Builds plus rapides
+- 📏 **Taille** : Images plus légères
+- 🔒 **Sécurité** : Évite de copier des secrets par accident
+
+**Analogie** : C'est comme une liste de ce qu'il ne faut PAS mettre dans sa valise !
+
+---
+
 # .dockerignore - Performance ⚡
 
 ### Exclure les fichiers inutiles
@@ -348,13 +528,13 @@ RUN apt-get install -y curl
 
 ### Checklist pour un Dockerfile professionnel
 
-✅ **Image de base** : Alpine, slim, ou spécialisée avec version  
-✅ **Ordre des COPY** : Dépendances avant code source  
-✅ **RUN optimisé** : Une seule couche avec nettoyage  
-✅ **USER non-root** : Sécurité obligatoire  
-✅ **HEALTHCHECK** : Monitoring automatique  
-✅ **.dockerignore** : Exclusions optimisées  
-✅ **Multi-stage** : Images de production minimales  
+✅ **Image de base** : Alpine, slim, ou spécialisée avec version
+✅ **Ordre des COPY** : Dépendances avant code source
+✅ **RUN optimisé** : Une seule couche avec nettoyage
+✅ **USER non-root** : Sécurité obligatoire
+✅ **HEALTHCHECK** : Monitoring automatique
+✅ **.dockerignore** : Exclusions optimisées
+✅ **Multi-stage** : Images de production minimales
 
 ---
 
@@ -373,6 +553,10 @@ USER appuser
 EXPOSE 5000
 CMD ["python", "app.py"]
 ```
+
+---
+
+# Exemple Java Spring Boot
 
 ### Java Spring Boot
 
