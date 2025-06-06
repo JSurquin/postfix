@@ -112,7 +112,7 @@ mkdir -p roles/webapp/{tasks,files,templates,vars,handlers}
 
 # 2. Copier le Dockerfile de l'exercice précédent
 mkdir -p roles/webapp/files/app
-cat > roles/webapp/files/app/Dockerfile << 'EOF'
+
 FROM nginx:alpine
 
 # Copier notre page
@@ -123,7 +123,7 @@ HEALTHCHECK --interval=30s --timeout=3s \
   CMD wget --no-verbose --tries=1 --spider http://localhost/ || exit 1
 
 EXPOSE 80
-EOF
+
 ```
 
 ---
@@ -155,7 +155,7 @@ flowchart LR
 
 ```bash
 # 3. Template de page web avec variables Ansible
-cat > roles/webapp/templates/index.html.j2 << 'EOF'
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -186,7 +186,7 @@ cat > roles/webapp/templates/index.html.j2 << 'EOF'
     </div>
 </body>
 </html>
-EOF
+
 ```
 
 ---
@@ -195,7 +195,7 @@ EOF
 
 ```yaml
 # 4. Variables du rôle
-cat > roles/webapp/vars/main.yml << 'EOF'
+
 app_name: "Ma WebApp Ansible"
 app_version: "2.0.0"
 app_port: 8080
@@ -210,7 +210,7 @@ env_colors:
   production: "#e8f5e8"
 
 bg_color: "{{ env_colors[environment] | default('#f0f8ff') }}"
-EOF
+
 ```
 
 ---
@@ -219,7 +219,7 @@ EOF
 
 ```yaml
 # 5. Tâches principales du rôle
-cat > roles/webapp/tasks/main.yml << 'EOF'
+
 ---
 - name: Créer le répertoire de travail
   file:
@@ -269,7 +269,7 @@ cat > roles/webapp/tasks/main.yml << 'EOF'
       timeout: 10s
       retries: 3
   notify: Container deployed
-EOF
+
 ```
 
 ---
@@ -278,7 +278,7 @@ EOF
 
 ```yaml
 # 6. Handlers pour les notifications
-cat > roles/webapp/handlers/main.yml << 'EOF'
+
 ---
 - name: Rebuild image
   debug:
@@ -291,7 +291,7 @@ cat > roles/webapp/handlers/main.yml << 'EOF'
 - name: Display access info
   debug:
     msg: "Application accessible sur http://localhost:{{ app_port }}"
-EOF
+
 ```
 
 ---
@@ -300,7 +300,7 @@ EOF
 
 ```yaml
 # 7. Playbook principal
-cat > deploy-webapp.yml << 'EOF'
+
 ---
 - name: Déploiement WebApp avec Dockerfile
   hosts: localhost
@@ -321,7 +321,7 @@ cat > deploy-webapp.yml << 'EOF'
           🌐 Application: http://localhost:{{ app_port }}
           🏷️ Version: {{ app_version }}
           🔧 Environnement: {{ environment }}
-EOF
+
 ```
 
 ---
@@ -330,7 +330,7 @@ EOF
 
 ```bash
 # 8. Scripts de déploiement par environnement
-cat > deploy.sh << 'EOF'
+
 #!/bin/bash
 
 case "$1" in
@@ -353,7 +353,7 @@ case "$1" in
 esac
 
 echo "✅ Déploiement terminé !"
-EOF
+
 
 chmod +x deploy.sh
 
@@ -415,7 +415,7 @@ flowchart TD
 mkdir -p roles/docker-stack/{tasks,files,templates,vars,handlers,meta}
 
 # 2. Métadonnées du rôle (dépendance du rôle webapp)
-cat > roles/docker-stack/meta/main.yml << 'EOF'
+
 ---
 dependencies:
   - role: webapp
@@ -436,7 +436,7 @@ EOF
 
 ```yaml
 # 3. Variables principales
-cat > roles/docker-stack/vars/main.yml << 'EOF'
+
 # Configuration de la stack
 stack_name: "production-stack"
 stack_directory: "/opt/{{ stack_name }}"
@@ -456,7 +456,7 @@ EOF
 
 ```yaml
 # Ajouter à vars/main.yml
-cat >> roles/docker-stack/vars/main.yml << 'EOF'
+
 
 # Configuration base de données
 mysql_root_password: "{{ vault_mysql_root_password | default('production123') }}"
@@ -474,7 +474,7 @@ EOF
 
 ```yaml
 # Ajouter à vars/main.yml
-cat >> roles/docker-stack/vars/main.yml << 'EOF'
+
 
 # Environnements et ressources
 environments:
@@ -502,7 +502,7 @@ EOF
 
 ```yaml
 # 4. Template docker-compose.yml - Base
-cat > roles/docker-stack/templates/docker-compose.yml.j2 << 'EOF'
+
 version: '3.8'
 
 services:
@@ -529,7 +529,7 @@ EOF
 
 ```yaml
 # Continuer le template docker-compose.yml
-cat >> roles/docker-stack/templates/docker-compose.yml.j2 << 'EOF'
+
 
   app:
     image: {{ app_image }}:{{ app_version }}
@@ -561,7 +561,7 @@ EOF
 
 ```yaml
 # Continuer le template docker-compose.yml
-cat >> roles/docker-stack/templates/docker-compose.yml.j2 << 'EOF'
+
 
   database:
     image: mysql:8.0
@@ -593,7 +593,7 @@ EOF
 
 ```yaml
 # Finir le template docker-compose.yml
-cat >> roles/docker-stack/templates/docker-compose.yml.j2 << 'EOF'
+
 
 volumes:
   db_data:
@@ -614,7 +614,7 @@ EOF
 
 ```bash
 # 5. Template nginx proxy - Configuration de base
-cat > roles/docker-stack/templates/nginx.conf.j2 << 'EOF'
+
 events {
     worker_connections 1024;
 }
@@ -638,7 +638,7 @@ EOF
 
 ```bash
 # Continuer le template nginx
-cat >> roles/docker-stack/templates/nginx.conf.j2 << 'EOF'
+# chemin : roles/docker-stack/templates/nginx.conf.j2
 
     server {
         listen 80;
@@ -677,7 +677,7 @@ EOF
 
 ```yaml
 # 6. Tâches de déploiement - Partie 1 : Préparation
-cat > roles/docker-stack/tasks/main.yml << 'EOF'
+# chemin : roles/docker-stack/tasks/main.yml
 ---
 - name: Créer le répertoire de la stack
   file:
@@ -707,7 +707,7 @@ EOF
 
 ```yaml
 # Continuer tasks/main.yml - Partie 2 : Templates
-cat >> roles/docker-stack/tasks/main.yml << 'EOF'
+# chemin : roles/docker-stack/tasks/main.yml
 
 - name: Générer docker-compose.yml
   template:
@@ -747,7 +747,7 @@ EOF
 
 ```yaml
 # Continuer tasks/main.yml - Partie 3 : Déploiement
-cat >> roles/docker-stack/tasks/main.yml << 'EOF'
+# chemin : roles/docker-stack/tasks/main.yml
 
 - name: Démarrer la stack Docker Compose
   docker_compose:
@@ -791,7 +791,7 @@ EOF
 
 ```bash
 # 7. Template script de backup
-cat > roles/docker-stack/templates/backup.sh.j2 << 'EOF'
+# chemin : roles/docker-stack/templates/backup.sh.j2
 #!/bin/bash
 
 BACKUP_DIR="{{ stack_directory }}/backups"
@@ -815,7 +815,7 @@ EOF
 
 ```bash
 # Continuer le script de backup
-cat >> roles/docker-stack/templates/backup.sh.j2 << 'EOF'
+# chemin : roles/docker-stack/templates/backup.sh.j2
 
 # Backup configuration
 tar -czf "$BACKUP_DIR/config_backup_$DATE.tar.gz" \
@@ -839,7 +839,7 @@ EOF
 
 ```bash
 # 8. Template script de monitoring
-cat > roles/docker-stack/templates/monitor.sh.j2 << 'EOF'
+# chemin : roles/docker-stack/templates/monitor.sh.j2
 #!/bin/bash
 
 echo "📊 Monitoring de la stack {{ stack_name }}"
@@ -875,7 +875,7 @@ EOF
 
 ```yaml
 # 9. Handlers pour les redémarrages
-cat > roles/docker-stack/handlers/main.yml << 'EOF'
+# chemin : roles/docker-stack/handlers/main.yml
 ---
 - name: Restart stack
   docker_compose:
@@ -899,7 +899,7 @@ EOF
 
 ```yaml
 # 10. Playbook principal
-cat > deploy-stack.yml << 'EOF'
+# chemin : deploy-stack.yml
 ---
 - name: Déploiement Stack Docker Compose Production
   hosts: localhost
@@ -933,7 +933,7 @@ EOF
 
 ```yaml
 # Continuer le playbook principal
-cat >> deploy-stack.yml << 'EOF'
+# chemin : deploy-stack.yml
 
   post_tasks:
     - name: Afficher les informations de déploiement
@@ -955,7 +955,7 @@ EOF
 
 ```bash
 # 11. Script de déploiement avancé
-cat > deploy-production.sh << 'EOF'
+# chemin : deploy-production.sh
 #!/bin/bash
 
 echo "🚀 Déploiement de la stack de production..."
@@ -981,7 +981,6 @@ case "$1" in
     exit 1
     ;;
 esac
-EOF
 
 chmod +x deploy-production.sh
 ```

@@ -337,8 +337,7 @@ Mettons les mains dans le cambouis avec 2 exemples ultra-simples !
 mkdir mon-site-vercel
 cd mon-site-vercel
 
-# 2. Créer le fichier HTML
-cat > index.html << 'EOF'
+# 2. Créer le fichier HTML : index.html
 <!DOCTYPE html>
 <html>
 <head>
@@ -357,7 +356,7 @@ cat > index.html << 'EOF'
     </div>
 </body>
 </html>
-EOF
+
 
 # 3. Initialiser Git
 git init
@@ -402,7 +401,7 @@ npm init -y
 npm install express
 
 # 4. Créer l'API
-cat > server.js << 'EOF'
+# 2. Créer le fichier server.js
 const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -423,7 +422,6 @@ app.get('/health', (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Serveur running sur port ${PORT}`);
 });
-EOF
 
 # 5. Ajouter le script de démarrage
 npm pkg set scripts.start="node server.js"

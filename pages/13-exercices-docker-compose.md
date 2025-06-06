@@ -23,7 +23,13 @@ Avant les exercices principaux, des exercices courts pour maîtriser les bases !
 
 ## 🟢 Exercice Express 1 : Ma Première Stack
 
-### Stack super simple avec 2 services (15 min)
+### Stack super simple avec 2 services (15 min) au choix :
+- nginx + redis
+- nginx + mysql
+- nginx + postgres
+- nginx + mongo
+- nginx + elasticsearch
+- nginx + kibana
 
 **Ce qu'on apprend** : Premier docker-compose.yml, services liés
 
@@ -36,9 +42,8 @@ services:
     image: nginx:alpine
     ports:
       - "8080:80"
-      
   cache:
-    image: redis:alpine
+    image: votre_choix:alpine
 ```
 
 ```bash
@@ -298,7 +303,7 @@ networks:
 ```bash
 # Créer la configuration NGINX
 mkdir -p nginx
-cat > nginx.conf << 'EOF'
+# 2. Créer le fichier nginx.conf
 events {
     worker_connections 1024;
 }
@@ -324,11 +329,10 @@ http {
         }
     }
 }
-EOF
 
 # Créer une page web simple
 mkdir -p html
-cat > html/index.html << 'EOF'
+# 2. Créer le fichier index.html
 <!DOCTYPE html>
 <html>
 <head>
@@ -348,7 +352,6 @@ cat > html/index.html << 'EOF'
     </div>
 </body>
 </html>
-EOF
 ```
 
 ---
@@ -470,7 +473,7 @@ networks:
 
 ```bash
 # Configuration Prometheus
-cat > prometheus.yml << 'EOF'
+# 2. Créer le fichier prometheus.yml
 global:
   scrape_interval: 15s
   evaluation_interval: 15s
@@ -490,10 +493,9 @@ scrape_configs:
   - job_name: 'grafana'
     static_configs:
       - targets: ['grafana:3000']
-EOF
 
 # Configuration AlertManager
-cat > alertmanager.yml << 'EOF'
+# 2. Créer le fichier alertmanager.yml
 global:
   smtp_smarthost: 'localhost:587'
   smtp_from: 'alertmanager@example.org'
@@ -509,7 +511,6 @@ receivers:
   - name: 'web.hook'
     webhook_configs:
       - url: 'http://127.0.0.1:5001/'
-EOF
 ```
 
 ---
@@ -636,7 +637,7 @@ networks:
 
 ```bash
 # Script de déploiement GitLab
-cat > deploy-gitlab.sh << 'EOF'
+# 2. Créer le fichier deploy-gitlab.sh
 #!/bin/bash
 
 echo "🚀 Déploiement GitLab DevOps Stack..."
@@ -679,7 +680,7 @@ chmod +x deploy-gitlab.sh
 
 ```bash
 # Script de configuration du Runner
-cat > setup-runner.sh << 'EOF'
+# 2. Créer le fichier setup-runner.sh
 #!/bin/bash
 
 echo "🏃 Configuration GitLab Runner..."
@@ -702,7 +703,6 @@ echo "  --docker-privileged"
 
 echo ""
 echo "✅ Runner configuré pour exécuter des pipelines Docker"
-EOF
 
 chmod +x setup-runner.sh
 ```

@@ -31,7 +31,7 @@ Avant les exercices principaux, des Dockerfiles simples pour s'échauffer !
 # 1. Créer une page personnalisée
 mkdir my-nginx && cd my-nginx
 
-cat > index.html << 'EOF'
+# 2. Créer le fichier HTML : index.html
 <!DOCTYPE html>
 <html>
 <head><title>Mon Docker Custom</title></head>
@@ -41,14 +41,11 @@ cat > index.html << 'EOF'
     <p>Version: <strong>1.0</strong></p>
 </body>
 </html>
-EOF
 
 # 2. Créer le Dockerfile
-cat > Dockerfile << 'EOF'
 FROM nginx:alpine
 LABEL author="moi"
 COPY index.html /usr/share/nginx/html/
-EOF
 
 # 3. Build et test
 docker build -t my-nginx:v1 .
@@ -73,7 +70,7 @@ docker stop test-nginx && docker rm test-nginx
 # 1. Créer l'app Node.js
 mkdir my-app && cd my-app
 
-cat > package.json << 'EOF'
+# 2. Créer le fichier package.json
 {
   "name": "docker-app",
   "version": "1.0.0",
@@ -82,9 +79,8 @@ cat > package.json << 'EOF'
     "express": "^4.18.0"
   }
 }
-EOF
 
-cat > server.js << 'EOF'
+# 3. Créer le fichier server.js
 const express = require('express');
 const app = express();
 const PORT = 3000;
@@ -100,10 +96,8 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Serveur sur le port ${PORT}`);
 });
-EOF
 
 # 2. Dockerfile pour Node.js
-cat > Dockerfile << 'EOF'
 FROM node:18-alpine
 WORKDIR /app
 COPY package.json .
@@ -111,7 +105,6 @@ RUN npm install
 COPY server.js .
 EXPOSE 3000
 CMD ["node", "server.js"]
-EOF
 
 # 3. Build et test
 docker build -t my-app:v1 .
@@ -137,7 +130,6 @@ docker stop test-app && docker rm test-app
 mkdir optimized-app && cd optimized-app
 
 # App simple qui génère du contenu statique
-cat > build.js << 'EOF'
 const fs = require('fs');
 
 const html = `
@@ -154,19 +146,15 @@ const html = `
 
 fs.writeFileSync('dist/index.html', html);
 console.log('✅ Contenu généré');
-EOF
 
-cat > package.json << 'EOF'
 {
   "name": "builder-app",
   "scripts": {
     "build": "mkdir -p dist && node build.js"
   }
 }
-EOF
 
 # 2. Dockerfile multi-stage
-cat > Dockerfile << 'EOF'
 # Étape 1: Builder
 FROM node:18-alpine AS builder
 WORKDIR /app
@@ -177,16 +165,13 @@ RUN npm run build
 FROM nginx:alpine AS production
 LABEL stage="production"
 COPY --from=builder /app/dist/ /usr/share/nginx/html/
-EOF
 
 # 3. Comparaison avec version simple
-cat > Dockerfile.simple << 'EOF'
 FROM node:18-alpine
 WORKDIR /app
 COPY . .
 RUN npm run build
 COPY dist/ /usr/share/nginx/html/
-EOF
 
 # 4. Build des 2 versions
 docker build -t optimized:multistage .
@@ -238,7 +223,7 @@ mkdir mon-site
 cd mon-site
 
 # 2. Créer une page web simple
-cat > index.html << 'EOF'
+# 2. Créer le fichier HTML : index.html
 <!DOCTYPE html>
 <html>
 <head>
@@ -270,7 +255,6 @@ cat > index.html << 'EOF'
     </div>
 </body>
 </html>
-EOF
 ```
 
 ---
@@ -279,7 +263,6 @@ EOF
 
 ```dockerfile
 # 3. Créer le Dockerfile
-cat > Dockerfile << 'EOF'
 # Image de base
 FROM nginx:alpine
 
@@ -295,7 +278,6 @@ ENV VERSION="1.0"
 COPY index.html /usr/share/nginx/html/
 
 # Le port 80 est déjà exposé par nginx
-EOF
 
 # 4. Build de l'image
 docker build -t mon-site:v1 .
@@ -342,7 +324,6 @@ mkdir outils-docker
 cd outils-docker
 
 # 2. Script d'aide simple
-cat > aide.sh << 'EOF'
 #!/bin/sh
 echo "🛠️ Outils disponibles:"
 echo "  curl - Tester des URLs"
@@ -353,7 +334,6 @@ echo "Exemples:"
 echo "  curl https://httpbin.org/json"
 echo "  nano test.txt"
 echo "  htop"
-EOF
 
 chmod +x aide.sh
 ```
@@ -364,7 +344,6 @@ chmod +x aide.sh
 
 ```dockerfile
 # 3. Dockerfile avec outils
-cat > Dockerfile << 'EOF'
 # Image de base légère
 FROM alpine:latest
 
@@ -393,7 +372,6 @@ RUN echo 'echo "Tapez: aide"' >> /etc/profile
 
 # Commande par défaut
 CMD ["sh", "-l"]
-EOF
 
 # 4. Build et test
 docker build -t outils:v2 .
@@ -439,7 +417,6 @@ mkdir site-optimise
 cd site-optimise
 
 # 2. Créer plusieurs pages
-cat > index.html << 'EOF'
 <!DOCTYPE html>
 <html>
 <head>
@@ -457,9 +434,7 @@ cat > index.html << 'EOF'
     </div>
 </body>
 </html>
-EOF
 
-cat > about.html << 'EOF'
 <!DOCTYPE html>
 <html>
 <head>
@@ -477,7 +452,6 @@ cat > about.html << 'EOF'
     </div>
 </body>
 </html>
-EOF
 ```
 
 ---
@@ -486,7 +460,6 @@ EOF
 
 ```dockerfile
 # 3. Dockerfile optimisé
-cat > Dockerfile << 'EOF'
 # ================================
 # Étape 1: Préparation
 # ================================
@@ -516,17 +489,14 @@ LABEL optimized="true"
 COPY --from=builder /dist/ /usr/share/nginx/html/
 
 # nginx:alpine est déjà optimisé
-EOF
 
 # 4. Construire les deux versions pour comparer
 docker build -t site-optimise:multistage .
 
 # Version non-optimisée pour comparaison
-cat > Dockerfile.simple << 'EOF'
 FROM nginx:alpine
 RUN apk add --no-cache curl
 COPY *.html /usr/share/nginx/html/
-EOF
 
 docker build -f Dockerfile.simple -t site-optimise:simple .
 
