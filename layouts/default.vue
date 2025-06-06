@@ -20,5 +20,16 @@
         Revenir au sommaire
       </Link>
     </div>
+    <!-- Ajout du logo en bas à gauche -->
+    <div
+      class="absolute bottom-0 left-0 p-4 z-50"
+      style="width: 64px; height: 64px"
+    >
+      <img
+        src="https://www.andromed.fr/andromedark.png"
+        alt="Logo"
+        class="rounded-full"
+      />
+    </div>
   </div>
 </template>
