@@ -50,10 +50,7 @@ EOF
 ## 🟢 Correction Niveau Simple - Playbook
 
 ```yaml
-# 3. Playbook d'installation Docker
-cat > install-docker.yml << 'EOF'
----
-- name: Installation Docker sur machine locale
+- name: Installation Docker
   hosts: localhost
   become: true
   vars:
@@ -63,78 +60,19 @@ cat > install-docker.yml << 'EOF'
       - python3-docker
 
   tasks:
-    - name: Mise à jour du cache APT
+    - name: Installation Docker
       apt:
-        update_cache: true
-        cache_valid_time: 3600
-
-    - name: Installation des packages Docker
-      apt:
-        name: "{{ docker_packages }}"
+        name:
+          - docker.io
         state: present
+        update_cache: true
 
-    - name: Démarrage du service Docker
+    - name: Demarrage et activation Docker
       systemd:
         name: docker
         state: started
         enabled: true
-
-    - name: Ajout de l'utilisateur au groupe docker
-      user:
-        name: "{{ ansible_user }}"
-        groups: docker
-        append: true
-      notify: Redémarrage requis
-
-  handlers:
-    - name: Redémarrage requis
-      debug:
-        msg: "Relancez votre session pour utiliser Docker sans sudo"
-EOF
-```
-
----
-
-## 🟢 Correction Niveau Simple - Vérification
-
-```yaml
-# 4. Playbook de vérification
-cat > verify-docker.yml << 'EOF'
----
-- name: Vérification de l'installation Docker
-  hosts: localhost
-  vars:
-    test_image: "hello-world"
-    test_container: "test-ansible-docker"
-
-  tasks:
-    - name: Vérifier que Docker est disponible
-      docker_host_info:
-      register: docker_info
-
-    - name: Afficher les informations Docker
-      debug:
-        msg: "Docker version: {{ docker_info.host_info.ServerVersion }}"
-
-    - name: Tester avec hello-world
-      docker_container:
-        name: "{{ test_container }}"
-        image: "{{ test_image }}"
-        state: started
-        detach: false
-        output_logs: true
-        cleanup: true
-      register: hello_world
-
-    - name: Afficher le résultat du test
-      debug:
-        msg: "Test réussi : {{ hello_world.container.Output }}"
-
-    - name: Nettoyer l'image de test
-      docker_image:
-        name: "{{ test_image }}"
-        state: absent
-EOF
+      when: ansible_facts.virtualization_type != "docker"
 ```
 
 ---
@@ -144,20 +82,11 @@ EOF
 ```bash
 # 5. Exécuter l'installation
 ansible-playbook -i inventory.yml install-docker.yml
-
-# 6. Vérifier l'installation
-ansible-playbook -i inventory.yml verify-docker.yml
-
-# 7. Commandes de test
-echo "🧪 Tests manuels :"
-echo "docker --version"
-echo "docker-compose --version"
-echo "docker run hello-world"
-
-echo "✅ Docker installé et configuré avec Ansible !"
 ```
 
 **✅ Résultat** : Docker installé et configuré automatiquement
+
+Vous pouvez vérifier dans votre container avec un simple `docker ps` ou tout autre commande docker.
 
 ---
 
@@ -199,6 +128,29 @@ EOF
 
 ---
 
+## 🟡 Niveau Intermédiaire - Template
+
+```mermaid
+flowchart LR
+    A[Template index.html.j2] --> B[Ansible génère index.html avec variables]
+    B --> C[Copie dans /tmp/webapp-container/]
+    D[Dockerfile copié] --> C
+    C --> E[docker build utilise index.html généré]
+    E --> F[Image Docker avec contenu dynamique]
+    F --> G[Container nginx sert le HTML personnalisé]
+```
+
+<br/>
+
+### Au lieu d'avoir une page web statique, vous avez une page qui affiche automatiquement :
+
+- "Environnement: development" ou "production"
+- "Version: 2.0.0"
+- "Déployé le: 2025-01-09 à 14:30:25"
+- Des couleurs différentes selon l'environnement
+
+---
+
 ## 🟡 Correction Niveau Intermédiaire - Template
 
 ```bash
@@ -209,17 +161,17 @@ cat > roles/webapp/templates/index.html.j2 << 'EOF'
 <head>
     <title>{{ app_name | default('WebApp Ansible') }}</title>
     <style>
-        body { 
-            font-family: Arial; 
-            text-align: center; 
-            padding: 50px; 
-            background: {{ bg_color | default('#f0f8ff') }}; 
+        body {
+            font-family: Arial;
+            text-align: center;
+            padding: 50px;
+            background: {{ bg_color | default('#f0f8ff') }};
         }
-        .container { 
-            background: white; 
-            padding: 30px; 
-            border-radius: 15px; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
     </style>
 </head>
@@ -354,7 +306,7 @@ cat > deploy-webapp.yml << 'EOF'
   hosts: localhost
   vars:
     env: "{{ target_env | default('development') }}"
-  
+
   tasks:
     - name: Déployer l'application web
       include_role:
@@ -415,64 +367,116 @@ chmod +x deploy.sh
 
 ## 🔴 Exercice Niveau Avancé
 
-### Stack Docker Compose avec Ansible
+### Evolution vers une Stack Production
 
-**Objectif** : Déployer la stack Docker Compose créée précédemment avec Ansible
+**Objectif** : Faire évoluer notre webapp simple vers une vraie stack production
 
-**Consignes** :
-1. Rôle Ansible pour Docker Compose
-2. Déployer la stack production des exercices précédents
-3. Gestion de configuration et secrets
-4. Monitoring et maintenance automatisés
+**Le problème** : Notre webapp du niveau intermédiaire est trop simple pour la production :
+- Pas de base de données
+- Pas de proxy/load balancer
+- Pas de monitoring
+- Configuration manuelle
+
+**L'objectif** : Créer une stack complète avec Ansible !
 
 ---
 
-# 🔴 Correction Niveau Avancé - Structure
+## 🔴 Ce qu'on va construire
+
+### Architecture cible
+
+```mermaid
+flowchart TD
+    U[👤 Utilisateur] --> N[🔄 Nginx Proxy]
+    N --> A1[🐳 WebApp 1]
+    N --> A2[🐳 WebApp 2]
+    A1 --> D[🗄️ MySQL Database]
+    A2 --> D
+    
+    subgraph "📊 Monitoring"
+        M[📈 Health Checks]
+        B[💾 Backups auto]
+    end
+    
+    D --> M
+    D --> B
+```
+
+**🎯 Stack finale** : Nginx + 2 WebApps + MySQL + Monitoring/Backup
+
+---
+
+## 🔴 Étape 1 - Structure du rôle
+
+**D'abord, on organise notre nouveau rôle pour la stack :**
 
 ```bash
 # 1. Créer le rôle pour la stack
 mkdir -p roles/docker-stack/{tasks,files,templates,vars,handlers,meta}
 
-# 2. Métadonnées du rôle
+# 2. Métadonnées du rôle (dépendance du rôle webapp)
 cat > roles/docker-stack/meta/main.yml << 'EOF'
 ---
 dependencies:
   - role: webapp
 galaxy_info:
   author: DevOps Team
-  description: Déploiement stack Docker Compose production
+  description: Stack Docker Compose production avec Nginx + WebApp + MySQL
   min_ansible_version: 2.9
+EOF
+```
+
+**💡 Logic** : Notre nouvelle stack utilise le rôle `webapp` qu'on a créé avant !
+
+---
+
+## 🔴 Étape 2 - Variables de base
+
+**Configuration de base de notre stack :**
+
+```yaml
+# 3. Variables principales
+cat > roles/docker-stack/vars/main.yml << 'EOF'
+# Configuration de la stack
+stack_name: "production-stack"
+stack_directory: "/opt/{{ stack_name }}"
+
+# Configuration application
+app_port: 80
+app_image: "webapp-ansible"  # L'image qu'on a créée avant
+app_version: "latest"
 EOF
 ```
 
 ---
 
-# 🔴 Correction Niveau Avancé - Variables
+## 🔴 Étape 3 - Variables base de données
+
+**Configuration MySQL sécurisée :**
 
 ```yaml
-# 3. Variables de la stack
-cat > roles/docker-stack/vars/main.yml << 'EOF'
-# Configuration de la stack
-stack_name: "production-stack"
-stack_directory: "/opt/{{ stack_name }}"
+# Ajouter à vars/main.yml
+cat >> roles/docker-stack/vars/main.yml << 'EOF'
 
 # Configuration base de données
 mysql_root_password: "{{ vault_mysql_root_password | default('production123') }}"
 mysql_database: "webapp"
 mysql_user: "app_user"
 mysql_password: "{{ vault_mysql_password | default('apppass123') }}"
+EOF
+```
 
-# Configuration application
-app_port: 80
-app_image: "webapp-ansible"
-app_version: "latest"
+---
 
-# Configuration monitoring
-monitoring_enabled: true
-backup_enabled: true
-backup_schedule: "0 2 * * *"  # Tous les jours à 2h
+## 🔴 Étape 4 - Variables environnements
 
-# Environnements
+**Configuration par environnement (dev/staging/prod) :**
+
+```yaml
+# Ajouter à vars/main.yml
+cat >> roles/docker-stack/vars/main.yml << 'EOF'
+
+# Environnements et ressources
 environments:
   production:
     replicas: 2
@@ -482,15 +486,22 @@ environments:
     replicas: 1
     memory_limit: "256m"
     cpu_limit: "0.25"
+
+# Configuration monitoring
+monitoring_enabled: true
+backup_enabled: true
+backup_schedule: "0 2 * * *"  # Tous les jours à 2h
 EOF
 ```
 
 ---
 
-## 🔴 Correction Niveau Avancé - Templates
+## 🔴 Étape 5 - Docker Compose : Base
+
+**Création du template docker-compose principal :**
 
 ```yaml
-# 4. Template docker-compose.yml
+# 4. Template docker-compose.yml - Base
 cat > roles/docker-stack/templates/docker-compose.yml.j2 << 'EOF'
 version: '3.8'
 
@@ -507,11 +518,18 @@ services:
     networks:
       - frontend
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+EOF
+```
+
+---
+
+## 🔴 Étape 6 - Docker Compose : Application
+
+**Service application dans le docker-compose :**
+
+```yaml
+# Continuer le template docker-compose.yml
+cat >> roles/docker-stack/templates/docker-compose.yml.j2 << 'EOF'
 
   app:
     image: {{ app_image }}:{{ app_version }}
@@ -532,6 +550,18 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+EOF
+```
+
+---
+
+## 🔴 Étape 7 - Docker Compose : Base de données
+
+**Service MySQL dans le docker-compose :**
+
+```yaml
+# Continuer le template docker-compose.yml
+cat >> roles/docker-stack/templates/docker-compose.yml.j2 << 'EOF'
 
   database:
     image: mysql:8.0
@@ -552,6 +582,18 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+EOF
+```
+
+---
+
+## 🔴 Étape 8 - Docker Compose : Réseaux
+
+**Volumes et réseaux du docker-compose :**
+
+```yaml
+# Finir le template docker-compose.yml
+cat >> roles/docker-stack/templates/docker-compose.yml.j2 << 'EOF'
 
 volumes:
   db_data:
@@ -566,10 +608,12 @@ EOF
 
 ---
 
-## 🔴 Correction Niveau Avancé - Configuration Nginx
+## 🔴 Étape 9 - Configuration Nginx : Base
+
+**Template nginx pour le proxy :**
 
 ```bash
-# 5. Template nginx proxy
+# 5. Template nginx proxy - Configuration de base
 cat > roles/docker-stack/templates/nginx.conf.j2 << 'EOF'
 events {
     worker_connections 1024;
@@ -583,11 +627,23 @@ http {
     # Logs
     access_log /var/log/nginx/access.log;
     error_log /var/log/nginx/error.log;
+EOF
+```
+
+---
+
+## 🔴 Étape 10 - Configuration Nginx : Virtual Host
+
+**Configuration du serveur web :**
+
+```bash
+# Continuer le template nginx
+cat >> roles/docker-stack/templates/nginx.conf.j2 << 'EOF'
 
     server {
         listen 80;
         server_name {{ ansible_fqdn | default('localhost') }};
-        
+
         # Health check endpoint
         location /health {
             access_log off;
@@ -602,7 +658,7 @@ http {
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
-            
+
             # Timeouts
             proxy_connect_timeout 30s;
             proxy_send_timeout 30s;
@@ -615,10 +671,12 @@ EOF
 
 ---
 
-## 🔴 Correction Niveau Avancé - Tâches principales
+## 🔴 Étape 11 - Tâches : Préparation
+
+**Tâches de préparation des répertoires :**
 
 ```yaml
-# 6. Tâches de déploiement
+# 6. Tâches de déploiement - Partie 1 : Préparation
 cat > roles/docker-stack/tasks/main.yml << 'EOF'
 ---
 - name: Créer le répertoire de la stack
@@ -638,6 +696,18 @@ cat > roles/docker-stack/tasks/main.yml << 'EOF'
     - nginx-proxy
     - backups
     - scripts
+EOF
+```
+
+---
+
+## 🔴 Étape 12 - Tâches : Génération des fichiers
+
+**Génération des templates :**
+
+```yaml
+# Continuer tasks/main.yml - Partie 2 : Templates
+cat >> roles/docker-stack/tasks/main.yml << 'EOF'
 
 - name: Générer docker-compose.yml
   template:
@@ -666,6 +736,18 @@ cat > roles/docker-stack/tasks/main.yml << 'EOF'
     src: monitor.sh.j2
     dest: "{{ stack_directory }}/scripts/monitor.sh"
     mode: '0755'
+EOF
+```
+
+---
+
+## 🔴 Étape 13 - Tâches : Déploiement
+
+**Démarrage de la stack et vérifications :**
+
+```yaml
+# Continuer tasks/main.yml - Partie 3 : Déploiement
+cat >> roles/docker-stack/tasks/main.yml << 'EOF'
 
 - name: Démarrer la stack Docker Compose
   docker_compose:
@@ -703,7 +785,9 @@ EOF
 
 ---
 
-## 🔴 Correction Niveau Avancé - Scripts de maintenance
+## 🔴 Étape 14 - Script de backup
+
+**Script automatisé de sauvegarde :**
 
 ```bash
 # 7. Template script de backup
@@ -720,6 +804,18 @@ echo "💾 Backup de la stack $STACK_NAME - $DATE"
 docker compose -f {{ stack_directory }}/docker-compose.yml exec -T database \
     mysqldump -u root -p{{ mysql_root_password }} {{ mysql_database }} \
     > "$BACKUP_DIR/db_backup_$DATE.sql"
+EOF
+```
+
+---
+
+## 🔴 Étape 15 - Script de backup (suite)
+
+**Sauvegarde config et nettoyage :**
+
+```bash
+# Continuer le script de backup
+cat >> roles/docker-stack/templates/backup.sh.j2 << 'EOF'
 
 # Backup configuration
 tar -czf "$BACKUP_DIR/config_backup_$DATE.tar.gz" \
@@ -733,7 +829,15 @@ find "$BACKUP_DIR" -name "*backup_*.tar.gz" -mtime +7 -delete
 echo "✅ Backup terminé dans $BACKUP_DIR"
 ls -la "$BACKUP_DIR"/*$DATE*
 EOF
+```
 
+---
+
+## 🔴 Étape 16 - Script de monitoring
+
+**Script de surveillance de la stack :**
+
+```bash
 # 8. Template script de monitoring
 cat > roles/docker-stack/templates/monitor.sh.j2 << 'EOF'
 #!/bin/bash
@@ -765,10 +869,12 @@ EOF
 
 ---
 
-## 🔴 Correction Niveau Avancé - Handlers et Playbook
+## 🔴 Étape 17 - Handlers
+
+**Gestionnaires de redémarrage :**
 
 ```yaml
-# 9. Handlers
+# 9. Handlers pour les redémarrages
 cat > roles/docker-stack/handlers/main.yml << 'EOF'
 ---
 - name: Restart stack
@@ -783,7 +889,15 @@ cat > roles/docker-stack/handlers/main.yml << 'EOF'
       - proxy
     restarted: true
 EOF
+```
 
+---
+
+## 🔴 Étape 18 - Playbook principal
+
+**Orchestration complète :**
+
+```yaml
 # 10. Playbook principal
 cat > deploy-stack.yml << 'EOF'
 ---
@@ -792,7 +906,7 @@ cat > deploy-stack.yml << 'EOF'
   vars:
     target_env: "{{ env | default('production') }}"
     force_restart: "{{ restart | default(false) }}"
-  
+
   pre_tasks:
     - name: Vérifier les prérequis
       assert:
@@ -808,6 +922,18 @@ cat > deploy-stack.yml << 'EOF'
     - name: Déployer la stack complète
       include_role:
         name: docker-stack
+EOF
+```
+
+---
+
+## 🔴 Étape 19 - Playbook (suite)
+
+**Informations de déploiement :**
+
+```yaml
+# Continuer le playbook principal
+cat >> deploy-stack.yml << 'EOF'
 
   post_tasks:
     - name: Afficher les informations de déploiement
@@ -823,7 +949,9 @@ EOF
 
 ---
 
-## 🔴 Correction Niveau Avancé - Déploiement final
+## 🔴 Étape 20 - Script de déploiement
+
+**Script d'orchestration finale :**
 
 ```bash
 # 11. Script de déploiement avancé
@@ -856,15 +984,28 @@ esac
 EOF
 
 chmod +x deploy-production.sh
+```
 
+---
+
+## 🔴 Étape 21 - Test final
+
+**Déploiement et vérification :**
+
+```bash
 # Déploiement final
 echo "🎯 Lancement du déploiement production..."
 ./deploy-production.sh deploy
 
 echo "✅ Stack complète déployée avec Ansible !"
+
+# Tests post-déploiement
+echo "🧪 Tests de la stack..."
+curl http://localhost/health
+docker compose -f /opt/production-stack/docker-compose.yml ps
 ```
 
-**✅ Résultat** : Stack production complète déployée et gérée par Ansible
+**✅ Résultat** : Stack production complète avec Nginx + WebApp + MySQL + Monitoring/Backup !
 
 ---
 
@@ -896,4 +1037,4 @@ echo "✅ Stack complète déployée avec Ansible !"
 
 ### 🚀 **Formation Docker & Ansible complète !**
 
-Vous maîtrisez maintenant l'automatisation complète avec Docker et Ansible ! 
+Vous maîtrisez maintenant l'automatisation complète avec Docker et Ansible !

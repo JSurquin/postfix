@@ -13,6 +13,142 @@ Orchestrez plusieurs containers facilement !
 
 ---
 
+## 🎮 Exercices Express (Warm-up)
+
+### 3 exercices rapides avec images officielles
+
+Avant les exercices principaux, des exercices courts pour maîtriser les bases !
+
+---
+
+## 🟢 Exercice Express 1 : Ma Première Stack
+
+### Stack super simple avec 2 services (15 min)
+
+**Ce qu'on apprend** : Premier docker-compose.yml, services liés
+
+```yaml
+# Créer docker-compose.yml
+version: '3.8'
+
+services:
+  web:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+      
+  cache:
+    image: redis:alpine
+```
+
+```bash
+# Tester la stack
+docker compose up -d
+docker compose ps
+curl http://localhost:8080
+docker compose down
+```
+
+**Mission** : Voir "nginx welcome page" sur http://localhost:8080
+
+---
+
+## 🟡 Exercice Express 2 : Stack Base de Données
+
+### Postgres + Adminer pour explorer une BDD (20 min)
+
+**Ce qu'on apprend** : Variables d'environnement, volumes, interface web
+
+```yaml
+# docker-compose.yml plus sophistiqué
+version: '3.8'
+
+services:
+  database:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: testdb
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password123
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      
+  adminer:
+    image: adminer:latest
+    ports:
+      - "8081:8080"
+    depends_on:
+      - database
+
+volumes:
+  db_data:
+```
+
+```bash
+# Test complet
+docker compose up -d
+echo "🌐 Interface BDD: http://localhost:8081"
+# Se connecter via Adminer avec les credentials
+docker compose down -v
+```
+
+**Mission** : Se connecter à la BDD via l'interface web Adminer
+
+---
+
+## 🔴 Exercice Express 3 : Stack Monitoring Simple
+
+### Prometheus + Grafana pour surveiller (25 min)
+
+**Ce qu'on apprend** : Stack monitoring, réseaux personnalisés
+
+```yaml
+# docker-compose.yml monitoring
+version: '3.8'
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    networks:
+      - monitoring
+      
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin123
+    networks:
+      - monitoring
+    volumes:
+      - grafana_data:/var/lib/grafana
+
+volumes:
+  grafana_data:
+
+networks:
+  monitoring:
+    driver: bridge
+```
+
+```bash
+# Déploiement monitoring
+docker compose up -d
+echo "📊 Prometheus: http://localhost:9090"
+echo "📈 Grafana: http://localhost:3000 (admin/admin123)"
+docker compose down -v
+```
+
+**Mission** : Accéder aux 2 interfaces de monitoring
+
+---
+
+## 🎯 Exercices Principaux Détaillés
+
+---
+
 # 🟢 Exercice Niveau Simple
 
 ### WordPress + MySQL (Stack de blog)

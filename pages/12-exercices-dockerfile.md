@@ -13,6 +13,205 @@ Apprenez Docker étape par étape !
 
 ---
 
+## 🎮 Exercices Express (Mise en jambes)
+
+### 3 exercices rapides pour créer ses premières images
+
+Avant les exercices principaux, des Dockerfiles simples pour s'échauffer !
+
+---
+
+## 🟢 Exercice Express 1 : Custom Nginx Page
+
+### Personnaliser une page nginx (20 min)
+
+**Ce qu'on apprend** : FROM, COPY, instructions de base
+
+```bash
+# 1. Créer une page personnalisée
+mkdir my-nginx && cd my-nginx
+
+cat > index.html << 'EOF'
+<!DOCTYPE html>
+<html>
+<head><title>Mon Docker Custom</title></head>
+<body style="font-family: Arial; text-align: center; padding: 50px; background: #e3f2fd;">
+    <h1>🐳 Ma Première Image Custom</h1>
+    <p>J'ai créé cette page avec Dockerfile !</p>
+    <p>Version: <strong>1.0</strong></p>
+</body>
+</html>
+EOF
+
+# 2. Créer le Dockerfile
+cat > Dockerfile << 'EOF'
+FROM nginx:alpine
+LABEL author="moi"
+COPY index.html /usr/share/nginx/html/
+EOF
+
+# 3. Build et test
+docker build -t my-nginx:v1 .
+docker run -d --name test-nginx -p 8080:80 my-nginx:v1
+echo "🌐 Test: http://localhost:8080"
+
+# 4. Cleanup
+docker stop test-nginx && docker rm test-nginx
+```
+
+**Mission** : Voir votre page personnalisée !
+
+---
+
+## 🟡 Exercice Express 2 : App Node.js Simple
+
+### Containeriser une app web basique (25 min)
+
+**Ce qu'on apprend** : WORKDIR, RUN, CMD, workflow complet
+
+```bash
+# 1. Créer l'app Node.js
+mkdir my-app && cd my-app
+
+cat > package.json << 'EOF'
+{
+  "name": "docker-app",
+  "version": "1.0.0",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.18.0"
+  }
+}
+EOF
+
+cat > server.js << 'EOF'
+const express = require('express');
+const app = express();
+const PORT = 3000;
+
+app.get('/', (req, res) => {
+    res.send(`
+        <h1>🚀 App Node.js Dockerisée</h1>
+        <p>Serveur Express dans un container</p>
+        <p>Port: ${PORT}</p>
+    `);
+});
+
+app.listen(PORT, () => {
+    console.log(`Serveur sur le port ${PORT}`);
+});
+EOF
+
+# 2. Dockerfile pour Node.js
+cat > Dockerfile << 'EOF'
+FROM node:18-alpine
+WORKDIR /app
+COPY package.json .
+RUN npm install
+COPY server.js .
+EXPOSE 3000
+CMD ["node", "server.js"]
+EOF
+
+# 3. Build et test
+docker build -t my-app:v1 .
+docker run -d --name test-app -p 3000:3000 my-app:v1
+echo "🌐 App: http://localhost:3000"
+
+# 4. Cleanup
+docker stop test-app && docker rm test-app
+```
+
+**Mission** : Voir votre app web fonctionner !
+
+---
+
+## 🔴 Exercice Express 3 : Multi-stage Optimisé
+
+### Optimiser avec un build en 2 étapes (30 min)
+
+**Ce qu'on apprend** : Multi-stage build, optimisation de taille
+
+```bash
+# 1. Préparer le projet
+mkdir optimized-app && cd optimized-app
+
+# App simple qui génère du contenu statique
+cat > build.js << 'EOF'
+const fs = require('fs');
+
+const html = `
+<!DOCTYPE html>
+<html>
+<head><title>App Optimisée</title></head>
+<body style="font-family: Arial; text-align: center; padding: 50px; background: #f3e5f5;">
+    <h1>⚡ Image Multi-Stage</h1>
+    <p>Cette image a été optimisée !</p>
+    <p>Générée à: ${new Date().toLocaleString()}</p>
+</body>
+</html>
+`;
+
+fs.writeFileSync('dist/index.html', html);
+console.log('✅ Contenu généré');
+EOF
+
+cat > package.json << 'EOF'
+{
+  "name": "builder-app",
+  "scripts": {
+    "build": "mkdir -p dist && node build.js"
+  }
+}
+EOF
+
+# 2. Dockerfile multi-stage
+cat > Dockerfile << 'EOF'
+# Étape 1: Builder
+FROM node:18-alpine AS builder
+WORKDIR /app
+COPY package.json build.js ./
+RUN npm run build
+
+# Étape 2: Production légère
+FROM nginx:alpine AS production
+LABEL stage="production"
+COPY --from=builder /app/dist/ /usr/share/nginx/html/
+EOF
+
+# 3. Comparaison avec version simple
+cat > Dockerfile.simple << 'EOF'
+FROM node:18-alpine
+WORKDIR /app
+COPY . .
+RUN npm run build
+COPY dist/ /usr/share/nginx/html/
+EOF
+
+# 4. Build des 2 versions
+docker build -t optimized:multistage .
+docker build -f Dockerfile.simple -t optimized:simple .
+
+# 5. Comparer les tailles
+echo "📊 Comparaison des tailles:"
+docker images | grep optimized
+
+# 6. Test
+docker run -d --name test-opt -p 8080:80 optimized:multistage
+echo "🌐 App optimisée: http://localhost:8080"
+
+# 7. Cleanup
+docker stop test-opt && docker rm test-opt
+```
+
+**Mission** : Comparer les tailles d'images !
+
+---
+
+## 🎯 Exercices Principaux Détaillés
+
+---
+
 # 🟢 Exercice Niveau Simple
 
 ### Personnaliser une page web

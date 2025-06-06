@@ -9,6 +9,105 @@ routeAlias: 'premier-contact-docker'
 
 ---
 
+## 🎮 Exercices Express (Échauffement)
+
+### 3 exercices rapides pour commencer en douceur
+
+Avant l'exercice principal, quelques exercices courts pour se familiariser !
+
+---
+
+## 🟢 Exercice Express 1 : Discovery Mode
+
+### Découvrir Docker sans rien casser (10 min)
+
+**Ce qu'on apprend** : Bases absolues, premières commandes
+
+```bash
+# 1. Le traditionnel Hello World
+docker run hello-world
+
+# 2. Votre premier container interactif
+docker run alpine echo "Je découvre Docker!"
+
+# 3. Observer ce qui s'est passé
+docker images
+docker ps -a
+```
+
+**Questions** :
+- Combien d'images avez-vous maintenant ?
+- Quel est le statut de vos containers ?
+
+---
+
+## 🟡 Exercice Express 2 : Container Explorer
+
+### Lancer des containers simples et les observer (15 min)
+
+**Ce qu'on apprend** : Containers en arrière-plan, logs
+
+```bash
+# 1. Lancer des services populaires
+docker run -d --name web nginx:alpine
+docker run -d --name cache redis:alpine
+docker run -d --name db postgres:alpine
+
+# 2. Observer ce qui tourne
+docker ps
+
+# 3. Voir ce qui se passe dans les logs
+docker logs web
+docker logs cache
+
+# 4. Nettoyer proprement
+docker stop web cache db
+docker rm web cache db
+```
+
+**Mission** : Tous les containers doivent être "Up" dans `docker ps`
+
+---
+
+## 🔴 Exercice Express 3 : Container Investigator
+
+### Explorer l'intérieur d'un container (20 min)
+
+**Ce qu'on apprend** : Mode interactif, différences entre distributions
+
+```bash
+# 1. Entrer dans un container Ubuntu
+docker run -it ubuntu:latest bash
+
+# Dans le container, explorer :
+ls /
+cat /etc/os-release
+ps aux
+whoami
+
+# Sortir du container
+exit
+
+# 2. Comparer avec Alpine Linux
+docker run -it alpine:latest sh
+
+# Explorer les différences :
+ls /
+cat /etc/os-release
+ps aux
+
+# Sortir
+exit
+```
+
+**Questions** :
+- Quelle distribution est plus légère ?
+- Quelles sont les différences principales ?
+
+---
+
+## 🎯 Exercice Principal Détaillé
+
 ### Votre première expérience pratique
 
 Maintenant que vous connaissez les concepts **ET** les commandes CLI, mettons les mains dans le cambouis ! Cet exercice vous fait pratiquer ce que vous venez d'apprendre.
