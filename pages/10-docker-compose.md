@@ -148,9 +148,11 @@ secrets: # Gestion des secrets
 
 ---
 
-```yaml
-version: '3.8'
+<div class="-mt-6">
 
+##### Exemple de fichier docker-compose.yml
+
+```yaml
 services:
   # Base de données PostgreSQL
   db:
@@ -198,6 +200,8 @@ networks:
   default:
     name: webapp-network
 ```
+
+</div>
 
 ---
 
