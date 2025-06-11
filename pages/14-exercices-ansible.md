@@ -89,7 +89,382 @@ Vous pouvez vérifier dans votre container avec un simple `docker ps` ou tout au
 
 ---
 
-## 🟡 Exercice Niveau Intermédiaire
+## 🟡 Exercice Niveau Intermédiaire - Étape 1
+
+### Déployer un container simple avec Ansible
+
+**Objectif** : Lancer votre premier container avec Ansible (sans rôles)
+
+**Consignes** :
+1. Utiliser le module `docker_container` d'Ansible
+2. Déployer un container nginx simple
+3. Le rendre accessible sur le port 8080
+4. Vérifier qu'il fonctionne
+
+---
+
+## 🟡 Correction Étape 1 - Playbook simple
+
+```yaml
+# deploy-container.yml
+---
+- name: Déploiement container simple
+  hosts: localhost
+  vars:
+    container_name: "mon-nginx"
+    container_port: 8080
+
+  tasks:
+    - name: Arrêter container existant (si présent)
+      community.docker.docker_container:
+        name: "{{ container_name }}"
+        state: absent
+      ignore_errors: true
+
+    - name: Lancer container nginx
+      community.docker.docker_container:
+        name: "{{ container_name }}"
+        image: nginx:alpine
+        ports:
+          - "{{ container_port }}:80"
+        state: started
+        restart_policy: always
+
+    - name: Vérifier que le container fonctionne
+      uri:
+        url: "http://localhost:{{ container_port }}"
+        method: GET
+        status_code: 200
+      retries: 3
+      delay: 5
+
+    - name: Afficher l'URL d'accès
+      debug:
+        msg: "✅ Container accessible sur http://localhost:{{ container_port }}"
+```
+
+---
+
+## 🟡 Correction Étape 1 - Exécution
+
+```bash
+# Installation du module Docker pour Ansible
+ansible-galaxy collection install community.docker
+
+# Exécution du playbook
+ansible-playbook -i inventory.yml deploy-container.yml
+
+# Test manuel
+curl http://localhost:8080
+```
+
+**✅ Résultat** : Container nginx déployé automatiquement avec Ansible !
+
+---
+
+## 🟡 Exercice Niveau Intermédiaire - Étape 2
+
+### Utiliser des variables et templates
+
+**Objectif** : Personnaliser le contenu avec des variables Ansible
+
+**Consignes** :
+1. Créer un template HTML personnalisé
+2. Utiliser des variables pour le personnaliser
+3. Monter ce fichier dans le container
+4. Tester avec différents environnements
+
+---
+
+## 🟡 Correction Étape 2 - Template HTML
+
+```html
+<!-- templates/index.html.j2 -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ app_title | default('Mon App Ansible') }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background-color: {{ bg_color | default('#f0f8ff') }};
+        }
+        .info-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="info-box">
+        <h1>🚀 {{ app_title | default('Application Ansible') }}</h1>
+        <p><strong>Environnement:</strong> {{ environment | default('development') }}</p>
+        <p><strong>Version:</strong> {{ app_version | default('1.0.0') }}</p>
+        <p><strong>Déployé le:</strong> {{ ansible_date_time.date }} à {{ ansible_date_time.time }}</p>
+        <hr>
+        <p>Automatisé avec Ansible + Docker 🐳</p>
+    </div>
+</body>
+</html>
+```
+
+---
+
+## 🟡 Correction Étape 2 - Playbook avec template
+
+```yaml
+# deploy-with-template.yml
+---
+- name: Déploiement avec template personnalisé
+  hosts: localhost
+  vars:
+    app_title: "Ma Super App"
+    app_version: "2.0.0"
+    environment: "{{ env | default('development') }}"
+    container_name: "webapp-{{ environment }}"
+    container_port: "{{ port | default(8080) }}"
+    
+    # Couleurs par environnement
+    env_colors:
+      development: "#e3f2fd"
+      staging: "#fff3e0"
+      production: "#e8f5e8"
+    
+    bg_color: "{{ env_colors[environment] | default('#f0f8ff') }}"
+
+  tasks:
+    - name: Créer le répertoire temporaire
+      file:
+        path: /tmp/webapp
+        state: directory
+
+    - name: Générer la page HTML depuis le template
+      template:
+        src: index.html.j2
+        dest: /tmp/webapp/index.html
+
+    - name: Arrêter container existant
+      community.docker.docker_container:
+        name: "{{ container_name }}"
+        state: absent
+      ignore_errors: true
+
+    - name: Lancer container avec notre page personnalisée
+      community.docker.docker_container:
+        name: "{{ container_name }}"
+        image: nginx:alpine
+        ports:
+          - "{{ container_port }}:80"
+        volumes:
+          - /tmp/webapp/index.html:/usr/share/nginx/html/index.html:ro
+        state: started
+        restart_policy: always
+
+    - name: Tester l'application
+      uri:
+        url: "http://localhost:{{ container_port }}"
+        return_content: true
+      register: app_response
+
+    - name: Afficher le résultat
+      debug:
+        msg: |
+          ✅ Application {{ app_title }} déployée !
+          🌐 URL: http://localhost:{{ container_port }}
+          🏷️ Environnement: {{ environment }}
+          📱 Version: {{ app_version }}
+```
+
+---
+
+## 🟡 Correction Étape 2 - Test multi-environnements
+
+```bash
+# Test en développement
+ansible-playbook -i inventory.yml deploy-with-template.yml
+
+# Test en staging (port différent)
+ansible-playbook -i inventory.yml deploy-with-template.yml \
+  -e env=staging -e port=8081
+
+# Test en production (encore un autre port)
+ansible-playbook -i inventory.yml deploy-with-template.yml \
+  -e env=production -e port=8082
+
+# Vérifier les 3 environnements
+curl http://localhost:8080  # dev
+curl http://localhost:8081  # staging  
+curl http://localhost:8082  # prod
+```
+
+**✅ Résultat** : 3 environnements différents avec des couleurs et configs personnalisées !
+
+---
+
+## 🟡 Exercice Niveau Intermédiaire - Étape 3
+
+### Docker Compose simple avec Ansible
+
+**Objectif** : Déployer un docker-compose.yml basique (app + base de données)
+
+**Consignes** :
+1. Créer un template docker-compose.yml
+2. Déployer une app web + base de données Redis
+3. Utiliser des variables pour les ports et mots de passe
+4. Vérifier la connectivité entre les services
+
+---
+
+## 🟡 Correction Étape 3 - Template Docker Compose
+
+```yaml
+# templates/docker-compose.yml.j2
+version: '3.8'
+
+services:
+  webapp:
+    image: nginx:alpine
+    container_name: {{ stack_name }}-web
+    ports:
+      - "{{ web_port }}:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    depends_on:
+      - redis
+    networks:
+      - app-network
+
+  redis:
+    image: redis:alpine
+    container_name: {{ stack_name }}-redis
+    ports:
+      - "{{ redis_port }}:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+
+volumes:
+  redis_data:
+
+networks:
+  app-network:
+    driver: bridge
+```
+
+---
+
+## 🟡 Correction Étape 3 - Playbook Docker Compose
+
+```yaml
+# deploy-compose.yml
+---
+- name: Déploiement Docker Compose simple
+  hosts: localhost
+  vars:
+    stack_name: "myapp"
+    web_port: 9000
+    redis_port: 6379
+    app_directory: "/tmp/{{ stack_name }}"
+
+  tasks:
+    - name: Créer le répertoire de l'application
+      file:
+        path: "{{ app_directory }}/html"
+        state: directory
+        recurse: true
+
+    - name: Générer docker-compose.yml
+      template:
+        src: docker-compose.yml.j2
+        dest: "{{ app_directory }}/docker-compose.yml"
+
+    - name: Créer une page web de test
+      copy:
+        content: |
+          <!DOCTYPE html>
+          <html>
+          <head><title>App avec Redis</title></head>
+          <body>
+            <h1>🚀 Application avec Redis</h1>
+            <p>Stack: {{ stack_name }}</p>
+            <p>Web: localhost:{{ web_port }}</p>
+            <p>Redis: localhost:{{ redis_port }}</p>
+            <p>Déployé avec Docker Compose + Ansible</p>
+          </body>
+          </html>
+        dest: "{{ app_directory }}/html/index.html"
+
+    - name: Démarrer la stack Docker Compose
+      community.docker.docker_compose:
+        project_src: "{{ app_directory }}"
+        state: present
+
+    - name: Attendre que les services démarrent
+      wait_for:
+        port: "{{ web_port }}"
+        delay: 5
+        timeout: 30
+
+    - name: Tester l'application web
+      uri:
+        url: "http://localhost:{{ web_port }}"
+        status_code: 200
+
+    - name: Tester la connexion Redis (optionnel)
+      command: docker exec {{ stack_name }}-redis redis-cli ping
+      register: redis_test
+      ignore_errors: true
+
+    - name: Afficher les résultats
+      debug:
+        msg: |
+          ✅ Stack Docker Compose déployée !
+          🌐 Web: http://localhost:{{ web_port }}
+          🔴 Redis: localhost:{{ redis_port }}
+          ❤️ Redis status: {{ redis_test.stdout | default('N/A') }}
+```
+
+---
+
+## 🟡 Correction Étape 3 - Exécution et gestion
+
+```bash
+# Déployer la stack
+ansible-playbook -i inventory.yml deploy-compose.yml
+
+# Vérifier les services
+docker ps
+curl http://localhost:9000
+
+# Script pour arrêter la stack
+# stop-stack.yml
+---
+- name: Arrêter la stack
+  hosts: localhost
+  vars:
+    app_directory: "/tmp/myapp"
+  tasks:
+    - name: Arrêter Docker Compose
+      community.docker.docker_compose:
+        project_src: "{{ app_directory }}"
+        state: absent
+
+# Utilisation
+ansible-playbook -i inventory.yml stop-stack.yml
+```
+
+**✅ Résultat** : Stack web + Redis déployée avec Docker Compose et Ansible !
+
+---
+
+## 🟡 Exercice Niveau Intermédiaire Avancé
 
 ### Déploiement Dockerfile avec Ansible
 
