@@ -771,7 +771,7 @@ http {
 
 ---
 
-## 🔴 Étape 14 - Script de backup
+### 🔴 Étape 14 - Script de backup
 
 **Script automatisé de sauvegarde :**
 
@@ -794,7 +794,7 @@ docker compose -f {{ stack_directory }}/docker-compose.yml exec -T database \
 
 ---
 
-## 🔴 Étape 15 - Script de backup (suite)
+### 🔴 Étape 15 - Script de backup (suite)
 
 **Sauvegarde config et nettoyage :**
 
@@ -817,7 +817,7 @@ ls -la "$BACKUP_DIR"/*$DATE*
 
 ---
 
-## 🔴 Étape 16 - Script de monitoring
+### 🔴 Étape 16 - Script de monitoring
 
 **Script de surveillance de la stack :**
 
@@ -852,7 +852,7 @@ ls -la {{ stack_directory }}/backups/ | tail -5
 
 ---
 
-## 🔴 Étape 17 - Handlers
+### 🔴 Étape 17 - Handlers
 
 **Gestionnaires de redémarrage :**
 
@@ -875,7 +875,7 @@ ls -la {{ stack_directory }}/backups/ | tail -5
 
 ---
 
-## 🔴 Étape 18 - Playbook principal
+### 🔴 Étape 18 - Playbook principal
 
 **Orchestration complète :**
 
@@ -908,7 +908,7 @@ ls -la {{ stack_directory }}/backups/ | tail -5
 
 ---
 
-## 🔴 Étape 19 - Playbook (suite)
+### 🔴 Étape 19 - Playbook (suite)
 
 **Informations de déploiement :**
 
@@ -929,7 +929,7 @@ ls -la {{ stack_directory }}/backups/ | tail -5
 
 ---
 
-## 🔴 Étape 20 - Script de déploiement
+### 🔴 Étape 20 - Script de déploiement
 
 **Script d'orchestration finale :**
 
@@ -967,7 +967,7 @@ chmod +x deploy-production.sh
 
 ---
 
-## 🔴 Étape 21 - Test final
+### 🔴 Étape 21 - Test final
 
 **Déploiement et vérification :**
 
@@ -988,7 +988,7 @@ docker compose -f /opt/production-stack/docker-compose.yml ps
 
 ---
 
-## Récapitulatif Exercices Ansible 📋
+### Récapitulatif Exercices Ansible 📋
 
 ### Compétences acquises
 
@@ -1006,7 +1006,7 @@ docker compose -f /opt/production-stack/docker-compose.yml ps
 
 ---
 
-## Récapitulatif Ansible (suite) 📋
+### Récapitulatif Ansible (suite) 📋
 
 **🔴 Niveau Avancé** :
 - Déploiement Docker Compose
