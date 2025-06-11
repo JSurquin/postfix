@@ -43,6 +43,8 @@ routeAlias: 'qcm-ansible'
 - [ ]  YAML
 - [ ]  TOML
 
+---
+
 ### 5. Qu'est-ce qu'un inventaire Ansible ?
 
 - [ ]  La liste des playbooks disponibles
@@ -68,6 +70,8 @@ routeAlias: 'qcm-ansible'
 - [ ]  Un rôle est plus rapide qu'un module
 - [ ]  Il n'y a pas de différence
 
+---
+
 ### 8. Quelle commande exécute une tâche ad-hoc sur tous les serveurs web ?
 
 - [ ]  `ansible webservers -m ping`
@@ -92,6 +96,8 @@ routeAlias: 'qcm-ansible'
 - [ ]  `failed_when: false`
 - [ ]  `error_handling: ignore`
 - [ ]  `skip_errors: yes`
+
+---
 
 ### 11. À quoi servent les tags dans Ansible ?
 
