@@ -148,8 +148,6 @@ secrets: # Gestion des secrets
 
 ---
 
-### Application complète Next.js + PostgreSQL + Nginx
-
 ```yaml
 version: '3.8'
 
