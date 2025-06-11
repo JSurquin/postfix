@@ -34,6 +34,10 @@ Un **Dockerfile** est un fichier texte contenant des instructions :
 
 # Qu'est-ce qu'une Image Docker ? 📦
 
+> A vrai dire nous l'avons déjà vu , mais petit rappel :
+
+<br/>
+
 ### Le modèle prêt à utiliser
 
 Une **Image Docker** est un template immuable :
@@ -341,9 +345,7 @@ Le **multi-stage build** sépare construction et production :
 
 ---
 
-# Multi-stage builds 🏭
-
-### Optimisation drastique : de 1GB à 200MB
+### Multi-stage builds 🏭 - Optimisation drastique : de 1GB à 200MB
 
 ```dockerfile
 # Stage 1: Build (image lourde avec outils)
@@ -529,18 +531,68 @@ RUN apt-get install -y curl
 ### Checklist pour un Dockerfile professionnel
 
 ✅ **Image de base** : Alpine, slim, ou spécialisée avec version
+
 ✅ **Ordre des COPY** : Dépendances avant code source
+
 ✅ **RUN optimisé** : Une seule couche avec nettoyage
+
 ✅ **USER non-root** : Sécurité obligatoire
+
 ✅ **HEALTHCHECK** : Monitoring automatique
+
 ✅ **.dockerignore** : Exclusions optimisées
+
 ✅ **Multi-stage** : Images de production minimales
 
 ---
 
-# Exemples par stack technique 💻
+### Exemples par stack technique 💻 - Python Flask - Multi-stage optimisé
 
-### Python Flask
+```dockerfile
+# Stage 1: Build dependencies avec compilateurs
+FROM python:3.12-slim AS builder
+WORKDIR /app
+
+# Installation des outils de build
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Installation des dépendances
+COPY requirements.txt .
+RUN pip install --user --no-cache-dir -r requirements.txt
+
+# Stage 2: Runtime optimisé
+FROM python:3.12-slim
+WORKDIR /app
+
+# Copier seulement les packages installés
+COPY --from=builder /root/.local /root/.local
+
+# Copier le code source
+COPY . .
+
+# Créer utilisateur non-root
+RUN adduser --disabled-password --gecos "" appuser
+USER appuser
+
+# Variables d'environnement
+ENV PATH=/root/.local/bin:$PATH
+ENV FLASK_APP=app.py
+ENV FLASK_ENV=production
+
+# Monitoring
+HEALTHCHECK --interval=30s --timeout=3s \
+    CMD curl -f http://localhost:5000/health || exit 1
+
+EXPOSE 5000
+CMD ["python", "-m", "flask", "run", "--host=0.0.0.0"]
+```
+
+---
+
+### Alternative Flask simple (pour développement)
 
 ```dockerfile
 FROM python:3.12-slim
@@ -551,6 +603,8 @@ COPY . .
 RUN adduser --disabled-password appuser
 USER appuser
 EXPOSE 5000
+HEALTHCHECK --interval=30s --timeout=3s \
+    CMD curl -f http://localhost:5000/health || exit 1
 CMD ["python", "app.py"]
 ```
 
@@ -558,13 +612,47 @@ CMD ["python", "app.py"]
 
 # Exemple Java Spring Boot
 
-### Java Spring Boot
+### Java Spring Boot - Multi-stage build complet
 
 ```dockerfile
+# Stage 1: Build du JAR avec Maven
+FROM maven:3.9-openjdk-21-slim AS build
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests
+
+# Stage 2: Runtime optimisé
 FROM openjdk:21-jre-slim
 WORKDIR /app
-COPY target/*.jar app.jar
+COPY --from=build /app/target/*.jar app.jar
 RUN addgroup --system spring && adduser --system --group spring
 USER spring
 EXPOSE 8080
+HEALTHCHECK --interval=30s --timeout=3s \
+    CMD curl -f http://localhost:8080/actuator/health || exit 1
+ENTRYPOINT ["java", "-jar", "app.jar"]
+```
+
+---
+
+### Alternative avec Gradle
+
+```dockerfile
+# Stage 1: Build avec Gradle
+FROM gradle:8.5-jdk21-alpine AS build
+WORKDIR /app
+COPY build.gradle settings.gradle ./
+COPY src ./src
+RUN gradle build -x test --no-daemon
+
+# Stage 2: Runtime
+FROM openjdk:21-jre-slim
+WORKDIR /app
+COPY --from=build /app/build/libs/*.jar app.jar
+RUN addgroup --system spring && adduser --system --group spring
+USER spring
+EXPOSE 8080
+HEALTHCHECK --interval=30s --timeout=3s \
+    CMD curl -f http://localhost:8080/actuator/health || exit 1
 ENTRYPOINT ["java", "-jar", "app.jar"]

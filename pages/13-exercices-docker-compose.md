@@ -23,7 +23,9 @@ Avant les exercices principaux, des exercices courts pour maîtriser les bases !
 
 ## 🟢 Exercice Express 1 : Ma Première Stack
 
-### Stack super simple avec 2 services (15 min) au choix :
+### Stack super simple avec 2 services (15 min)
+
+**Choix possibles** :
 - nginx + redis
 - nginx + mysql
 - nginx + postgres
@@ -33,6 +35,10 @@ Avant les exercices principaux, des exercices courts pour maîtriser les bases !
 
 **Ce qu'on apprend** : Premier docker-compose.yml, services liés
 
+---
+
+## 🟢 Express 1 - Configuration YAML
+
 ```yaml
 # Créer docker-compose.yml
 version: '3.8'
@@ -41,10 +47,14 @@ services:
   web:
     image: nginx:alpine
     ports:
-      - "8080:80"
+      - '8080:80'
   cache:
     image: votre_choix:alpine
 ```
+
+---
+
+## 🟢 Express 1 - Tests et vérification
 
 ```bash
 # Tester la stack
@@ -64,6 +74,10 @@ docker compose down
 
 **Ce qu'on apprend** : Variables d'environnement, volumes, interface web
 
+---
+
+## 🟡 Express 2 - Configuration BDD
+
 ```yaml
 # docker-compose.yml plus sophistiqué
 version: '3.8'
@@ -77,17 +91,28 @@ services:
       POSTGRES_PASSWORD: password123
     volumes:
       - db_data:/var/lib/postgresql/data
-      
+```
+
+---
+
+## 🟡 Express 2 - Interface Adminer
+
+```yaml
+# Suite du docker-compose.yml
   adminer:
     image: adminer:latest
     ports:
-      - "8081:8080"
+      - '8081:8080'
     depends_on:
       - database
 
 volumes:
   db_data:
 ```
+
+---
+
+## 🟡 Express 2 - Tests et accès
 
 ```bash
 # Test complet
@@ -107,6 +132,10 @@ docker compose down -v
 
 **Ce qu'on apprend** : Stack monitoring, réseaux personnalisés
 
+---
+
+## 🔴 Express 3 - Service Prometheus
+
 ```yaml
 # docker-compose.yml monitoring
 version: '3.8'
@@ -115,14 +144,21 @@ services:
   prometheus:
     image: prom/prometheus:latest
     ports:
-      - "9090:9090"
+      - '9090:9090'
     networks:
       - monitoring
-      
+```
+
+---
+
+## 🔴 Express 3 - Service Grafana
+
+```yaml
+# Suite du docker-compose.yml
   grafana:
     image: grafana/grafana:latest
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       GF_SECURITY_ADMIN_PASSWORD: admin123
     networks:
@@ -137,6 +173,10 @@ networks:
   monitoring:
     driver: bridge
 ```
+
+---
+
+## 🔴 Express 3 - Déploiement et accès
 
 ```bash
 # Déploiement monitoring
@@ -246,9 +286,7 @@ docker compose down
 
 ---
 
-# 🟡 Correction Niveau Intermédiaire
-
-### Configuration avec réseaux
+### 🟡 Correction Niveau Intermédiaire - Configuration avec réseaux
 
 ```yaml
 version: '3.8'
@@ -296,13 +334,17 @@ networks:
 
 ---
 
-# 🟡 Configuration NGINX Proxy
 
-### Fichier nginx.conf automatique
+<div class="-mt-4">
+
+### 🟡 Nginx - Configuration de base (nginx.conf)
 
 ```bash
 # Créer la configuration NGINX
 mkdir -p nginx
+```
+
+```nginx
 # 2. Créer le fichier nginx.conf
 events {
     worker_connections 1024;
@@ -315,24 +357,35 @@ http {
 
     server {
         listen 80;
-        
+
         location / {
             proxy_pass http://app;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         }
-        
+
         location /health {
             return 200 'healthy\n';
             add_header Content-Type text/plain;
         }
     }
 }
+```
 
+</div>
+
+---
+
+## 🟡 Nginx - Page web d'exemple
+
+```bash
 # Créer une page web simple
 mkdir -p html
-# 2. Créer le fichier index.html
+```
+
+```html
+<!-- 2. Créer le fichier index.html -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -401,6 +454,10 @@ docker compose down -v
 
 ### Stack de monitoring complète
 
+---
+
+## 🔴 Avancé - Service Prometheus
+
 ```yaml
 version: '3.8'
 
@@ -413,13 +470,20 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus_data:/prometheus
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/etc/prometheus/console_libraries'
-      - '--web.console.templates=/etc/prometheus/consoles'
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --web.console.libraries=/etc/prometheus/console_libraries
+      - --web.console.templates=/etc/prometheus/consoles
     networks:
       - monitoring
+```
 
+---
+
+## 🔴 Avancé - Service Grafana
+
+```yaml
+# Suite du docker-compose.yml
   grafana:
     image: grafana/grafana:latest
     ports:
@@ -430,7 +494,14 @@ services:
       - grafana_data:/var/lib/grafana
     networks:
       - monitoring
+```
 
+---
+
+## 🔴 Avancé - Node Exporter
+
+```yaml
+# Suite du docker-compose.yml
   node-exporter:
     image: prom/node-exporter:latest
     ports:
@@ -440,13 +511,20 @@ services:
       - /sys:/host/sys:ro
       - /:/rootfs:ro
     command:
-      - '--path.procfs=/host/proc'
-      - '--path.rootfs=/rootfs'
-      - '--path.sysfs=/host/sys'
-      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+      - --path.procfs=/host/proc
+      - --path.rootfs=/rootfs
+      - --path.sysfs=/host/sys
+      - --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)
     networks:
       - monitoring
+```
 
+---
+
+## 🔴 Avancé - AlertManager et volumes
+
+```yaml
+# Suite du docker-compose.yml
   alertmanager:
     image: prom/alertmanager:latest
     ports:
@@ -467,13 +545,11 @@ networks:
 
 ---
 
-# 🔴 Configuration Prometheus
+## 🔴 Config - Fichier Prometheus
 
-### Configuration automatique
-
-```bash
+```yaml
 # Configuration Prometheus
-# 2. Créer le fichier prometheus.yml
+# Créer le fichier prometheus.yml
 global:
   scrape_interval: 15s
   evaluation_interval: 15s
@@ -493,9 +569,15 @@ scrape_configs:
   - job_name: 'grafana'
     static_configs:
       - targets: ['grafana:3000']
+```
 
+---
+
+## 🔴 Config - Fichier AlertManager
+
+```yaml
 # Configuration AlertManager
-# 2. Créer le fichier alertmanager.yml
+# Créer le fichier alertmanager.yml
 global:
   smtp_smarthost: 'localhost:587'
   smtp_from: 'alertmanager@example.org'
@@ -560,9 +642,7 @@ docker compose logs -f prometheus
 
 ---
 
-# 🔵 Correction Niveau Expert
-
-### Infrastructure GitLab complète
+### 🔵 Correction Niveau Expert - Infrastructure GitLab complète
 
 ```yaml
 version: '3.8'
@@ -631,13 +711,11 @@ networks:
 
 ---
 
-# 🔵 Configuration GitLab Expert
-
-### Scripts de configuration automatique
+### 🔵 Script de déploiement GitLab (deploy-gitlab.sh)
 
 ```bash
 # Script de déploiement GitLab
-# 2. Créer le fichier deploy-gitlab.sh
+# Créer le fichier deploy-gitlab.sh
 #!/bin/bash
 
 echo "🚀 Déploiement GitLab DevOps Stack..."
@@ -650,6 +728,14 @@ docker compose up -d
 
 echo "⏳ GitLab démarre... (peut prendre 5-10 minutes)"
 echo "📊 Monitoring du démarrage:"
+```
+
+---
+
+## 🔵 Script d'attente GitLab
+
+```bash
+# Suite du script deploy-gitlab.sh
 
 # Attendre que GitLab soit prêt
 until curl -s http://gitlab.local/users/sign_in > /dev/null; do
@@ -667,7 +753,6 @@ echo ""
 echo "🌐 GitLab: http://gitlab.local"
 echo "👤 Utilisateur: root"
 echo "🔧 Configuration Runner: docker compose exec gitlab-runner gitlab-runner register"
-EOF
 
 chmod +x deploy-gitlab.sh
 ```
@@ -678,9 +763,13 @@ chmod +x deploy-gitlab.sh
 
 ### Registration automatique du Runner
 
+---
+
+## 🔵 Script configuration Runner
+
 ```bash
 # Script de configuration du Runner
-# 2. Créer le fichier setup-runner.sh
+# Créer le fichier setup-runner.sh
 #!/bin/bash
 
 echo "🏃 Configuration GitLab Runner..."
@@ -689,6 +778,14 @@ echo "🏃 Configuration GitLab Runner..."
 echo "1. Aller sur http://gitlab.local/admin/runners"
 echo "2. Copier le registration token"
 echo "3. Exécuter la commande suivante:"
+```
+
+---
+
+## 🔵 Commande registration Runner
+
+```bash
+# Suite du script setup-runner.sh
 
 echo ""
 echo "docker compose exec gitlab-runner gitlab-runner register \\"
@@ -711,13 +808,23 @@ chmod +x setup-runner.sh
 
 # 🔵 Test Stack DevOps Complète
 
+---
+
+## 🔵 Déploiement et attente
+
 ```bash
 # Déploiement complet
 ./deploy-gitlab.sh
 
 # Attendre le démarrage complet
 sleep 300
+```
 
+---
+
+## 🔵 Tests et vérifications
+
+```bash
 # Vérifications
 echo "🧪 Tests de la stack DevOps..."
 
@@ -729,7 +836,13 @@ docker compose exec postgresql pg_isready -U gitlab && echo "✅ PostgreSQL OK"
 
 # Status des services
 docker compose ps
+```
 
+---
+
+## 🔵 Informations finales
+
+```bash
 echo ""
 echo "🎉 Stack DevOps GitLab déployée !"
 echo "🌐 GitLab: http://gitlab.local"
@@ -779,4 +892,4 @@ docker compose logs -f gitlab
 
 ### 🚀 **Docker Compose maîtrisé avec images réelles !**
 
-Prochaine étape : Ansible pour automatiser le déploiement ! 
+Prochaine étape : Ansible pour automatiser le déploiement !

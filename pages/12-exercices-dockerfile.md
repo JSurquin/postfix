@@ -21,11 +21,7 @@ Avant les exercices principaux, des Dockerfiles simples pour s'échauffer !
 
 ---
 
-## 🟢 Exercice Express 1 : Custom Nginx Page
-
-### Personnaliser une page nginx (20 min)
-
-**Ce qu'on apprend** : FROM, COPY, instructions de base
+### 🟢 Exercice Express 1 : Custom Nginx Page - Personnaliser une page nginx (20 min)
 
 ```bash
 # 1. Créer une page personnalisée
@@ -56,15 +52,9 @@ echo "🌐 Test: http://localhost:8080"
 docker stop test-nginx && docker rm test-nginx
 ```
 
-**Mission** : Voir votre page personnalisée !
-
 ---
 
-## 🟡 Exercice Express 2 : App Node.js Simple
-
-### Containeriser une app web basique (25 min)
-
-**Ce qu'on apprend** : WORKDIR, RUN, CMD, workflow complet
+### 🟡 Exercice Express 2 : App Node.js Simple - Containeriser une app web basique (25 min)
 
 ```bash
 # 1. Créer l'app Node.js
@@ -115,15 +105,9 @@ echo "🌐 App: http://localhost:3000"
 docker stop test-app && docker rm test-app
 ```
 
-**Mission** : Voir votre app web fonctionner !
-
 ---
 
-## 🔴 Exercice Express 3 : Multi-stage Optimisé
-
-### Optimiser avec un build en 2 étapes (30 min)
-
-**Ce qu'on apprend** : Multi-stage build, optimisation de taille
+### 🔴 Exercice Express 3 : Multi-stage Optimisé - Optimiser avec un build en 2 étapes (30 min)
 
 ```bash
 # 1. Préparer le projet
@@ -189,17 +173,13 @@ echo "🌐 App optimisée: http://localhost:8080"
 docker stop test-opt && docker rm test-opt
 ```
 
-**Mission** : Comparer les tailles d'images !
-
 ---
 
 ## 🎯 Exercices Principaux Détaillés
 
 ---
 
-# 🟢 Exercice Niveau Simple
-
-### Personnaliser une page web
+### 🟢 Exercice Niveau Simple - Personnaliser une page web
 
 **Objectif** : Customiser une image nginx avec votre propre page
 
@@ -215,7 +195,7 @@ docker stop test-opt && docker rm test-opt
 
 ---
 
-# 🟢 Correction Niveau Simple
+### 🟢 Correction Niveau Simple
 
 ```bash
 # 1. Créer le projet
@@ -259,7 +239,7 @@ cd mon-site
 
 ---
 
-# 🟢 Dockerfile Simple
+### 🟢 Dockerfile Simple
 
 ```dockerfile
 # 3. Créer le Dockerfile
@@ -298,9 +278,7 @@ docker stop test-site && docker rm test-site
 
 ---
 
-# 🟡 Exercice Niveau Intermédiaire
-
-### Ajouter des outils utiles
+### 🟡 Exercice Niveau Intermédiaire - Ajouter des outils utiles
 
 **Objectif** : Créer une image avec quelques outils pratiques
 
@@ -316,7 +294,7 @@ docker stop test-site && docker rm test-site
 
 ---
 
-# 🟡 Correction Niveau Intermédiaire
+### 🟡 Correction Niveau Intermédiaire
 
 ```bash
 # 1. Créer le projet
@@ -340,7 +318,7 @@ chmod +x aide.sh
 
 ---
 
-# 🟡 Dockerfile Intermédiaire
+### 🟡 Dockerfile Intermédiaire
 
 ```dockerfile
 # 3. Dockerfile avec outils
@@ -392,9 +370,7 @@ docker rm test-outils
 
 ---
 
-# 🔴 Exercice Niveau Avancé
-
-### Multi-stage simple
+### 🔴 Exercice Niveau Avancé - Multi-stage simple
 
 **Objectif** : Optimiser la taille avec un build en 2 étapes
 
@@ -409,7 +385,7 @@ docker rm test-outils
 
 ---
 
-# 🔴 Correction Multi-stage
+### 🔴 Correction Multi-stage
 
 ```bash
 # 1. Créer le projet
@@ -456,7 +432,7 @@ cd site-optimise
 
 ---
 
-# 🔴 Dockerfile Multi-stage
+### 🔴 Dockerfile Multi-stage
 
 ```dockerfile
 # 3. Dockerfile optimisé
@@ -516,9 +492,9 @@ docker stop site-opt && docker rm site-opt
 
 ---
 
-# Récapitulatif Dockerfile 📋
+### Récapitulatif Dockerfile 📋
 
-### Ce qu'on a appris simplement
+#### Ce qu'on a appris simplement
 
 **🟢 Niveau Simple** :
 - `FROM` : Choisir une image de base
@@ -534,7 +510,7 @@ docker stop site-opt && docker rm site-opt
 
 ---
 
-# Récapitulatif Dockerfile (suite) 📋
+### Récapitulatif Dockerfile (suite) 📋
 
 **🔴 Niveau Avancé** :
 - Multi-stage build (2 étapes)
@@ -542,15 +518,14 @@ docker stop site-opt && docker rm site-opt
 - Optimisation de taille
 - Comparaison d'images
 
-### 🎯 **Progression logique maîtrisée !**
+#### 🎯 **Progression logique maîtrisée !**
 
 **Prochaine étape** : Docker Compose pour orchestrer plusieurs containers !
-
 ---
 
-# 💡 Points clés à retenir
+### 💡 Points clés à retenir
 
-### Instructions Dockerfile essentielles
+#### Instructions Dockerfile essentielles
 
 ```dockerfile
 FROM image:tag          # Image de base
@@ -562,11 +537,11 @@ WORKDIR /path          # Répertoire de travail
 CMD ["commande"]       # Commande par défaut
 ```
 
-### Bonnes pratiques simples
+#### Bonnes pratiques simples
 
 1. **Images de base légères** (`alpine`)
 2. **Une seule responsabilité** par image
 3. **Multi-stage** pour optimiser
 4. **Labels** pour la documentation
 
-### 🚀 **Docker maîtrisé progressivement !** 
+#### 🚀 **Docker maîtrisé progressivement !**

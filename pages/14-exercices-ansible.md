@@ -42,7 +42,6 @@ all:
       ansible_python_interpreter: /usr/bin/python3
   vars:
     ansible_user: "{{ ansible_env.USER }}"
-EOF
 ```
 
 ---
@@ -386,7 +385,7 @@ chmod +x deploy.sh
 ### Architecture cible
 
 ```mermaid
-flowchart TD
+flowchart LR
     U[👤 Utilisateur] --> N[🔄 Nginx Proxy]
     N --> A1[🐳 WebApp 1]
     N --> A2[🐳 WebApp 2]
@@ -406,7 +405,7 @@ flowchart TD
 
 ---
 
-## 🔴 Étape 1 - Structure du rôle
+### 🔴 Étape 1 - Structure du rôle
 
 **D'abord, on organise notre nouveau rôle pour la stack :**
 
@@ -423,14 +422,13 @@ galaxy_info:
   author: DevOps Team
   description: Stack Docker Compose production avec Nginx + WebApp + MySQL
   min_ansible_version: 2.9
-EOF
 ```
 
 **💡 Logic** : Notre nouvelle stack utilise le rôle `webapp` qu'on a créé avant !
 
 ---
 
-## 🔴 Étape 2 - Variables de base
+### 🔴 Étape 2 - Variables de base
 
 **Configuration de base de notre stack :**
 
@@ -445,12 +443,11 @@ stack_directory: "/opt/{{ stack_name }}"
 app_port: 80
 app_image: "webapp-ansible"  # L'image qu'on a créée avant
 app_version: "latest"
-EOF
 ```
 
 ---
 
-## 🔴 Étape 3 - Variables base de données
+### 🔴 Étape 3 - Variables base de données
 
 **Configuration MySQL sécurisée :**
 
@@ -463,12 +460,11 @@ mysql_root_password: "{{ vault_mysql_root_password | default('production123') }}
 mysql_database: "webapp"
 mysql_user: "app_user"
 mysql_password: "{{ vault_mysql_password | default('apppass123') }}"
-EOF
 ```
 
 ---
 
-## 🔴 Étape 4 - Variables environnements
+### 🔴 Étape 4 - Variables environnements
 
 **Configuration par environnement (dev/staging/prod) :**
 
@@ -491,12 +487,11 @@ environments:
 monitoring_enabled: true
 backup_enabled: true
 backup_schedule: "0 2 * * *"  # Tous les jours à 2h
-EOF
 ```
 
 ---
 
-## 🔴 Étape 5 - Docker Compose : Base
+### 🔴 Étape 5 - Docker Compose : Base
 
 **Création du template docker-compose principal :**
 
@@ -518,12 +513,11 @@ services:
     networks:
       - frontend
     restart: unless-stopped
-EOF
 ```
 
 ---
 
-## 🔴 Étape 6 - Docker Compose : Application
+### 🔴 Étape 6 - Docker Compose : Application
 
 **Service application dans le docker-compose :**
 
@@ -550,12 +544,11 @@ EOF
       interval: 30s
       timeout: 10s
       retries: 3
-EOF
 ```
 
 ---
 
-## 🔴 Étape 7 - Docker Compose : Base de données
+### 🔴 Étape 7 - Docker Compose : Base de données
 
 **Service MySQL dans le docker-compose :**
 
@@ -582,12 +575,11 @@ EOF
       interval: 30s
       timeout: 10s
       retries: 3
-EOF
 ```
 
 ---
 
-## 🔴 Étape 8 - Docker Compose : Réseaux
+### 🔴 Étape 8 - Docker Compose : Réseaux
 
 **Volumes et réseaux du docker-compose :**
 
@@ -603,12 +595,11 @@ networks:
     driver: bridge
   backend:
     driver: bridge
-EOF
 ```
 
 ---
 
-## 🔴 Étape 9 - Configuration Nginx : Base
+### 🔴 Étape 9 - Configuration Nginx : Base
 
 **Template nginx pour le proxy :**
 
@@ -627,12 +618,11 @@ http {
     # Logs
     access_log /var/log/nginx/access.log;
     error_log /var/log/nginx/error.log;
-EOF
 ```
 
 ---
 
-## 🔴 Étape 10 - Configuration Nginx : Virtual Host
+### 🔴 Étape 10 - Configuration Nginx : Virtual Host
 
 **Configuration du serveur web :**
 
@@ -666,12 +656,11 @@ EOF
         }
     }
 }
-EOF
 ```
 
 ---
 
-## 🔴 Étape 11 - Tâches : Préparation
+### 🔴 Étape 11 - Tâches : Préparation
 
 **Tâches de préparation des répertoires :**
 
@@ -696,12 +685,11 @@ EOF
     - nginx-proxy
     - backups
     - scripts
-EOF
 ```
 
 ---
 
-## 🔴 Étape 12 - Tâches : Génération des fichiers
+### 🔴 Étape 12 - Tâches : Génération des fichiers
 
 **Génération des templates :**
 
@@ -736,12 +724,11 @@ EOF
     src: monitor.sh.j2
     dest: "{{ stack_directory }}/scripts/monitor.sh"
     mode: '0755'
-EOF
 ```
 
 ---
 
-## 🔴 Étape 13 - Tâches : Déploiement
+### 🔴 Étape 13 - Tâches : Déploiement
 
 **Démarrage de la stack et vérifications :**
 
@@ -780,7 +767,6 @@ EOF
   register: health_check
   retries: 3
   delay: 5
-EOF
 ```
 
 ---
@@ -804,7 +790,6 @@ echo "💾 Backup de la stack $STACK_NAME - $DATE"
 docker compose -f {{ stack_directory }}/docker-compose.yml exec -T database \
     mysqldump -u root -p{{ mysql_root_password }} {{ mysql_database }} \
     > "$BACKUP_DIR/db_backup_$DATE.sql"
-EOF
 ```
 
 ---
@@ -828,7 +813,6 @@ find "$BACKUP_DIR" -name "*backup_*.tar.gz" -mtime +7 -delete
 
 echo "✅ Backup terminé dans $BACKUP_DIR"
 ls -la "$BACKUP_DIR"/*$DATE*
-EOF
 ```
 
 ---
@@ -864,7 +848,6 @@ curl -s -o /dev/null -w "Status: %{http_code} | Time: %{time_total}s\n" \
 echo ""
 echo "💾 Derniers backups:"
 ls -la {{ stack_directory }}/backups/ | tail -5
-EOF
 ```
 
 ---
@@ -888,7 +871,6 @@ EOF
     services:
       - proxy
     restarted: true
-EOF
 ```
 
 ---
@@ -922,7 +904,6 @@ EOF
     - name: Déployer la stack complète
       include_role:
         name: docker-stack
-EOF
 ```
 
 ---
@@ -944,7 +925,6 @@ EOF
           🏥 Health: http://localhost:{{ app_port }}/health
           🛠️ Monitoring: {{ stack_directory }}/scripts/monitor.sh
           💾 Backup: {{ stack_directory }}/scripts/backup.sh
-EOF
 ```
 
 ---
