@@ -15,6 +15,8 @@ routeAlias: 'fondamentaux-ansible'
 
 Ansible est l'outil d'automatisation de référence : **sans agent, idempotent, déclaratif**.
 
+> l'idempotence signifie qu'une opération a le même effet qu'on l'applique une ou plusieurs fois.
+
 ---
 
 # Ansible - Perfect pour Docker
@@ -24,8 +26,6 @@ Ansible est l'outil d'automatisation de référence : **sans agent, idempotent, 
 Parfait pour orchestrer Docker et automatiser l'infrastructure.
 
 Exemple concret : Automatiser le déploiement d’une app Dockerisée sur plusieurs serveurs en une seule commande, sans se connecter manuellement à chaque machine, pour installer Docker, copier le code, builder l’image, lancer le conteneur, et gérer les mises à jour ou redémarrages.
-
-**Ansible 2025** : Support natif containers, modules cloud avancés, collections étendues
 
 ---
 
@@ -620,12 +620,12 @@ log_level=ERROR
 worker_processes {{ nginx_worker_processes }};
 # On peut utiliser des boucles pour générer des fichiers de config dynamiquement
 upstream app {
+# autant de x le nombre de replicas dans le ".env" alors on fais l'action
+# (si replicas = 3 => on écrira dans la conf de nginx 3 x la commande server app-)
 {% for i in range(environments[env].replicas) %}
     server app-{{ i+1 }}:8080;
 {% endfor %}
 }
-# Donc dans ce cas : 
-# On peut aussi utiliser des variables pour générer des fichiers de config dynamiquement
 ```
 
 ---
@@ -819,11 +819,6 @@ tasks:
       path: '/opt/{{ app_name }}/{{ item }}'
       state: directory
     loop: [data, logs, config]
-
-  - name: Configuration docker-compose
-    template:
-      src: docker-compose.yml.j2
-      dest: '/opt/{{ app_name }}/docker-compose.yml'
 ```
 
 ---
@@ -995,11 +990,27 @@ ansible-project/
 ├── inventory/
 │   ├── production.yml
 │   └── staging.yml
-├── group_vars/all.yml
+├── group_vars/
+│   ├── all.yml
+│   ├── docker.yml
+│   └── webapp.yml
+├── templates/
+│   ├── nginx.conf.j2
+│   ├── docker-compose.yml.j2
+│   ├── daemon.json.j2
+│   ├── .env.j2
+│   └── README.md
 ├── playbooks/
 │   ├── site.yml
 │   └── deploy.yml
 ├── roles/
+│   ├── docker/
+│   ├── nginx/
+│   └── app/
+├── .env
+├── .env.staging
+├── .env.production
+├── .env.development
 └── secrets.yml (vault)
 ```
 
