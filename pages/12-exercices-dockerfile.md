@@ -3,7 +3,7 @@ layout: new-section
 routeAlias: 'exercices-dockerfile'
 ---
 
-<a name="EXERCICES_DOCKERFILE" id="EXERCICES_DOCKERFILE"></a>
+<a name="exercices-dockerfile" id="exercices-dockerfile"></a>
 
 # Exercices Dockerfile 📝
 

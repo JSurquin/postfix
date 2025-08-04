@@ -3,7 +3,7 @@ layout: new-section
 routeAlias: 'exercices-docker-compose'
 ---
 
-<a name="EXERCICES_COMPOSE" id="EXERCICES_COMPOSE"></a>
+<a name="exercices-docker-compose" id="exercices-docker-compose"></a>
 
 # Exercices Docker Compose 🎼
 

@@ -3,7 +3,7 @@ layout: new-section
 routeAlias: 'exercices-cli-docker'
 ---
 
-<a name="EXERCICES_CLI" id="EXERCICES_CLI"></a>
+<a name="exercices-cli-docker" id="exercices-cli-docker"></a>
 
 # Exercices CLI Docker 🎯
 

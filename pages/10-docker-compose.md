@@ -3,7 +3,7 @@ layout: new-section
 routeAlias: 'docker-compose-orchestration'
 ---
 
-<a name="DOCKER_COMPOSE" id="DOCKER_COMPOSE"></a>
+<a name="docker-compose-orchestration" id="docker-compose-orchestration"></a>
 
 # Docker Compose - Orchestration Multi-Containers
 
@@ -216,9 +216,8 @@ WORKDIR /app
 
 # Installer les dépendances basées sur le gestionnaire de packages préféré
 COPY package.json package-lock.json ./
-RUN npm ci; 
+RUN npm ci;
 # npm install
-
 # Rebuild le code source seulement quand nécessaire
 # 2 eme stage, permet de différencier le build de l'app et le runner
 FROM base AS builder
@@ -236,7 +235,6 @@ FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
-
 # on crée un user et un group
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
@@ -246,13 +244,10 @@ COPY --from=builder /app/public ./public
 # Copier les fichiers de build Next.js
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
 # on change de user
 USER nextjs
-
 # on expose le port 3000
 EXPOSE 3000
-
 # on définit le port et le hostname
 ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"

@@ -239,10 +239,15 @@ docker run --rm python:3.12-alpine python --version
 ### Vous venez de maîtriser :
 
 ✅ **Vérifier** votre installation Docker
+
 ✅ **Lancer** votre premier container (`docker run`)
+
 ✅ **Lister** les containers et images (`docker ps`, `docker images`)
+
 ✅ **Surveiller** vos containers (`docker logs`, `docker stats`)
+
 ✅ **Gérer le cycle de vie** (`docker stop`, `docker rm`)
+
 ✅ **Pratiquer** de façon autonome
 
 ### 🚀 **Prêt pour le CLI !**

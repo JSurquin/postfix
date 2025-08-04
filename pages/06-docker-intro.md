@@ -3,7 +3,7 @@ layout: new-section
 routeAlias: 'intro-docker'
 ---
 
-<a name="INTRO-DOCKER" id="INTRO-DOCKER"></a>
+<a name="intro-docker" id="intro-docker"></a>
 
 # Introduction à Docker 🐳
 

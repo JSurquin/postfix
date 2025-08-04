@@ -3,7 +3,7 @@ layout: new-section
 routeAlias: 'comprendre-cicd'
 ---
 
-<a name="CI/CD" id="CI/CD"></a>
+<a name="comprendre-cicd" id="comprendre-cicd"></a>
 
 # Comprendre le CI/CD & les micro-services
 
