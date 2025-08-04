@@ -30,15 +30,41 @@ routeAlias: 'rappel-fondamentaux'
 
 ### Compréhension approfondie des types Python
 
+**Types immutables vs mutables :**
+- `int`, `str`, `tuple` : immutables
+- `list`, `dict`, `set` : mutables
+
+**Références et copies :**
+- Référence : même objet en mémoire
+- Copie superficielle : nouveaux objets, références partagées
+- Copie profonde : objets complètement indépendants
+
+---
+
+# Types Immutables vs Mutables
+
 ```python
-# Types immutables vs mutables
+# Types immutables
 x = 42          # int (immutable)
 y = "hello"     # str (immutable)
-z = [1, 2, 3]  # list (mutable)
+t = (1, 2, 3)  # tuple (immutable)
 
-# Références et copies
+# Types mutables
+z = [1, 2, 3]  # list (mutable)
+d = {"a": 1}   # dict (mutable)
+s = {1, 2, 3}  # set (mutable)
+```
+
+---
+
+# Références et Copies
+
+```python
+# Référence (même objet)
 a = [1, 2, 3]
 b = a           # Référence (même objet)
+
+# Copies superficielles
 c = a.copy()    # Copie superficielle
 d = a[:]        # Copie superficielle (slice)
 e = list(a)     # Copie superficielle
@@ -54,8 +80,17 @@ f = copy.deepcopy(a)  # Copie profonde
 
 ### Techniques avancées de contrôle de flux
 
+**Optimisations principales :**
+- Éviter `range(len())` quand possible
+- Utiliser `enumerate()` pour l'index
+- Préférer les list comprehensions
+- Optimiser les boucles imbriquées
+
+---
+
+# Optimisation des Boucles
+
 ```python
-# Optimisation des boucles
 # ❌ Moins efficace
 for i in range(len(items)):
     print(items[i])
@@ -67,10 +102,24 @@ for item in items:
 # ✅ Avec index si nécessaire
 for i, item in enumerate(items):
     print(f"{i}: {item}")
+```
 
-# List comprehensions avancées
-squares = [x**2 for x in range(10) if x % 2 == 0]
+---
+
+# List Comprehensions Avancées
+
+```python
+# List comprehension simple
+squares = [x**2 for x in range(10)]
+
+# Avec condition
+even_squares = [x**2 for x in range(10) if x % 2 == 0]
+
+# List comprehension imbriquée
 matrix = [[i+j for j in range(3)] for i in range(3)]
+
+# Dict comprehension
+square_dict = {x: x**2 for x in range(5)}
 ```
 
 ---
@@ -79,20 +128,68 @@ matrix = [[i+j for j in range(3)] for i in range(3)]
 
 ### Fonctionnalités avancées des fonctions
 
+**Concepts avancés :**
+- Annotations de type
+- Arguments variables (`*args`, `**kwargs`)
+- Fonctions lambda avancées
+- Fonctions d'ordre supérieur
+
+---
+
+# Fonctions avec Annotations de Type
+
 ```python
 # Fonctions avec annotations de type
 def greet(name: str, age: int = 18) -> str:
     return f"Hello {name}, you are {age} years old"
 
+# Fonction avec types complexes
+from typing import List, Dict, Optional
+
+def process_data(items: List[int], config: Optional[Dict] = None) -> List[str]:
+    if config is None:
+        config = {}
+    return [str(item) for item in items]
+```
+
+---
+
+# Arguments Variables
+
+```python
 # Fonctions avec *args et **kwargs
 def flexible_func(*args, **kwargs):
     print(f"Positional args: {args}")
     print(f"Keyword args: {kwargs}")
 
-# Fonctions lambda avancées
+# Utilisation
+flexible_func(1, 2, 3, name="John", age=30)
+
+# Fonction avec paramètres mixtes
+def mixed_func(required, *args, optional=None, **kwargs):
+    print(f"Required: {required}")
+    print(f"Args: {args}")
+    print(f"Optional: {optional}")
+    print(f"Kwargs: {kwargs}")
+```
+
+---
+
+# Fonctions Lambda Avancées
+
+```python
+# Fonctions lambda avec reduce
 from functools import reduce
 numbers = [1, 2, 3, 4, 5]
 sum_squares = reduce(lambda x, y: x + y**2, numbers, 0)
+
+# Lambda avec filter et map
+even_numbers = list(filter(lambda x: x % 2 == 0, numbers))
+doubled = list(map(lambda x: x * 2, numbers))
+
+# Lambda avec sorted
+names = ["Alice", "Bob", "Charlie"]
+sorted_names = sorted(names, key=lambda x: len(x))
 ```
 
 ---
@@ -101,25 +198,48 @@ sum_squares = reduce(lambda x, y: x + y**2, numbers, 0)
 
 ### Techniques avancées avec les collections
 
-```python
-# Dictionnaires avancés
-from collections import defaultdict, Counter
+**Collections spécialisées :**
+- `defaultdict` : évite les KeyError
+- `Counter` : comptage efficace
+- `deque` : file double-ended
+- `namedtuple` : tuples nommés
 
+---
+
+# Dictionnaires Avancés
+
+```python
 # defaultdict - évite les KeyError
+from collections import defaultdict
+
 dd = defaultdict(list)
 dd['a'].append(1)  # Pas besoin de vérifier si 'a' existe
 
 # Counter - comptage efficace
+from collections import Counter
+
 text = "hello world"
 char_count = Counter(text)
 most_common = char_count.most_common(3)
+```
 
+---
+
+# Sets et Opérations Ensemblistes
+
+```python
 # Sets avancés
 set1 = {1, 2, 3, 4}
 set2 = {3, 4, 5, 6}
+
+# Opérations ensemblistes
 union = set1 | set2
 intersection = set1 & set2
 difference = set1 - set2
+symmetric_diff = set1 ^ set2
+
+# Frozenset (immutable)
+fs = frozenset([1, 2, 3])
 ```
 
 ---
@@ -128,8 +248,18 @@ difference = set1 - set2
 
 ### Gestion d'erreurs robuste et efficace
 
+**Bonnes pratiques :**
+- Utiliser des context managers
+- Gérer les exceptions spécifiques
+- Éviter les `except: pass`
+- Logger les erreurs appropriément
+
+---
+
+# Context Managers Personnalisés
+
 ```python
-# Context managers personnalisés
+# Context manager avec contextlib
 from contextlib import contextmanager
 
 @contextmanager
@@ -144,7 +274,13 @@ def timer():
 with timer():
     # Code à mesurer
     pass
+```
 
+---
+
+# Gestion d'Erreurs Spécifique
+
+```python
 # Gestion d'erreurs spécifique
 try:
     result = risky_operation()
@@ -161,6 +297,16 @@ except Exception as e:
 
 ### POO avancée et bonnes pratiques
 
+**Concepts avancés :**
+- Propriétés et encapsulation
+- Méthodes de classe et statiques
+- Héritage multiple
+- Classes abstraites
+
+---
+
+# Propriétés et Encapsulation
+
 ```python
 # Propriétés et encapsulation
 class BankAccount:
@@ -176,7 +322,13 @@ class BankAccount:
         if value < 0:
             raise ValueError("Le solde ne peut pas être négatif")
         self._balance = value
+```
 
+---
+
+# Méthodes de Classe et Statiques
+
+```python
 # Méthodes de classe et statiques
 class MathUtils:
     @staticmethod
@@ -187,6 +339,10 @@ class MathUtils:
     def from_string(cls, string):
         x, y = map(int, string.split(','))
         return cls(x, y)
+
+# Utilisation
+result = MathUtils.add(5, 3)
+obj = MathUtils.from_string("10,20")
 ```
 
 ---
@@ -194,6 +350,16 @@ class MathUtils:
 # 7. Modules et Packages - Organisation
 
 ### Structure de projet professionnelle
+
+**Structure recommandée :**
+- Séparation claire des responsabilités
+- Packages avec `__init__.py`
+- Tests unitaires
+- Documentation
+
+---
+
+# Structure de Projet
 
 ```python
 # Structure recommandée
@@ -208,13 +374,24 @@ my_project/
 ├── docs/
 ├── requirements.txt
 └── setup.py
+```
 
+---
+
+# __init__.py Avancé
+
+```python
 # __init__.py avancé
 from .core import main_function
 from .utils import helper_function
 
 __version__ = "1.0.0"
 __all__ = ["main_function", "helper_function"]
+
+# Configuration du package
+def setup_package():
+    """Configuration initiale du package"""
+    pass
 ```
 
 ---
@@ -222,6 +399,16 @@ __all__ = ["main_function", "helper_function"]
 # 8. Manipulation de Fichiers - Techniques Avancées
 
 ### Gestion de fichiers robuste
+
+**Techniques avancées :**
+- `pathlib` pour la gestion des chemins
+- Gestion d'erreurs robuste
+- Context managers personnalisés
+- Encodage approprié
+
+---
+
+# Pathlib - Approche Moderne
 
 ```python
 # Pathlib - approche moderne
@@ -232,6 +419,16 @@ project_dir = Path("my_project")
 project_dir.mkdir(exist_ok=True)
 (project_dir / "data").mkdir(exist_ok=True)
 
+# Manipulation de chemins
+file_path = Path("my_folder/my_file.txt")
+parent_dir = file_path.parent
+```
+
+---
+
+# Lecture/Écriture Robuste
+
+```python
 # Lecture/écriture avec gestion d'erreurs
 def safe_read_file(file_path):
     try:
@@ -251,6 +448,16 @@ def safe_read_file(file_path):
 
 ### Standards de qualité du code
 
+**Standards :**
+- PEP 8 pour le style
+- Docstrings appropriées
+- Annotations de type
+- Gestion d'erreurs
+
+---
+
+# PEP 8 - Style de Code
+
 ```python
 # PEP 8 - Style de code
 def calculate_average(numbers: list[float]) -> float:
@@ -269,9 +476,24 @@ def calculate_average(numbers: list[float]) -> float:
         raise ValueError("La liste ne peut pas être vide")
     
     return sum(numbers) / len(numbers)
+```
 
+---
+
+# Annotations de Type
+
+```python
 # Docstrings et annotations
 from typing import Optional, List, Dict, Any
+
+def process_data(
+    items: List[int], 
+    config: Optional[Dict[str, Any]] = None
+) -> List[str]:
+    """Traite une liste de données avec configuration optionnelle."""
+    if config is None:
+        config = {}
+    return [str(item) for item in items]
 ```
 
 ---
@@ -279,6 +501,16 @@ from typing import Optional, List, Dict, Any
 # 10. Performance et Optimisation - Bases
 
 ### Premiers concepts d'optimisation
+
+**Concepts de base :**
+- Profiling simple
+- Optimisation des boucles
+- Choix des structures de données
+- Éviter les anti-patterns
+
+---
+
+# Profiling Simple
 
 ```python
 # Profiling simple
@@ -294,7 +526,13 @@ def profile_function(func):
         profiler.print_stats(sort='cumulative')
         return result
     return wrapper
+```
 
+---
+
+# Optimisation des Boucles
+
+```python
 # Optimisation des boucles
 # ❌ Moins efficace
 result = []
@@ -303,6 +541,9 @@ for i in range(1000):
 
 # ✅ Plus efficace
 result = [i * 2 for i in range(1000)]
+
+# ✅ Avec générateur pour la mémoire
+result = (i * 2 for i in range(1000000))
 ```
 
 ---
@@ -337,11 +578,18 @@ def get_statistics(numbers: List[float]) -> Dict[str, float]:
         'mean': mean(numbers),
         'median': median(numbers)
     }
+```
 
+---
+
+# Test des Statistiques
+
+```python
 # Test
 numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 stats = get_statistics(numbers)
 print(stats)
+# {'min': 1, 'max': 10, 'mean': 5.5, 'median': 5.5}
 ```
 
 ---
@@ -369,7 +617,13 @@ class Logger:
         except Exception as e:
             self.logger.error(f"Erreur dans {func_name}: {e}")
             raise
+```
 
+---
+
+# Utilisation du Logger
+
+```python
 # Utilisation
 logger = Logger("my_app")
 with logger.log_function("ma_fonction"):
@@ -406,7 +660,13 @@ def retry(max_attempts: int = 3, delay: float = 1.0):
             raise last_exception
         return wrapper
     return decorator
+```
 
+---
+
+# Test du Décorateur Retry
+
+```python
 # Utilisation
 @retry(max_attempts=3, delay=0.5)
 def risky_function():
@@ -414,6 +674,13 @@ def risky_function():
     if random.random() < 0.7:
         raise ValueError("Échec aléatoire")
     return "Succès!"
+
+# Test
+try:
+    result = risky_function()
+    print(result)
+except ValueError as e:
+    print(f"Échec final: {e}")
 ```
 
 ---

@@ -13,6 +13,16 @@ routeAlias: 'decorateurs-generateurs'
 
 ### Au-delà des bases
 
+**Concepts avancés :**
+- Décorateurs avec paramètres
+- Décorateurs de classe
+- Décorateurs de méthodes
+- Décorateurs de validation
+
+---
+
+# Décorateur avec Paramètres
+
 ```python
 # Décorateur avec paramètres
 def repeat(times):
@@ -28,6 +38,15 @@ def repeat(times):
 def greet(name):
     print(f"Hello {name}")
 
+# Utilisation
+greet("John")
+```
+
+---
+
+# Décorateur de Classe
+
+```python
 # Décorateur de classe
 def singleton(cls):
     instances = {}
@@ -41,6 +60,11 @@ def singleton(cls):
 class Database:
     def __init__(self):
         print("Initialisation de la base de données")
+
+# Test
+db1 = Database()
+db2 = Database()
+print(db1 is db2)  # True
 ```
 
 ---
@@ -48,6 +72,16 @@ class Database:
 # Générateurs et Itérateurs
 
 ### Gestion efficace de la mémoire
+
+**Avantages des générateurs :**
+- Économie de mémoire
+- Évaluation lazy
+- Traitement de grandes séquences
+- Pipelines de données
+
+---
+
+# Générateur Simple
 
 ```python
 # Générateur simple
@@ -61,7 +95,13 @@ def fibonacci():
 fib = fibonacci()
 for _ in range(10):
     print(next(fib))
+```
 
+---
+
+# Générateur avec Paramètres
+
+```python
 # Générateur avec paramètres
 def count_up_to(n):
     i = 0
@@ -71,6 +111,10 @@ def count_up_to(n):
 
 # Expression génératrice
 squares = (x**2 for x in range(1000000))  # Pas de liste en mémoire
+
+# Utilisation
+for num in count_up_to(5):
+    print(num)
 ```
 
 ---
@@ -78,6 +122,16 @@ squares = (x**2 for x in range(1000000))  # Pas de liste en mémoire
 # Décorateurs de Méthodes
 
 ### Décorateurs pour les classes
+
+**Types de décorateurs :**
+- `@property` : propriétés
+- `@classmethod` : méthodes de classe
+- `@staticmethod` : méthodes statiques
+- Décorateurs personnalisés
+
+---
+
+# Décorateur de Propriété
 
 ```python
 # Décorateur de propriété
@@ -94,23 +148,33 @@ class Circle:
         if value < 0:
             raise ValueError("Le rayon ne peut pas être négatif")
         self._radius = value
+```
+
+---
+
+# Propriétés Calculées
+
+```python
+# Propriétés calculées
+class Circle:
+    def __init__(self, radius):
+        self._radius = radius
     
     @property
     def area(self):
         import math
         return math.pi * self._radius ** 2
-
-# Décorateur de méthode de classe
-class Date:
-    def __init__(self, year, month, day):
-        self.year = year
-        self.month = month
-        self.day = day
     
-    @classmethod
-    def from_string(cls, date_string):
-        year, month, day = map(int, date_string.split('-'))
-        return cls(year, month, day)
+    @property
+    def circumference(self):
+        import math
+        return 2 * math.pi * self._radius
+
+# Utilisation
+circle = Circle(5)
+print(f"Rayon: {circle.radius}")
+print(f"Aire: {circle.area}")
+print(f"Circonférence: {circle.circumference}")
 ```
 
 ---
@@ -118,6 +182,16 @@ class Date:
 # Générateurs Avancés
 
 ### Patterns avancés avec les générateurs
+
+**Applications avancées :**
+- Pipelines de traitement
+- Filtrage de données
+- Transformation de séquences
+- Traitement de fichiers
+
+---
+
+# Pipeline de Générateurs
 
 ```python
 # Pipeline de générateurs
@@ -134,7 +208,13 @@ def filter_even(numbers):
 def square(numbers):
     for num in numbers:
         yield num ** 2
+```
 
+---
+
+# Pipeline Complet
+
+```python
 # Pipeline complet
 numbers = read_numbers('numbers.txt')
 even_numbers = filter_even(numbers)
@@ -149,6 +229,16 @@ for result in squared_even:
 # Décorateurs de Validation
 
 ### Validation automatique des données
+
+**Types de validation :**
+- Validation de types
+- Validation de valeurs
+- Validation de paramètres
+- Validation de retour
+
+---
+
+# Validation de Types
 
 ```python
 def validate_types(**type_hints):
@@ -168,12 +258,22 @@ def validate_types(**type_hints):
 @validate_types(x=int, y=str)
 def process_data(x, y):
     return f"Processed: {x} and {y}"
+```
 
+---
+
+# Test de Validation
+
+```python
 # Test
 try:
     process_data("5", 123)  # Erreur de type
 except TypeError as e:
     print(f"Erreur: {e}")
+
+# Succès
+result = process_data(5, "hello")
+print(result)
 ```
 
 ---
@@ -181,6 +281,16 @@ except TypeError as e:
 # Générateurs Infinis
 
 ### Générateurs sans limite
+
+**Applications :**
+- Séquences mathématiques
+- Flux de données
+- Simulation de processus
+- Génération de données
+
+---
+
+# Générateur de Nombres Premiers
 
 ```python
 # Générateur de nombres premiers
@@ -199,11 +309,22 @@ def primes():
         if is_prime(n):
             yield n
         n += 1
+```
 
+---
+
+# Utilisation du Générateur Infini
+
+```python
 # Utilisation
 prime_gen = primes()
 first_10_primes = [next(prime_gen) for _ in range(10)]
 print(first_10_primes)
+
+# Ou avec itertools
+from itertools import islice
+first_10 = list(islice(primes(), 10))
+print(first_10)
 ```
 
 ---
@@ -211,6 +332,16 @@ print(first_10_primes)
 # Décorateurs de Cache
 
 ### Optimisation avec mise en cache
+
+**Types de cache :**
+- Cache simple
+- Cache avec TTL
+- Cache avec limite de taille
+- Cache avec politique d'éviction
+
+---
+
+# Cache avec TTL
 
 ```python
 import functools
@@ -236,11 +367,21 @@ def cache_with_ttl(ttl_seconds=300):
         
         return wrapper
     return decorator
+```
 
+---
+
+# Utilisation du Cache
+
+```python
 @cache_with_ttl(ttl_seconds=60)
 def expensive_calculation(n):
     time.sleep(1)  # Simulation d'un calcul coûteux
     return n * n
+
+# Test
+print(expensive_calculation(5))  # Premier appel - lent
+print(expensive_calculation(5))  # Deuxième appel - rapide (cache)
 ```
 
 ---
@@ -248,6 +389,16 @@ def expensive_calculation(n):
 # Générateurs de Coroutines
 
 ### Introduction aux coroutines
+
+**Concepts :**
+- Générateurs qui reçoivent des valeurs
+- Communication bidirectionnelle
+- Pipelines de traitement
+- Contrôle de flux
+
+---
+
+# Coroutine Simple
 
 ```python
 def coroutine_example():
@@ -272,6 +423,16 @@ print(gen.send(10))  # Envoie 10, reçoit 20
 # Décorateurs de Logging
 
 ### Logging automatique des fonctions
+
+**Fonctionnalités :**
+- Log des entrées/sorties
+- Mesure du temps d'exécution
+- Log des erreurs
+- Traçabilité
+
+---
+
+# Décorateur de Logging
 
 ```python
 import logging
@@ -299,12 +460,23 @@ def log_function_calls(logger_name="app"):
         
         return wrapper
     return decorator
+```
 
+---
+
+# Utilisation du Logging
+
+```python
 @log_function_calls()
 def slow_function(n):
     import time
     time.sleep(0.1)
     return n * 2
+
+# Test
+logging.basicConfig(level=logging.INFO)
+result = slow_function(5)
+print(f"Résultat: {result}")
 ```
 
 ---
@@ -341,9 +513,18 @@ def fibonacci(n):
     if n <= 1:
         return n
     return fibonacci(n-1) + fibonacci(n-2)
+```
 
+---
+
+# Test du Memoize
+
+```python
 # Test - beaucoup plus rapide avec memoization
 print(fibonacci(35))  # Sans memoize: très lent, avec memoize: instantané
+
+# Vérification du cache
+print(f"Cache size: {len(fibonacci.__closure__[0].cell_contents)}")
 ```
 
 ---
@@ -364,11 +545,6 @@ def fibonacci_lazy():
 fib_gen = fibonacci_lazy()
 first_20 = [next(fib_gen) for _ in range(20)]
 print(first_20)
-
-# Ou avec itertools
-from itertools import islice
-first_10 = list(islice(fibonacci_lazy(), 10))
-print(first_10)
 ```
 
 ---
@@ -401,12 +577,25 @@ def timeout(seconds):
         
         return wrapper
     return decorator
+```
 
+---
+
+# Test du Timeout
+
+```python
 @timeout(5)
 def slow_function():
     import time
     time.sleep(10)  # Cette fonction sera interrompue après 5 secondes
     return "Terminé"
+
+# Test
+try:
+    result = slow_function()
+    print(result)
+except TimeoutError as e:
+    print(f"Timeout: {e}")
 ```
 
 ---

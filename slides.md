@@ -286,3 +286,19 @@ src: './pages/16-metaclasses.md'
 src: './pages/17-async-await.md'
 ---
 
+---
+src: './pages/18-testing.md'
+---
+
+---
+src: './pages/19-design-patterns.md'
+---
+
+---
+src: './pages/20-optimisation-performance.md'
+---
+
+---
+src: './pages/21-frameworks-web.md'
+---
+
