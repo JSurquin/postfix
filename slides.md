@@ -270,3 +270,19 @@ src: './pages/12-qcm-initiation.md'
 src: './pages/13-rappel-fondamentaux.md'
 ---
 
+---
+src: './pages/14-decorateurs-generateurs.md'
+---
+
+---
+src: './pages/15-context-managers.md'
+---
+
+---
+src: './pages/16-metaclasses.md'
+---
+
+---
+src: './pages/17-async-await.md'
+---
+
