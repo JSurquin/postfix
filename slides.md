@@ -262,3 +262,11 @@ src: './pages/10-fichiers-io.md'
 src: './pages/11-projet-final.md'
 ---
 
+---
+src: './pages/12-qcm-initiation.md'
+---
+
+---
+src: './pages/13-rappel-fondamentaux.md'
+---
+
