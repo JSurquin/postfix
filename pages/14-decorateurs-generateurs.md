@@ -37,7 +37,13 @@ def repeat(times):
 @repeat(3)
 def greet(name):
     print(f"Hello {name}")
+```
 
+---
+
+# Utilisation du Décorateur avec Paramètres
+
+```python
 # Utilisation
 greet("John")
 ```
@@ -60,7 +66,13 @@ def singleton(cls):
 class Database:
     def __init__(self):
         print("Initialisation de la base de données")
+```
 
+---
+
+# Test du Décorateur de Classe
+
+```python
 # Test
 db1 = Database()
 db2 = Database()
@@ -90,7 +102,13 @@ def fibonacci():
     while True:
         yield a
         a, b = b, a + b
+```
 
+---
+
+# Utilisation du Générateur Simple
+
+```python
 # Utilisation
 fib = fibonacci()
 for _ in range(10):
@@ -108,10 +126,22 @@ def count_up_to(n):
     while i < n:
         yield i
         i += 1
+```
 
+---
+
+# Expression Génératrice
+
+```python
 # Expression génératrice
 squares = (x**2 for x in range(1000000))  # Pas de liste en mémoire
+```
 
+---
+
+# Utilisation du Générateur avec Paramètres
+
+```python
 # Utilisation
 for num in count_up_to(5):
     print(num)
@@ -169,7 +199,13 @@ class Circle:
     def circumference(self):
         import math
         return 2 * math.pi * self._radius
+```
 
+---
+
+# Utilisation des Propriétés
+
+```python
 # Utilisation
 circle = Circle(5)
 print(f"Rayon: {circle.radius}")
@@ -270,7 +306,13 @@ try:
     process_data("5", 123)  # Erreur de type
 except TypeError as e:
     print(f"Erreur: {e}")
+```
 
+---
+
+# Succès de Validation
+
+```python
 # Succès
 result = process_data(5, "hello")
 print(result)
@@ -320,7 +362,13 @@ def primes():
 prime_gen = primes()
 first_10_primes = [next(prime_gen) for _ in range(10)]
 print(first_10_primes)
+```
 
+---
+
+# Utilisation avec itertools
+
+```python
 # Ou avec itertools
 from itertools import islice
 first_10 = list(islice(primes(), 10))
@@ -378,7 +426,13 @@ def cache_with_ttl(ttl_seconds=300):
 def expensive_calculation(n):
     time.sleep(1)  # Simulation d'un calcul coûteux
     return n * n
+```
 
+---
+
+# Test du Cache
+
+```python
 # Test
 print(expensive_calculation(5))  # Premier appel - lent
 print(expensive_calculation(5))  # Deuxième appel - rapide (cache)
@@ -408,7 +462,13 @@ def coroutine_example():
         if x is None:
             break
         yield x * 2
+```
 
+---
+
+# Utilisation de la Coroutine
+
+```python
 # Utilisation
 gen = coroutine_example()
 next(gen)  # Démarrage du générateur
@@ -472,7 +532,13 @@ def slow_function(n):
     import time
     time.sleep(0.1)
     return n * 2
+```
 
+---
+
+# Test du Logging
+
+```python
 # Test
 logging.basicConfig(level=logging.INFO)
 result = slow_function(5)
@@ -522,7 +588,13 @@ def fibonacci(n):
 ```python
 # Test - beaucoup plus rapide avec memoization
 print(fibonacci(35))  # Sans memoize: très lent, avec memoize: instantané
+```
 
+---
+
+# Vérification du Cache
+
+```python
 # Vérification du cache
 print(f"Cache size: {len(fibonacci.__closure__[0].cell_contents)}")
 ```
@@ -540,7 +612,13 @@ def fibonacci_lazy():
     while True:
         yield a
         a, b = b, a + b
+```
 
+---
+
+# Utilisation du Générateur Fibonacci
+
+```python
 # Utilisation
 fib_gen = fibonacci_lazy()
 first_20 = [next(fib_gen) for _ in range(20)]
@@ -589,7 +667,13 @@ def slow_function():
     import time
     time.sleep(10)  # Cette fonction sera interrompue après 5 secondes
     return "Terminé"
+```
 
+---
+
+# Exécution du Test Timeout
+
+```python
 # Test
 try:
     result = slow_function()

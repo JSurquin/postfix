@@ -21,30 +21,65 @@ layout: default
 
 ### Les exceptions intégrées de Python
 
+**Exceptions courantes :**
+- `ZeroDivisionError` : Division par zéro
+- `ValueError` : Valeur incorrecte
+- `IndexError` : Index hors limites
+- `KeyError` : Clé inexistante
+- `FileNotFoundError` : Fichier non trouvé
+
+---
+
+# Exception ZeroDivisionError
+
 ```python
 # Exceptions courantes
 try:
     resultat = 10 / 0
 except ZeroDivisionError:
     print("Division par zéro impossible")
+```
 
+---
+
+# Exception ValueError
+
+```python
 try:
     nombre = int("abc")
 except ValueError:
     print("Impossible de convertir en nombre")
+```
 
+---
+
+# Exception IndexError
+
+```python
 try:
     liste = [1, 2, 3]
     print(liste[10])
 except IndexError:
     print("Index hors limites")
+```
 
+---
+
+# Exception KeyError
+
+```python
 try:
     dictionnaire = {"a": 1}
     print(dictionnaire["b"])
 except KeyError:
     print("Clé inexistante")
+```
 
+---
+
+# Exception FileNotFoundError
+
+```python
 try:
     fichier = open("fichier_inexistant.txt")
 except FileNotFoundError:
@@ -58,6 +93,16 @@ layout: default
 # Structure try/except/finally 🔧
 
 ### Gestion complète des exceptions
+
+**Structure de base :**
+- `try` : Code qui peut générer une exception
+- `except` : Gestion des exceptions
+- `finally` : Code qui s'exécute toujours
+- `else` : Code qui s'exécute si aucune exception
+
+---
+
+# Structure de Base
 
 ```python
 # Structure de base
@@ -74,7 +119,13 @@ except Exception as e:
     print(f"Erreur inattendue : {e}")
 finally:
     print("Ce code s'exécute toujours")
+```
 
+---
+
+# Gestion de Fichier
+
+```python
 # Exemple avec gestion de fichier
 try:
     fichier = open("donnees.txt", "r")
@@ -97,306 +148,228 @@ layout: default
 
 ### Techniques de gestion d'erreurs sophistiquées
 
+**Techniques avancées :**
+- Gestion hiérarchique des exceptions
+- Exceptions personnalisées
+- Context managers
+- Assertions
+
+---
+
+# Gestion Hiérarchique
+
 ```python
-# Gestion avec else
+# Gestion hiérarchique des exceptions
 try:
     nombre = int(input("Entrez un nombre : "))
-except ValueError:
-    print("Erreur : Nombre invalide")
+    resultat = 100 / nombre
+    print(f"Résultat : {resultat}")
+except (ValueError, TypeError):
+    print("Erreur de type ou de valeur")
+except ZeroDivisionError:
+    print("Division par zéro")
+except Exception as e:
+    print(f"Erreur inattendue : {e}")
 else:
-    # Ce code s'exécute seulement si aucune exception n'est levée
-    print(f"Nombre saisi : {nombre}")
-    resultat = nombre ** 2
-    print(f"Carré : {resultat}")
-
-# Gestion avec plusieurs exceptions
-try:
-    # Code qui peut générer plusieurs types d'erreurs
-    pass
-except (ValueError, TypeError) as e:
-    print(f"Erreur de type : {e}")
-except (FileNotFoundError, PermissionError) as e:
-    print(f"Erreur de fichier : {e}")
-
-# Gestion avec récupération
-def lire_nombre():
-    while True:
-        try:
-            return int(input("Entrez un nombre : "))
-        except ValueError:
-            print("Erreur : Veuillez entrer un nombre valide")
-            continue
+    print("Aucune exception n'a été levée")
+finally:
+    print("Toujours exécuté")
 ```
 
 ---
-layout: default
----
 
-# Lever des exceptions 🚀
-
-### Création et levée d'exceptions personnalisées
+# Exceptions Personnalisées
 
 ```python
-# Lever une exception simple
-def diviser(a, b):
-    if b == 0:
-        raise ValueError("Division par zéro impossible")
-    return a / b
-
-# Lever une exception avec contexte
-def ouvrir_fichier(nom_fichier):
-    try:
-        return open(nom_fichier, "r")
-    except FileNotFoundError:
-        raise FileNotFoundError(f"Le fichier '{nom_fichier}' n'existe pas")
-
-# Lever une exception depuis une exception
-def traiter_donnees(donnees):
-    try:
-        return int(donnees)
-    except ValueError as e:
-        raise ValueError(f"Données invalides : {donnees}") from e
-
-# Exemple d'utilisation
-try:
-    resultat = diviser(10, 0)
-except ValueError as e:
-    print(f"Erreur : {e}")
-
-try:
-    fichier = ouvrir_fichier("inexistant.txt")
-except FileNotFoundError as e:
-    print(f"Erreur : {e}")
-```
-
----
-layout: default
----
-
-# Exceptions personnalisées 🎭
-
-### Création de classes d'exception
-
-```python
-# Exception personnalisée simple
-class ErreurValidation(Exception):
-    """Exception levée lors d'une erreur de validation."""
+# Exceptions personnalisées
+class AgeInvalideError(Exception):
+    """Exception levée quand l'âge est invalide"""
     pass
 
-class ErreurAge(Exception):
-    """Exception pour les erreurs d'âge."""
-    def __init__(self, age, message="Âge invalide"):
+class Personne:
+    def __init__(self, nom, age):
+        if age < 0 or age > 150:
+            raise AgeInvalideError(f"Âge invalide : {age}")
+        self.nom = nom
         self.age = age
-        self.message = message
-        super().__init__(self.message)
-
-# Exceptions avec attributs
-class ErreurConnexion(Exception):
-    """Exception pour les erreurs de connexion."""
-    def __init__(self, serveur, port, message="Erreur de connexion"):
-        self.serveur = serveur
-        self.port = port
-        self.message = message
-        super().__init__(self.message)
-
-# Utilisation des exceptions personnalisées
-def valider_age(age):
-    if not isinstance(age, int):
-        raise ErreurValidation("L'âge doit être un entier")
-    if age < 0 or age > 150:
-        raise ErreurAge(age, f"Âge {age} invalide")
-    return True
-
-def connecter_serveur(serveur, port):
-    # Simulation d'une erreur de connexion
-    raise ErreurConnexion(serveur, port, "Serveur indisponible")
-```
-
----
-layout: default
----
-
-# Context managers 🔄
-
-### Gestion automatique des ressources
-
-```python
-# Context manager avec with
-with open("fichier.txt", "r") as fichier:
-    contenu = fichier.read()
-    print(contenu)
-# Le fichier est automatiquement fermé
-
-# Context manager personnalisé
-class GestionnaireFichier:
-    def __init__(self, nom_fichier, mode="r"):
-        self.nom_fichier = nom_fichier
-        self.mode = mode
-        self.fichier = None
-    
-    def __enter__(self):
-        self.fichier = open(self.nom_fichier, self.mode)
-        return self.fichier
-    
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        if self.fichier:
-            self.fichier.close()
-        # Retourner False pour propager l'exception
-        return False
-
-# Utilisation du context manager personnalisé
-with GestionnaireFichier("test.txt", "w") as f:
-    f.write("Test de context manager")
-```
-
----
-layout: default
----
-
-# Context managers avec contextlib 🛠️
-
-### Utilisation de contextlib pour créer des context managers
-
-```python
-from contextlib import contextmanager, closing
-import time
-
-# Context manager avec décorateur
-@contextmanager
-def timer(nom_operation):
-    debut = time.time()
-    try:
-        yield
-    finally:
-        fin = time.time()
-        print(f"{nom_operation} : {fin - debut:.4f} secondes")
-
-# Context manager pour gestion d'erreurs
-@contextmanager
-def gestion_erreur_graceful():
-    try:
-        yield
-    except Exception as e:
-        print(f"Erreur gérée gracieusement : {e}")
-        # Ne pas propager l'exception
 
 # Utilisation
-with timer("Calcul complexe"):
-    # Simulation d'un calcul
-    time.sleep(1)
-
-with gestion_erreur_graceful():
-    resultat = 10 / 0  # Erreur gérée gracieusement
-
-# Context manager pour ressources
-@contextmanager
-def connexion_base_donnees():
-    print("Connexion à la base de données...")
-    try:
-        yield "connexion_objet"
-    finally:
-        print("Fermeture de la connexion...")
-
-with connexion_base_donnees() as conn:
-    print(f"Utilisation de {conn}")
+try:
+    personne = Personne("Alice", 200)
+except AgeInvalideError as e:
+    print(f"Erreur : {e}")
 ```
 
 ---
-layout: default
----
 
-# Assertions et debugging 🐛
-
-### Vérifications et débogage
+# Context Managers
 
 ```python
-# Assertions pour vérifications
-def calculer_moyenne(nombres):
-    assert len(nombres) > 0, "La liste ne peut pas être vide"
-    assert all(isinstance(x, (int, float)) for x in nombres), "Tous les éléments doivent être des nombres"
-    return sum(nombres) / len(nombres)
-
-# Assertions avec messages personnalisés
-def valider_age(age):
-    assert isinstance(age, int), f"L'âge doit être un entier, reçu : {type(age)}"
-    assert 0 <= age <= 150, f"L'âge doit être entre 0 et 150, reçu : {age}"
-    return True
-
-# Désactiver les assertions en production
-# python -O script.py  # Désactive les assertions
-
-# Debugging avec pdb
-import pdb
-
-def fonction_complexe():
-    x = 10
-    y = 20
-    pdb.set_trace()  # Point d'arrêt
-    resultat = x + y
-    return resultat
-
-# Commandes pdb utiles :
-# n (next) - ligne suivante
-# s (step) - entrer dans la fonction
-# c (continue) - continuer l'exécution
-# p variable - afficher une variable
-# l (list) - afficher le code autour
+# Context managers avec with
+try:
+    with open("fichier.txt", "r") as fichier:
+        contenu = fichier.read()
+        print(contenu)
+except FileNotFoundError:
+    print("Fichier non trouvé")
+# Le fichier est automatiquement fermé
 ```
 
 ---
 layout: default
 ---
 
-# Logging et monitoring 📊
+# Assertions 🔍
 
-### Enregistrement des erreurs et événements
+### Vérifications de débogage
+
+**Utilisation des assertions :**
+- Vérification de conditions
+- Débogage et tests
+- Validation de données
+- Documentation du code
+
+---
+
+# Assertions de Base
+
+```python
+# Assertions de base
+def diviser(a, b):
+    assert b != 0, "Le diviseur ne peut pas être zéro"
+    return a / b
+
+# Test
+try:
+    resultat = diviser(10, 0)
+except AssertionError as e:
+    print(f"Assertion échouée : {e}")
+```
+
+---
+
+# Assertions Avancées
+
+```python
+# Assertions avancées
+def calculer_moyenne(notes):
+    assert len(notes) > 0, "La liste ne peut pas être vide"
+    assert all(0 <= note <= 20 for note in notes), "Les notes doivent être entre 0 et 20"
+    return sum(notes) / len(notes)
+
+# Test
+notes = [15, 18, 12, 20]
+moyenne = calculer_moyenne(notes)
+print(f"Moyenne : {moyenne}")
+```
+
+---
+layout: default
+---
+
+# Logging 📝
+
+### Enregistrement des événements
+
+**Avantages du logging :**
+- Traçabilité des erreurs
+- Niveaux de log configurables
+- Rotation des fichiers de log
+- Format personnalisable
+
+---
+
+# Configuration du Logging
 
 ```python
 import logging
-import traceback
 
-# Configuration du logging
+# Configuration de base
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('app.log'),
-        logging.StreamHandler()
-    ]
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    filename='app.log'
 )
 
-logger = logging.getLogger(__name__)
+# Utilisation
+logging.info("Application démarrée")
+logging.warning("Attention : valeur suspecte")
+logging.error("Erreur critique détectée")
+```
 
-# Logging des erreurs
-def fonction_avec_logging():
-    try:
-        resultat = 10 / 0
-    except ZeroDivisionError as e:
-        logger.error(f"Erreur de division : {e}")
-        logger.error(f"Traceback complet : {traceback.format_exc()}")
-        raise
+---
 
-# Logging avec contexte
-def traiter_donnees(donnees):
-    logger.info(f"Début du traitement de {len(donnees)} éléments")
-    
-    try:
-        resultat = [int(x) for x in donnees]
-        logger.info(f"Traitement réussi : {len(resultat)} éléments")
-        return resultat
-    except ValueError as e:
-        logger.error(f"Erreur de conversion : {e}")
-        raise
-    except Exception as e:
-        logger.critical(f"Erreur inattendue : {e}")
-        raise
+# Logging Avancé
 
-# Logging avec niveaux
-logger.debug("Message de debug")
-logger.info("Message d'information")
-logger.warning("Avertissement")
-logger.error("Erreur")
-logger.critical("Erreur critique")
+```python
+# Logger personnalisé
+logger = logging.getLogger('mon_app')
+logger.setLevel(logging.DEBUG)
+
+# Handler pour fichier
+file_handler = logging.FileHandler('debug.log')
+file_handler.setLevel(logging.DEBUG)
+
+# Handler pour console
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.WARNING)
+
+# Formatter
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+console_handler.setFormatter(formatter)
+
+# Ajout des handlers
+logger.addHandler(file_handler)
+logger.addHandler(console_handler)
+```
+
+---
+layout: default
+---
+
+# Débogage avec pdb 🐛
+
+### Débogueur intégré de Python
+
+**Fonctionnalités de pdb :**
+- Points d'arrêt
+- Inspection des variables
+- Exécution pas à pas
+- Évaluation d'expressions
+
+---
+
+# Utilisation de pdb
+
+```python
+import pdb
+
+def fonction_complexe(n):
+    resultat = 0
+    for i in range(n):
+        resultat += i
+        if i == 5:
+            pdb.set_trace()  # Point d'arrêt
+    return resultat
+
+# Utilisation
+resultat = fonction_complexe(10)
+```
+
+---
+
+# Commandes pdb
+
+```python
+# Commandes principales de pdb
+# n (next) : Ligne suivante
+# s (step) : Entrer dans la fonction
+# c (continue) : Continuer l'exécution
+# l (list) : Afficher le code autour
+# p variable : Afficher une variable
+# w (where) : Afficher la pile d'appels
+# q (quit) : Quitter le débogueur
 ```
 
 ---
@@ -407,615 +380,201 @@ layout: default
 
 ### Bonnes pratiques pour la production
 
+**Principes :**
+- Ne jamais exposer les détails d'erreurs
+- Logger toutes les erreurs
+- Gérer gracieusement les échecs
+- Monitoring et alertes
+
+---
+
+# Gestion Sécurisée
+
 ```python
-import logging
-import sys
-from typing import Optional, Any
+# Gestion sécurisée des erreurs
+def fonction_critique():
+    try:
+        # Code critique
+        resultat = operation_risquee()
+        return resultat
+    except Exception as e:
+        # Logger l'erreur complète
+        logger.error(f"Erreur critique : {e}", exc_info=True)
+        # Retourner une réponse sécurisée
+        return {"erreur": "Une erreur s'est produite", "code": "ERR_001"}
+```
 
-class GestionnaireErreurs:
+---
+
+# Monitoring d'Erreurs
+
+```python
+# Monitoring d'erreurs
+import time
+from collections import defaultdict
+
+class ErrorMonitor:
     def __init__(self):
-        self.logger = logging.getLogger(__name__)
-        self.setup_logging()
+        self.errors = defaultdict(int)
+        self.last_error_time = {}
     
-    def setup_logging(self):
-        """Configure le logging pour la production."""
-        logging.basicConfig(
-            level=logging.INFO,
-            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-            handlers=[
-                logging.FileHandler('production.log'),
-                logging.StreamHandler(sys.stdout)
-            ]
-        )
-    
-    def executer_securise(self, fonction, *args, **kwargs) -> Optional[Any]:
-        """Exécute une fonction avec gestion d'erreurs complète."""
-        try:
-            return fonction(*args, **kwargs)
-        except ValueError as e:
-            self.logger.warning(f"Erreur de validation : {e}")
-            return None
-        except FileNotFoundError as e:
-            self.logger.error(f"Fichier non trouvé : {e}")
-            return None
-        except PermissionError as e:
-            self.logger.error(f"Erreur de permission : {e}")
-            return None
-        except Exception as e:
-            self.logger.critical(f"Erreur inattendue : {e}")
-            self.logger.critical(f"Traceback : {traceback.format_exc()}")
-            return None
-    
-    def valider_donnees(self, donnees):
-        """Valide les données avec gestion d'erreurs."""
-        if not donnees:
-            raise ValueError("Données vides")
+    def log_error(self, error_type, error_msg):
+        self.errors[error_type] += 1
+        self.last_error_time[error_type] = time.time()
         
-        if not isinstance(donnees, (list, tuple)):
-            raise TypeError("Données doivent être une liste ou un tuple")
-        
-        return True
-
-# Utilisation
-gestionnaire = GestionnaireErreurs()
-
-def fonction_risquee(nombre):
-    return 100 / nombre
-
-resultat = gestionnaire.executer_securise(fonction_risquee, 0)
-if resultat is None:
-    print("Fonction a échoué, gestion d'erreur en place")
+        # Alerte si trop d'erreurs
+        if self.errors[error_type] > 10:
+            logger.critical(f"Trop d'erreurs {error_type}: {self.errors[error_type]}")
+    
+    def get_stats(self):
+        return dict(self.errors)
 ```
 
 ---
 layout: default
 ---
 
-# Exercices pratiques 🎯
+# Exercices Pratiques 🎯
 
-### Exercice 1 : Validateur de données robuste
+### Testez vos compétences
 
-Créez un système de validation qui :
-1. Valide différents types de données (email, téléphone, âge)
-2. Lève des exceptions personnalisées
-3. Gère les erreurs de manière élégante
-4. Enregistre les erreurs dans un fichier de log
+**Exercice 1 :** Créez une fonction qui lit un fichier et gère toutes les exceptions possibles (FileNotFoundError, PermissionError, UnicodeDecodeError).
 
-**Fonctionnalités :**
-- Validation d'email avec regex
-- Validation de téléphone français
-- Validation d'âge avec plages
-- Logging des erreurs de validation
+**Exercice 2 :** Implémentez une classe `Validateur` qui valide des données avec des exceptions personnalisées.
+
+**Exercice 3 :** Créez un système de logging qui enregistre les erreurs dans un fichier avec rotation.
 
 ---
-layout: default
----
 
-# Exercices pratiques 🎯
+# Solutions des Exercices 💡
 
-### Exercice 2 : Gestionnaire de fichiers sécurisé
-
-Créez un gestionnaire de fichiers qui :
-1. Gère les erreurs de lecture/écriture
-2. Utilise des context managers
-3. Valide les types de fichiers
-4. Effectue des sauvegardes automatiques
-
-**Fonctionnalités :**
-- Lecture/écriture sécurisée
-- Validation des extensions
-- Sauvegarde avant modification
-- Gestion des permissions
-
----
-layout: default
----
-
-# Exercices pratiques 🎯
-
-### Exercice 3 : Système de monitoring
-
-Créez un système de monitoring qui :
-1. Surveille l'exécution de fonctions
-2. Enregistre les performances
-3. Détecte les erreurs récurrentes
-4. Génère des rapports
-
-**Fonctionnalités :**
-- Décorateur de monitoring
-- Métriques de performance
-- Détection d'anomalies
-- Rapports automatiques
-
----
-layout: default
----
-
-# Solutions des exercices 💡
-
-### Exercice 1 : Validateur de données robuste
+### Exercice 1 - Lecture de Fichier Sécurisée
 
 ```python
-import re
-import logging
-from typing import Optional
+def lire_fichier_securise(chemin):
+    """Lit un fichier avec gestion complète des erreurs"""
+    try:
+        with open(chemin, 'r', encoding='utf-8') as fichier:
+            contenu = fichier.read()
+            return {"succes": True, "contenu": contenu}
+    except FileNotFoundError:
+        return {"succes": False, "erreur": "Fichier non trouvé"}
+    except PermissionError:
+        return {"succes": False, "erreur": "Permission refusée"}
+    except UnicodeDecodeError:
+        return {"succes": False, "erreur": "Erreur d'encodage"}
+    except Exception as e:
+        return {"succes": False, "erreur": f"Erreur inattendue : {e}"}
 
-# Configuration du logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('validation.log'),
-        logging.StreamHandler()
-    ]
-)
-logger = logging.getLogger(__name__)
+# Test
+resultat = lire_fichier_securise("fichier_inexistant.txt")
+print(resultat)
+```
 
-# Exceptions personnalisées
-class ErreurValidation(Exception):
-    """Exception de base pour les erreurs de validation."""
+---
+
+# Solutions des Exercices (suite)
+
+### Exercice 2 - Classe Validateur
+
+```python
+class ValidationError(Exception):
+    """Exception pour les erreurs de validation"""
     pass
 
-class ErreurEmail(ErreurValidation):
-    """Exception pour les erreurs d'email."""
-    pass
-
-class ErreurTelephone(ErreurValidation):
-    """Exception pour les erreurs de téléphone."""
-    pass
-
-class ErreurAge(ErreurValidation):
-    """Exception pour les erreurs d'âge."""
-    pass
-
-class ValidateurDonnees:
-    def __init__(self):
-        # Patterns regex
-        self.email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-        self.telephone_pattern = r'^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$'
-    
-    def valider_email(self, email: str) -> bool:
-        """Valide une adresse email."""
-        if not email:
-            raise ErreurEmail("Email vide")
-        
-        if not re.match(self.email_pattern, email):
-            raise ErreurEmail(f"Format d'email invalide : {email}")
-        
-        logger.info(f"Email validé : {email}")
+class Validateur:
+    def valider_email(self, email):
+        if '@' not in email or '.' not in email:
+            raise ValidationError(f"Email invalide : {email}")
         return True
     
-    def valider_telephone(self, telephone: str) -> bool:
-        """Valide un numéro de téléphone français."""
-        if not telephone:
-            raise ErreurTelephone("Numéro de téléphone vide")
-        
-        if not re.match(self.telephone_pattern, telephone):
-            raise ErreurTelephone(f"Format de téléphone invalide : {telephone}")
-        
-        logger.info(f"Téléphone validé : {telephone}")
-        return True
-    
-    def valider_age(self, age: int) -> bool:
-        """Valide un âge."""
+    def valider_age(self, age):
         if not isinstance(age, int):
-            raise ErreurAge(f"L'âge doit être un entier, reçu : {type(age)}")
-        
+            raise ValidationError("L'âge doit être un entier")
         if age < 0 or age > 150:
-            raise ErreurAge(f"L'âge doit être entre 0 et 150, reçu : {age}")
-        
-        logger.info(f"Âge validé : {age}")
+            raise ValidationError(f"Âge invalide : {age}")
         return True
     
-    def valider_utilisateur(self, nom: str, email: str, telephone: str, age: int) -> bool:
-        """Valide toutes les données d'un utilisateur."""
+    def valider_utilisateur(self, nom, email, age):
         try:
             self.valider_email(email)
-            self.valider_telephone(telephone)
             self.valider_age(age)
-            
-            if not nom or len(nom.strip()) < 2:
-                raise ErreurValidation("Le nom doit contenir au moins 2 caractères")
-            
-            logger.info(f"Utilisateur validé : {nom}")
             return True
-            
-        except ErreurValidation as e:
-            logger.error(f"Erreur de validation : {e}")
-            raise
+        except ValidationError as e:
+            print(f"Erreur de validation : {e}")
+            return False
 
-# Utilisation
-if __name__ == "__main__":
-    validateur = ValidateurDonnees()
-    
-    # Tests de validation
-    donnees_test = [
-        ("Alice", "alice@example.com", "0123456789", 25),
-        ("Bob", "email_invalide", "0123456789", 25),
-        ("Charlie", "charlie@example.com", "123", 25),
-        ("David", "david@example.com", "0123456789", 200),
-    ]
-    
-    for nom, email, telephone, age in donnees_test:
-        try:
-            validateur.valider_utilisateur(nom, email, telephone, age)
-            print(f"✅ {nom} : Validation réussie")
-        except ErreurValidation as e:
-            print(f"❌ {nom} : {e}")
+# Test
+validateur = Validateur()
+validateur.valider_utilisateur("Alice", "alice@example.com", 25)
 ```
 
 ---
-layout: default
----
 
-# Solutions des exercices 💡
+# Solutions des Exercices (fin)
 
-### Exercice 2 : Gestionnaire de fichiers sécurisé
+### Exercice 3 - Système de Logging
 
 ```python
-import os
-import shutil
 import logging
-from pathlib import Path
-from contextlib import contextmanager
-from typing import Optional, List
+from logging.handlers import RotatingFileHandler
 
-# Configuration du logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('fichiers.log'),
-        logging.StreamHandler()
-    ]
-)
-logger = logging.getLogger(__name__)
-
-class ErreurFichier(Exception):
-    """Exception pour les erreurs de fichiers."""
-    pass
-
-class GestionnaireFichiers:
-    def __init__(self, dossier_backup: str = "backups"):
-        self.dossier_backup = Path(dossier_backup)
-        self.dossier_backup.mkdir(exist_ok=True)
-        self.extensions_autorisees = {'.txt', '.csv', '.json', '.xml'}
+def configurer_logging():
+    """Configure un système de logging avec rotation"""
+    logger = logging.getLogger('mon_app')
+    logger.setLevel(logging.INFO)
     
-    def valider_fichier(self, chemin: str) -> bool:
-        """Valide un fichier."""
-        fichier = Path(chemin)
-        
-        if not fichier.exists():
-            raise ErreurFichier(f"Fichier inexistant : {chemin}")
-        
-        if not fichier.is_file():
-            raise ErreurFichier(f"Le chemin ne correspond pas à un fichier : {chemin}")
-        
-        extension = fichier.suffix.lower()
-        if extension not in self.extensions_autorisees:
-            raise ErreurFichier(f"Extension non autorisée : {extension}")
-        
-        return True
+    # Handler avec rotation (5 fichiers de 1MB max)
+    file_handler = RotatingFileHandler(
+        'app.log', 
+        maxBytes=1024*1024,  # 1MB
+        backupCount=5
+    )
     
-    def creer_backup(self, chemin: str) -> str:
-        """Crée une sauvegarde du fichier."""
-        fichier = Path(chemin)
-        timestamp = int(time.time())
-        nom_backup = f"{fichier.stem}_{timestamp}{fichier.suffix}"
-        chemin_backup = self.dossier_backup / nom_backup
-        
-        try:
-            shutil.copy2(fichier, chemin_backup)
-            logger.info(f"Backup créé : {chemin_backup}")
-            return str(chemin_backup)
-        except Exception as e:
-            logger.error(f"Erreur lors de la création du backup : {e}")
-            raise ErreurFichier(f"Impossible de créer le backup : {e}")
+    # Formatter
+    formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
+    file_handler.setFormatter(formatter)
     
-    @contextmanager
-    def lire_fichier_securise(self, chemin: str):
-        """Context manager pour lire un fichier de manière sécurisée."""
-        fichier = None
-        try:
-            self.valider_fichier(chemin)
-            fichier = open(chemin, 'r', encoding='utf-8')
-            logger.info(f"Fichier ouvert en lecture : {chemin}")
-            yield fichier
-        except Exception as e:
-            logger.error(f"Erreur lors de la lecture : {e}")
-            raise ErreurFichier(f"Erreur de lecture : {e}")
-        finally:
-            if fichier:
-                fichier.close()
-                logger.info(f"Fichier fermé : {chemin}")
+    # Ajout du handler
+    logger.addHandler(file_handler)
     
-    @contextmanager
-    def ecrire_fichier_securise(self, chemin: str, creer_backup: bool = True):
-        """Context manager pour écrire un fichier de manière sécurisée."""
-        fichier = None
-        backup_chemin = None
-        
-        try:
-            # Valider le chemin
-            fichier_path = Path(chemin)
-            fichier_path.parent.mkdir(parents=True, exist_ok=True)
-            
-            # Créer un backup si le fichier existe
-            if creer_backup and fichier_path.exists():
-                backup_chemin = self.creer_backup(chemin)
-            
-            fichier = open(chemin, 'w', encoding='utf-8')
-            logger.info(f"Fichier ouvert en écriture : {chemin}")
-            yield fichier
-            
-        except Exception as e:
-            logger.error(f"Erreur lors de l'écriture : {e}")
-            # Restaurer le backup en cas d'erreur
-            if backup_chemin and Path(backup_chemin).exists():
-                shutil.copy2(backup_chemin, chemin)
-                logger.info(f"Backup restauré : {backup_chemin}")
-            raise ErreurFichier(f"Erreur d'écriture : {e}")
-        finally:
-            if fichier:
-                fichier.close()
-                logger.info(f"Fichier fermé : {chemin}")
-    
-    def lister_fichiers(self, dossier: str, extension: Optional[str] = None) -> List[str]:
-        """Liste les fichiers d'un dossier."""
-        try:
-            dossier_path = Path(dossier)
-            if not dossier_path.exists():
-                raise ErreurFichier(f"Dossier inexistant : {dossier}")
-            
-            fichiers = []
-            for fichier in dossier_path.iterdir():
-                if fichier.is_file():
-                    if extension is None or fichier.suffix.lower() == extension.lower():
-                        fichiers.append(str(fichier))
-            
-            logger.info(f"Liste des fichiers trouvés : {len(fichiers)}")
-            return fichiers
-            
-        except Exception as e:
-            logger.error(f"Erreur lors de la liste des fichiers : {e}")
-            raise ErreurFichier(f"Erreur de liste : {e}")
+    return logger
 
 # Utilisation
-if __name__ == "__main__":
-    gestionnaire = GestionnaireFichiers()
-    
-    # Test de lecture sécurisée
-    try:
-        with gestionnaire.lire_fichier_securise("test.txt") as f:
-            contenu = f.read()
-            print(f"Contenu lu : {contenu}")
-    except ErreurFichier as e:
-        print(f"Erreur : {e}")
-    
-    # Test d'écriture sécurisée
-    try:
-        with gestionnaire.ecrire_fichier_securise("test.txt") as f:
-            f.write("Test de gestionnaire de fichiers sécurisé")
-        print("Écriture réussie")
-    except ErreurFichier as e:
-        print(f"Erreur : {e}")
+logger = configurer_logging()
+logger.info("Application démarrée")
+logger.error("Erreur test")
 ```
 
 ---
-layout: default
----
 
-# Solutions des exercices 💡
+# Points Clés à Retenir 🎯
 
-### Exercice 3 : Système de monitoring
+### Résumé de la gestion d'erreurs
 
-```python
-import time
-import logging
-import functools
-from typing import Dict, List, Any, Optional
-from collections import defaultdict
-from datetime import datetime, timedelta
+**1. Exceptions de base :**
+- `try/except/finally/else`
+- Gestion hiérarchique des exceptions
+- Exceptions personnalisées
 
-# Configuration du logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('monitoring.log'),
-        logging.StreamHandler()
-    ]
-)
-logger = logging.getLogger(__name__)
+**2. Outils avancés :**
+- Context managers (`with`)
+- Assertions pour la validation
+- Logging pour la traçabilité
+- Débogueur `pdb`
 
-class MetriquesMonitoring:
-    def __init__(self):
-        self.appels = defaultdict(int)
-        self.temps_execution = defaultdict(list)
-        self.erreurs = defaultdict(list)
-        self.debut_monitoring = datetime.now()
-    
-    def ajouter_appel(self, nom_fonction: str, temps: float, erreur: Optional[Exception] = None):
-        """Ajoute une métrique d'appel."""
-        self.appels[nom_fonction] += 1
-        self.temps_execution[nom_fonction].append(temps)
-        
-        if erreur:
-            self.erreurs[nom_fonction].append({
-                'erreur': str(erreur),
-                'timestamp': datetime.now(),
-                'temps_execution': temps
-            })
-    
-    def obtenir_statistiques(self, nom_fonction: str) -> Dict[str, Any]:
-        """Retourne les statistiques d'une fonction."""
-        temps_list = self.temps_execution[nom_fonction]
-        
-        if not temps_list:
-            return {}
-        
-        return {
-            'appels_total': self.appels[nom_fonction],
-            'temps_moyen': sum(temps_list) / len(temps_list),
-            'temps_min': min(temps_list),
-            'temps_max': max(temps_list),
-            'erreurs_total': len(self.erreurs[nom_fonction]),
-            'taux_erreur': len(self.erreurs[nom_fonction]) / self.appels[nom_fonction] * 100
-        }
-    
-    def obtenir_rapport_complet(self) -> Dict[str, Any]:
-        """Génère un rapport complet."""
-        rapport = {
-            'debut_monitoring': self.debut_monitoring,
-            'duree_monitoring': datetime.now() - self.debut_monitoring,
-            'fonctions_surveillees': list(self.appels.keys()),
-            'statistiques_par_fonction': {},
-            'erreurs_recentes': []
-        }
-        
-        # Statistiques par fonction
-        for fonction in self.appels.keys():
-            rapport['statistiques_par_fonction'][fonction] = self.obtenir_statistiques(fonction)
-        
-        # Erreurs récentes (dernières 24h)
-        limite = datetime.now() - timedelta(hours=24)
-        for fonction, erreurs in self.erreurs.items():
-            for erreur in erreurs:
-                if erreur['timestamp'] > limite:
-                    rapport['erreurs_recentes'].append({
-                        'fonction': fonction,
-                        'erreur': erreur['erreur'],
-                        'timestamp': erreur['timestamp']
-                    })
-        
-        return rapport
+**3. Bonnes pratiques :**
+- Gestion sécurisée en production
+- Monitoring des erreurs
+- Logging approprié
+- Messages d'erreur informatifs
 
-class SystemeMonitoring:
-    def __init__(self):
-        self.metriques = MetriquesMonitoring()
-        self.seuils_alerte = {
-            'temps_execution_max': 5.0,  # secondes
-            'taux_erreur_max': 10.0,     # pourcentage
-            'appels_min': 100            # nombre minimum d'appels
-        }
-    
-    def monitorer(self, seuil_temps: Optional[float] = None):
-        """Décorateur pour monitorer une fonction."""
-        def decorateur(func):
-            @functools.wraps(func)
-            def wrapper(*args, **kwargs):
-                debut = time.time()
-                erreur = None
-                
-                try:
-                    resultat = func(*args, **kwargs)
-                    return resultat
-                except Exception as e:
-                    erreur = e
-                    raise
-                finally:
-                    fin = time.time()
-                    temps_execution = fin - debut
-                    
-                    # Ajouter les métriques
-                    self.metriques.ajouter_appel(
-                        func.__name__, 
-                        temps_execution, 
-                        erreur
-                    )
-                    
-                    # Vérifier les seuils d'alerte
-                    self._verifier_alertes(func.__name__, temps_execution)
-            
-            return wrapper
-        return decorateur
-    
-    def _verifier_alertes(self, nom_fonction: str, temps_execution: float):
-        """Vérifie les seuils d'alerte."""
-        stats = self.metriques.obtenir_statistiques(nom_fonction)
-        
-        if not stats:
-            return
-        
-        # Alerte temps d'exécution
-        if temps_execution > self.seuils_alerte['temps_execution_max']:
-            logger.warning(f"ALERTE : {nom_fonction} a pris {temps_execution:.2f}s")
-        
-        # Alerte taux d'erreur
-        if stats['taux_erreur'] > self.seuils_alerte['taux_erreur_max']:
-            logger.error(f"ALERTE : {nom_fonction} a un taux d'erreur de {stats['taux_erreur']:.1f}%")
-        
-        # Alerte nombre d'appels
-        if stats['appels_total'] > self.seuils_alerte['appels_min']:
-            logger.info(f"INFO : {nom_fonction} a été appelée {stats['appels_total']} fois")
-    
-    def generer_rapport(self) -> str:
-        """Génère un rapport de monitoring."""
-        rapport = self.metriques.obtenir_rapport_complet()
-        
-        rapport_str = "=== RAPPORT DE MONITORING ===\n"
-        rapport_str += f"Période : {rapport['duree_monitoring']}\n"
-        rapport_str += f"Fonctions surveillées : {len(rapport['fonctions_surveillees'])}\n\n"
-        
-        for fonction, stats in rapport['statistiques_par_fonction'].items():
-            rapport_str += f"--- {fonction} ---\n"
-            rapport_str += f"  Appels total : {stats['appels_total']}\n"
-            rapport_str += f"  Temps moyen : {stats['temps_moyen']:.4f}s\n"
-            rapport_str += f"  Temps min/max : {stats['temps_min']:.4f}s / {stats['temps_max']:.4f}s\n"
-            rapport_str += f"  Taux d'erreur : {stats['taux_erreur']:.1f}%\n"
-            rapport_str += f"  Erreurs total : {stats['erreurs_total']}\n\n"
-        
-        if rapport['erreurs_recentes']:
-            rapport_str += "=== ERREURS RÉCENTES ===\n"
-            for erreur in rapport['erreurs_recentes'][:5]:  # 5 dernières erreurs
-                rapport_str += f"{erreur['timestamp']} - {erreur['fonction']}: {erreur['erreur']}\n"
-        
-        return rapport_str
+**4. Applications pratiques :**
+- Validation de données
+- Gestion de fichiers
+- Monitoring d'applications
+- Débogage efficace
 
-# Utilisation
-monitoring = SystemeMonitoring()
-
-@monitoring.monitorer()
-def fonction_test():
-    """Fonction de test pour le monitoring."""
-    time.sleep(0.1)  # Simulation d'un traitement
-    if time.time() % 10 < 2:  # 20% de chance d'erreur
-        raise ValueError("Erreur simulée")
-    return "Succès"
-
-# Tests
-if __name__ == "__main__":
-    for i in range(50):
-        try:
-            resultat = fonction_test()
-            print(f"Appel {i+1}: {resultat}")
-        except Exception as e:
-            print(f"Appel {i+1}: Erreur - {e}")
-    
-    # Générer le rapport
-    rapport = monitoring.generer_rapport()
-    print(rapport)
-```
-
----
-layout: default
----
-
-# Prochaines étapes 🎯
-
-### Ce qui nous attend
-
-1. **Programmation orientée objet** (classes, héritage)
-2. **Manipulation de fichiers** (I/O avancé)
-3. **Projet final intégrateur**
-4. **QCM de validation**
-5. **Débriefing et perspectives**
-
-**Préparation :**
-- Maîtrisez la gestion d'erreurs
-- Pratiquez les context managers
-- Testez les exercices proposés
-
----
-src: './pages/09-programmation-objet.md'
---- 
+**Prêt pour la programmation orientée objet !** 🚀 

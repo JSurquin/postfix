@@ -21,23 +21,51 @@ layout: default
 
 ### Opérations de base sur les fichiers
 
+**Opérations principales :**
+- Écriture de fichiers
+- Lecture de fichiers
+- Lecture ligne par ligne
+- Lecture de toutes les lignes
+
+---
+
+# Écriture de Fichier
+
 ```python
 # Écriture de fichier
 with open("test.txt", "w", encoding="utf-8") as fichier:
     fichier.write("Première ligne\n")
     fichier.write("Deuxième ligne\n")
     fichier.write("Troisième ligne\n")
+```
 
+---
+
+# Lecture de Fichier
+
+```python
 # Lecture de fichier
 with open("test.txt", "r", encoding="utf-8") as fichier:
     contenu = fichier.read()
     print(contenu)
+```
 
+---
+
+# Lecture Ligne par Ligne
+
+```python
 # Lecture ligne par ligne
 with open("test.txt", "r", encoding="utf-8") as fichier:
     for ligne in fichier:
         print(ligne.strip())
+```
 
+---
+
+# Lecture de Toutes les Lignes
+
+```python
 # Lecture de toutes les lignes
 with open("test.txt", "r", encoding="utf-8") as fichier:
     lignes = fichier.readlines()
@@ -52,29 +80,71 @@ layout: default
 
 ### Différents modes d'accès
 
+**Modes disponibles :**
+- `r` : Lecture (par défaut)
+- `w` : Écriture (écrase le contenu)
+- `a` : Ajout (ajoute à la fin)
+- `r+` : Lecture/écriture
+- `rb` : Lecture binaire
+- `wb` : Écriture binaire
+
+---
+
+# Mode Lecture
+
 ```python
 # Mode lecture (par défaut)
 with open("fichier.txt", "r") as f:
     contenu = f.read()
+```
 
+---
+
+# Mode Écriture
+
+```python
 # Mode écriture (écrase le contenu)
 with open("fichier.txt", "w") as f:
     f.write("Nouveau contenu")
+```
 
+---
+
+# Mode Ajout
+
+```python
 # Mode ajout (ajoute à la fin)
 with open("fichier.txt", "a") as f:
     f.write("\nLigne ajoutée")
+```
 
+---
+
+# Mode Lecture/Écriture
+
+```python
 # Mode lecture/écriture
 with open("fichier.txt", "r+") as f:
     contenu = f.read()
     f.seek(0)  # Retour au début
     f.write("Début modifié\n" + contenu)
+```
 
+---
+
+# Mode Binaire
+
+```python
 # Mode binaire
 with open("image.jpg", "rb") as f:
     donnees = f.read()
+```
 
+---
+
+# Mode avec Encodage
+
+```python
 # Mode texte avec encodage spécifique
 with open("fichier.txt", "r", encoding="latin-1") as f:
     contenu = f.read()
@@ -88,39 +158,107 @@ layout: default
 
 ### Utilisation du module pathlib
 
+**Avantages de pathlib :**
+- Interface orientée objet
+- Gestion cross-platform
+- Méthodes intuitives
+- Manipulation de chemins
+
+---
+
+# Création de Chemins
+
 ```python
 from pathlib import Path
 
 # Création de chemins
 chemin = Path("dossier/sous_dossier/fichier.txt")
 chemin_absolu = Path.cwd() / "fichier.txt"
+```
 
+---
+
+# Vérification d'Existence
+
+```python
 # Vérification d'existence
 if chemin.exists():
     print("Le fichier existe")
+```
 
+---
+
+# Manipulation de Chemins
+
+```python
+# Manipulation de chemins
+chemin = Path("dossier/sous_dossier/fichier.txt")
+
+# Propriétés du chemin
+print(chemin.name)      # nom du fichier
+print(chemin.suffix)    # extension
+print(chemin.stem)      # nom sans extension
+print(chemin.parent)    # dossier parent
+print(chemin.parts)     # parties du chemin
+```
+
+---
+
+# Création de Dossiers
+
+```python
 # Création de dossiers
-chemin_dossier = Path("nouveau_dossier")
-chemin_dossier.mkdir(exist_ok=True)
+nouveau_dossier = Path("nouveau_dossier")
+nouveau_dossier.mkdir(exist_ok=True)
 
-# Création de dossiers parents
-chemin_complet = Path("a/b/c/d/fichier.txt")
-chemin_complet.parent.mkdir(parents=True, exist_ok=True)
+# Création de dossiers imbriqués
+dossier_imbrique = Path("dossier1/dossier2/dossier3")
+dossier_imbrique.mkdir(parents=True, exist_ok=True)
+```
 
-# Navigation dans l'arborescence
-for fichier in Path(".").glob("*.txt"):
-    print(fichier)
+---
+layout: default
+---
 
+# Globbing et recherche 🔍
+
+### Recherche de fichiers avec des patterns
+
+**Patterns de recherche :**
+- `*` : N'importe quel caractère
+- `**` : Recherche récursive
+- `?` : Un caractère unique
+- `[abc]` : Caractères spécifiques
+
+---
+
+# Recherche Simple
+
+```python
+from pathlib import Path
+
+# Recherche de fichiers
+dossier = Path(".")
+fichiers_txt = list(dossier.glob("*.txt"))
+print(fichiers_txt)
+
+# Recherche avec pattern
+fichiers_py = list(dossier.glob("*.py"))
+print(fichiers_py)
+```
+
+---
+
+# Recherche Récursive
+
+```python
 # Recherche récursive
-for fichier in Path(".").rglob("*.py"):
-    print(fichier)
+tous_fichiers = list(dossier.rglob("*.txt"))
+print(tous_fichiers)
 
-# Informations sur le fichier
-chemin = Path("fichier.txt")
-print(chemin.name)        # nom du fichier
-print(chemin.suffix)      # extension
-print(chemin.stem)        # nom sans extension
-print(chemin.parent)      # dossier parent
+# Recherche avec plusieurs patterns
+fichiers_divers = list(dossier.glob("*.{txt,py,md}"))
+print(fichiers_divers)
 ```
 
 ---
@@ -129,14 +267,22 @@ layout: default
 
 # Formats de fichiers courants 📊
 
-### JSON, CSV, et autres formats
+### Manipulation de formats spécifiques
+
+**Formats supportés :**
+- JSON : Données structurées
+- CSV : Données tabulaires
+- Pickle : Sérialisation Python
+- XML : Données hiérarchiques
+
+---
+
+# Manipulation JSON
 
 ```python
 import json
-import csv
-import pickle
 
-# JSON
+# Écriture JSON
 donnees = {
     "nom": "Alice",
     "age": 25,
@@ -144,27 +290,48 @@ donnees = {
     "hobbies": ["lecture", "musique"]
 }
 
-# Écriture JSON
 with open("donnees.json", "w", encoding="utf-8") as f:
     json.dump(donnees, f, indent=2, ensure_ascii=False)
+```
 
+---
+
+# Lecture JSON
+
+```python
 # Lecture JSON
 with open("donnees.json", "r", encoding="utf-8") as f:
     donnees_lues = json.load(f)
 
-# CSV
-personnes = [
-    ["Nom", "Age", "Ville"],
+print(donnees_lues["nom"])
+print(donnees_lues["hobbies"])
+```
+
+---
+
+# Manipulation CSV
+
+```python
+import csv
+
+# Écriture CSV
+donnees = [
+    ["nom", "age", "ville"],
     ["Alice", 25, "Paris"],
     ["Bob", 30, "Lyon"],
     ["Charlie", 35, "Marseille"]
 ]
 
-# Écriture CSV
 with open("personnes.csv", "w", newline="", encoding="utf-8") as f:
     writer = csv.writer(f)
-    writer.writerows(personnes)
+    writer.writerows(donnees)
+```
 
+---
+
+# Lecture CSV
+
+```python
 # Lecture CSV
 with open("personnes.csv", "r", encoding="utf-8") as f:
     reader = csv.reader(f)
@@ -178,14 +345,40 @@ layout: default
 
 # Gestion d'erreurs pour les fichiers ⚠️
 
-### Traitement des erreurs d'I/O
+### Gestion robuste des opérations de fichiers
+
+**Erreurs courantes :**
+- `FileNotFoundError` : Fichier inexistant
+- `PermissionError` : Permissions insuffisantes
+- `UnicodeDecodeError` : Problème d'encodage
+- `OSError` : Erreurs système
+
+---
+
+# Gestion d'Erreurs de Base
 
 ```python
-import os
-from pathlib import Path
+# Gestion d'erreurs de base
+try:
+    with open("fichier_inexistant.txt", "r") as f:
+        contenu = f.read()
+except FileNotFoundError:
+    print("Le fichier n'existe pas")
+except PermissionError:
+    print("Pas de permission pour lire le fichier")
+except UnicodeDecodeError:
+    print("Problème d'encodage")
+except Exception as e:
+    print(f"Erreur inattendue : {e}")
+```
 
+---
+
+# Fonction de Lecture Sécurisée
+
+```python
 def lire_fichier_securise(chemin):
-    """Lit un fichier avec gestion d'erreurs."""
+    """Lit un fichier avec gestion d'erreurs complète"""
     try:
         with open(chemin, "r", encoding="utf-8") as f:
             return f.read()
@@ -196,384 +389,249 @@ def lire_fichier_securise(chemin):
         print(f"Pas de permission pour lire {chemin}")
         return None
     except UnicodeDecodeError:
-        print(f"Erreur d'encodage pour {chemin}")
+        print(f"Problème d'encodage pour {chemin}")
         return None
     except Exception as e:
         print(f"Erreur inattendue : {e}")
         return None
-
-def ecrire_fichier_securise(chemin, contenu):
-    """Écrit un fichier avec gestion d'erreurs."""
-    try:
-        # Créer le dossier parent si nécessaire
-        Path(chemin).parent.mkdir(parents=True, exist_ok=True)
-        
-        with open(chemin, "w", encoding="utf-8") as f:
-            f.write(contenu)
-        return True
-    except PermissionError:
-        print(f"Pas de permission pour écrire {chemin}")
-        return False
-    except Exception as e:
-        print(f"Erreur d'écriture : {e}")
-        return False
-
-# Utilisation
-contenu = lire_fichier_securise("fichier_inexistant.txt")
-if contenu is None:
-    print("Impossible de lire le fichier")
-
-succes = ecrire_fichier_securise("nouveau/fichier.txt", "Contenu test")
-if succes:
-    print("Fichier écrit avec succès")
 ```
 
 ---
 layout: default
 ---
 
-# Context managers personnalisés 🔄
+# Context managers personnalisés 🔧
 
-### Création de gestionnaires de ressources
+### Création de context managers pour les fichiers
+
+**Avantages :**
+- Gestion automatique des ressources
+- Code plus propre
+- Gestion d'erreurs centralisée
+- Réutilisabilité
+
+---
+
+# Context Manager Simple
+
+```python
+class GestionnaireFichier:
+    def __init__(self, nom_fichier, mode="r"):
+        self.nom_fichier = nom_fichier
+        self.mode = mode
+        self.fichier = None
+    
+    def __enter__(self):
+        self.fichier = open(self.nom_fichier, self.mode, encoding="utf-8")
+        return self.fichier
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if self.fichier:
+            self.fichier.close()
+        return False  # Propager l'exception
+```
+
+---
+
+# Utilisation du Context Manager
+
+```python
+# Utilisation
+with GestionnaireFichier("test.txt", "w") as f:
+    f.write("Test de context manager")
+
+with GestionnaireFichier("test.txt", "r") as f:
+    contenu = f.read()
+    print(contenu)
+```
+
+---
+layout: default
+---
+
+# Context Manager avec contextlib 🛠️
+
+### Utilisation du décorateur contextmanager
+
+**Avantages :**
+- Syntaxe plus simple
+- Moins de code boilerplate
+- Plus lisible
+
+---
+
+# Context Manager avec Décorateur
 
 ```python
 from contextlib import contextmanager
-import time
 
 @contextmanager
-def gestionnaire_fichier(chemin, mode="r"):
-    """Context manager pour la gestion de fichiers."""
-    fichier = None
+def gestionnaire_fichier(nom_fichier, mode="r"):
+    fichier = open(nom_fichier, mode, encoding="utf-8")
     try:
-        fichier = open(chemin, mode, encoding="utf-8")
         yield fichier
-    except Exception as e:
-        print(f"Erreur lors de l'utilisation du fichier : {e}")
-        raise
     finally:
-        if fichier:
-            fichier.close()
-
-@contextmanager
-def timer(nom_operation):
-    """Context manager pour mesurer le temps."""
-    debut = time.time()
-    try:
-        yield
-    finally:
-        fin = time.time()
-        print(f"{nom_operation} : {fin - debut:.4f} secondes")
-
-# Utilisation
-with gestionnaire_fichier("test.txt", "w") as f:
-    f.write("Test de context manager")
-
-with timer("Lecture de fichier"):
-    with gestionnaire_fichier("test.txt", "r") as f:
-        contenu = f.read()
-        print(contenu)
+        fichier.close()
 ```
 
 ---
-layout: default
----
 
-# Exercices pratiques 🎯
-
-### Exercice 1 : Gestionnaire de logs
-
-Créez un système de logging qui :
-1. Écrit les logs dans des fichiers datés
-2. Gère différents niveaux de log
-3. Rotation automatique des fichiers
-4. Formatage personnalisé
-
----
-layout: default
----
-
-# Exercices pratiques 🎯
-
-### Exercice 2 : Convertisseur de formats
-
-Créez un convertisseur qui :
-1. Lit des fichiers CSV
-2. Convertit en JSON
-3. Gère différents encodages
-4. Validation des données
-
----
-layout: default
----
-
-# Exercices pratiques 🎯
-
-### Exercice 3 : Synchroniseur de fichiers
-
-Créez un synchroniseur qui :
-1. Compare deux dossiers
-2. Copie les fichiers modifiés
-3. Gère les conflits
-4. Log des opérations
-
----
-layout: default
----
-
-# Solutions des exercices 💡
-
-### Exercice 1 : Gestionnaire de logs
+# Utilisation du Context Manager Décoré
 
 ```python
-import logging
-from datetime import datetime
-from pathlib import Path
-
-class GestionnaireLogs:
-    def __init__(self, dossier_logs="logs"):
-        self.dossier_logs = Path(dossier_logs)
-        self.dossier_logs.mkdir(exist_ok=True)
-        self.setup_logging()
-    
-    def setup_logging(self):
-        """Configure le système de logging."""
-        # Créer le nom de fichier avec la date
-        nom_fichier = f"app_{datetime.now().strftime('%Y%m%d')}.log"
-        chemin_fichier = self.dossier_logs / nom_fichier
-        
-        # Configuration du logging
-        logging.basicConfig(
-            level=logging.INFO,
-            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-            handlers=[
-                logging.FileHandler(chemin_fichier, encoding='utf-8'),
-                logging.StreamHandler()
-            ]
-        )
-    
-    def log_info(self, message):
-        """Log un message d'information."""
-        logging.info(message)
-    
-    def log_error(self, message):
-        """Log un message d'erreur."""
-        logging.error(message)
-    
-    def log_warning(self, message):
-        """Log un avertissement."""
-        logging.warning(message)
-    
-    def nettoyer_anciens_logs(self, jours=30):
-        """Supprime les logs plus anciens que X jours."""
-        limite = datetime.now().timestamp() - (jours * 24 * 3600)
-        
-        for fichier in self.dossier_logs.glob("*.log"):
-            if fichier.stat().st_mtime < limite:
-                fichier.unlink()
-                print(f"Supprimé : {fichier}")
-
 # Utilisation
-gestionnaire = GestionnaireLogs()
-gestionnaire.log_info("Démarrage de l'application")
-gestionnaire.log_warning("Attention : espace disque faible")
-gestionnaire.log_error("Erreur de connexion à la base de données")
+with gestionnaire_fichier("test.txt", "w") as f:
+    f.write("Test avec contextmanager")
+
+with gestionnaire_fichier("test.txt", "r") as f:
+    contenu = f.read()
+    print(contenu)
 ```
 
 ---
 layout: default
 ---
 
-# Solutions des exercices 💡
+# Exercices Pratiques 🎯
 
-### Exercice 2 : Convertisseur de formats
+### Testez vos compétences
+
+**Exercice 1 :** Créez une fonction qui lit un fichier CSV et retourne les données sous forme de liste de dictionnaires.
+
+**Exercice 2 :** Implémentez un système de logging qui écrit les logs dans un fichier avec rotation automatique.
+
+**Exercice 3 :** Créez un context manager personnalisé pour gérer les sauvegardes automatiques de fichiers.
+
+---
+
+# Solutions des Exercices 💡
+
+### Exercice 1 - Lecture CSV en Dictionnaires
 
 ```python
 import csv
-import json
-import sys
 from pathlib import Path
 
-class ConvertisseurFormats:
-    def __init__(self):
-        self.encodages_supportes = ['utf-8', 'latin-1', 'cp1252']
+def lire_csv_en_dict(chemin_fichier):
+    """Lit un fichier CSV et retourne une liste de dictionnaires"""
+    if not Path(chemin_fichier).exists():
+        return []
     
-    def detecter_encodage(self, fichier):
-        """Détecte l'encodage d'un fichier."""
-        for encodage in self.encodages_supportes:
-            try:
-                with open(fichier, 'r', encoding=encodage) as f:
-                    f.read()
-                return encodage
-            except UnicodeDecodeError:
-                continue
-        return 'utf-8'  # Par défaut
-    
-    def csv_vers_json(self, fichier_csv, fichier_json):
-        """Convertit un fichier CSV en JSON."""
-        encodage = self.detecter_encodage(fichier_csv)
-        
-        try:
-            with open(fichier_csv, 'r', encoding=encodage) as f:
-                reader = csv.DictReader(f)
-                donnees = list(reader)
-            
-            with open(fichier_json, 'w', encoding='utf-8') as f:
-                json.dump(donnees, f, indent=2, ensure_ascii=False)
-            
-            print(f"Conversion réussie : {len(donnees)} enregistrements")
-            return True
-            
-        except Exception as e:
-            print(f"Erreur de conversion : {e}")
-            return False
-    
-    def valider_csv(self, fichier_csv):
-        """Valide la structure d'un fichier CSV."""
-        try:
-            with open(fichier_csv, 'r', encoding=self.detecter_encodage(fichier_csv)) as f:
-                reader = csv.reader(f)
-                en_tete = next(reader)
-                
-                if not en_tete:
-                    return False, "Fichier vide"
-                
-                # Vérifier que toutes les lignes ont le même nombre de colonnes
-                for i, ligne in enumerate(reader, 2):
-                    if len(ligne) != len(en_tete):
-                        return False, f"Ligne {i} : nombre de colonnes incorrect"
-                
-                return True, f"Fichier valide : {len(en_tete)} colonnes"
-                
-        except Exception as e:
-            return False, f"Erreur de validation : {e}"
+    with open(chemin_fichier, "r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        return list(reader)
 
-# Utilisation
-convertisseur = ConvertisseurFormats()
-
-# Validation
-valide, message = convertisseur.valider_csv("donnees.csv")
-print(message)
-
-if valide:
-    # Conversion
-    succes = convertisseur.csv_vers_json("donnees.csv", "donnees.json")
-    if succes:
-        print("Conversion terminée")
+# Test
+donnees = lire_csv_en_dict("personnes.csv")
+for personne in donnees:
+    print(f"{personne['nom']} a {personne['age']} ans")
 ```
 
 ---
-layout: default
----
 
-# Solutions des exercices 💡
+# Solutions des Exercices (suite)
 
-### Exercice 3 : Synchroniseur de fichiers
+### Exercice 2 - Système de Logging
 
 ```python
-import shutil
-import hashlib
+import logging
 from pathlib import Path
 from datetime import datetime
 
-class SynchroniseurFichiers:
-    def __init__(self, source, destination):
-        self.source = Path(source)
-        self.destination = Path(destination)
-        self.logs = []
-    
-    def calculer_hash(self, fichier):
-        """Calcule le hash MD5 d'un fichier."""
-        hash_md5 = hashlib.md5()
-        with open(fichier, "rb") as f:
-            for chunk in iter(lambda: f.read(4096), b""):
-                hash_md5.update(chunk)
-        return hash_md5.hexdigest()
-    
-    def fichier_modifie(self, source, dest):
-        """Vérifie si un fichier a été modifié."""
-        if not dest.exists():
-            return True
+class LoggerFichier:
+    def __init__(self, nom_fichier, niveau=logging.INFO):
+        self.nom_fichier = nom_fichier
+        self.logger = logging.getLogger(nom_fichier)
+        self.logger.setLevel(niveau)
         
-        return self.calculer_hash(source) != self.calculer_hash(dest)
+        # Handler pour fichier
+        handler = logging.FileHandler(nom_fichier, encoding="utf-8")
+        formatter = logging.Formatter(
+            '%(asctime)s - %(levelname)s - %(message)s'
+        )
+        handler.setFormatter(formatter)
+        self.logger.addHandler(handler)
     
-    def synchroniser(self):
-        """Synchronise les dossiers."""
-        if not self.source.exists():
-            self.log("ERREUR", f"Dossier source inexistant : {self.source}")
-            return False
-        
-        self.destination.mkdir(parents=True, exist_ok=True)
-        
-        fichiers_copies = 0
-        erreurs = 0
-        
-        for fichier_source in self.source.rglob("*"):
-            if fichier_source.is_file():
-                # Calculer le chemin relatif
-                chemin_relatif = fichier_source.relative_to(self.source)
-                fichier_dest = self.destination / chemin_relatif
-                
-                try:
-                    # Créer le dossier parent si nécessaire
-                    fichier_dest.parent.mkdir(parents=True, exist_ok=True)
-                    
-                    # Vérifier si le fichier a été modifié
-                    if self.fichier_modifie(fichier_source, fichier_dest):
-                        shutil.copy2(fichier_source, fichier_dest)
-                        self.log("COPIE", f"{chemin_relatif}")
-                        fichiers_copies += 1
-                    else:
-                        self.log("IGNORE", f"{chemin_relatif} (inchangé)")
-                        
-                except Exception as e:
-                    self.log("ERREUR", f"{chemin_relatif} : {e}")
-                    erreurs += 1
-        
-        self.log("RESUME", f"Synchronisation terminée : {fichiers_copies} fichiers copiés, {erreurs} erreurs")
-        return erreurs == 0
+    def info(self, message):
+        self.logger.info(message)
     
-    def log(self, niveau, message):
-        """Enregistre un message de log."""
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        log_message = f"[{timestamp}] {niveau}: {message}"
-        self.logs.append(log_message)
-        print(log_message)
+    def error(self, message):
+        self.logger.error(message)
     
-    def sauvegarder_logs(self, fichier_log):
-        """Sauvegarde les logs dans un fichier."""
-        with open(fichier_log, "w", encoding="utf-8") as f:
-            for log in self.logs:
-                f.write(log + "\n")
+    def warning(self, message):
+        self.logger.warning(message)
 
 # Utilisation
-synchroniseur = SynchroniseurFichiers("source", "destination")
-succes = synchroniseur.synchroniser()
-
-if succes:
-    print("Synchronisation réussie")
-else:
-    print("Synchronisation avec erreurs")
-
-synchroniseur.sauvegarder_logs("sync.log")
+logger = LoggerFichier("app.log")
+logger.info("Application démarrée")
+logger.error("Une erreur s'est produite")
 ```
 
 ---
-layout: default
+
+# Solutions des Exercices (fin)
+
+### Exercice 3 - Context Manager de Sauvegarde
+
+```python
+import shutil
+from pathlib import Path
+from datetime import datetime
+
+class SauvegardeFichier:
+    def __init__(self, chemin_fichier):
+        self.chemin_fichier = Path(chemin_fichier)
+        self.chemin_backup = None
+    
+    def __enter__(self):
+        # Créer une sauvegarde
+        if self.chemin_fichier.exists():
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            self.chemin_backup = self.chemin_fichier.with_suffix(f".backup_{timestamp}{self.chemin_fichier.suffix}")
+            shutil.copy2(self.chemin_fichier, self.chemin_backup)
+        return self.chemin_fichier
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        # En cas d'erreur, restaurer la sauvegarde
+        if exc_type is not None and self.chemin_backup and self.chemin_backup.exists():
+            shutil.copy2(self.chemin_backup, self.chemin_fichier)
+            print(f"Sauvegarde restaurée : {self.chemin_backup}")
+        return False
+
+# Utilisation
+with SauvegardeFichier("important.txt") as f:
+    f.write_text("Nouveau contenu important")
+```
+
 ---
 
-# Prochaines étapes 🎯
+# Points Clés à Retenir 🎯
 
-### Ce qui nous attend
+### Résumé de la manipulation de fichiers
 
-1. **Projet final intégrateur**
-2. **QCM de validation**
-3. **Débriefing et perspectives**
+**1. Opérations de base :**
+- Lecture et écriture de fichiers
+- Modes d'ouverture appropriés
+- Gestion de l'encodage
 
-**Préparation :**
-- Maîtrisez la manipulation de fichiers
-- Pratiquez les context managers
-- Testez les exercices proposés
+**2. Gestion des chemins :**
+- Module `pathlib` pour les chemins
+- Manipulation cross-platform
+- Recherche avec globbing
 
----
-src: './pages/11-projet-final.md'
---- 
+**3. Formats de fichiers :**
+- JSON pour les données structurées
+- CSV pour les données tabulaires
+- Gestion d'encodage appropriée
+
+**4. Gestion d'erreurs :**
+- Gestion robuste des exceptions
+- Context managers personnalisés
+- Sauvegardes automatiques
+
+**5. Bonnes pratiques :**
+- Utilisation de `with` pour les fichiers
+- Gestion appropriée des encodages
+- Context managers pour la réutilisabilité
+
+**Prêt pour le projet final !** 🚀 

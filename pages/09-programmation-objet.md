@@ -21,6 +21,16 @@ layout: default
 
 ### Création de classes en Python
 
+**Concepts de base :**
+- Classes : modèles pour créer des objets
+- Objets : instances de classes
+- Attributs : données des objets
+- Méthodes : comportements des objets
+
+---
+
+# Définition d'une Classe
+
 ```python
 # Définition d'une classe simple
 class Personne:
@@ -34,14 +44,26 @@ class Personne:
     def avoir_anniversaire(self):
         self.age += 1
         return f"Joyeux anniversaire ! J'ai maintenant {self.age} ans"
+```
 
+---
+
+# Création d'Objets
+
+```python
 # Création d'objets
 alice = Personne("Alice", 25)
 bob = Personne("Bob", 30)
 
 print(alice.se_presenter())  # Je m'appelle Alice et j'ai 25 ans
 print(bob.se_presenter())    # Je m'appelle Bob et j'ai 30 ans
+```
 
+---
+
+# Utilisation des Méthodes
+
+```python
 alice.avoir_anniversaire()
 print(alice.se_presenter())  # Je m'appelle Alice et j'ai 26 ans
 ```
@@ -54,6 +76,18 @@ layout: default
 
 ### Méthodes magiques de Python
 
+**Méthodes spéciales principales :**
+- `__init__` : constructeur
+- `__str__` : représentation string
+- `__repr__` : représentation technique
+- `__eq__` : égalité
+- `__add__` : addition
+- `__len__` : longueur
+
+---
+
+# Méthodes Spéciales de Base
+
 ```python
 class Point:
     def __init__(self, x, y):
@@ -65,7 +99,13 @@ class Point:
     
     def __repr__(self):
         return f"Point(x={self.x}, y={self.y})"
-    
+```
+
+---
+
+# Méthodes Spéciales Avancées
+
+```python
     def __eq__(self, autre):
         if not isinstance(autre, Point):
             return False
@@ -76,7 +116,13 @@ class Point:
     
     def __len__(self):
         return int((self.x**2 + self.y**2)**0.5)
+```
 
+---
+
+# Utilisation des Méthodes Spéciales
+
+```python
 # Utilisation
 p1 = Point(3, 4)
 p2 = Point(1, 2)
@@ -95,6 +141,16 @@ layout: default
 
 ### Création de hiérarchies de classes
 
+**Concepts d'héritage :**
+- Classe parent (base)
+- Classe enfant (dérivée)
+- Réutilisation de code
+- Polymorphisme
+
+---
+
+# Classe Parent
+
 ```python
 class Animal:
     def __init__(self, nom):
@@ -105,10 +161,16 @@ class Animal:
     
     def se_deplacer(self):
         return "L'animal se déplace"
+```
 
+---
+
+# Classes Enfants
+
+```python
 class Chien(Animal):
     def parler(self):
-        return f"{self.nom} dit : Wouf !"
+        return f"{self.nom} dit : Woof !"
     
     def se_deplacer(self):
         return f"{self.nom} court"
@@ -119,22 +181,449 @@ class Chat(Animal):
     
     def se_deplacer(self):
         return f"{self.nom} marche silencieusement"
+```
 
-# Polymorphisme
-animaux = [Chien("Rex"), Chat("Mimi"), Animal("Générique")]
+---
 
-for animal in animaux:
-    print(f"{animal.nom} : {animal.parler()}")
-    print(f"{animal.nom} : {animal.se_deplacer()}")
+# Utilisation de l'Héritage
+
+```python
+# Utilisation
+chien = Chien("Rex")
+chat = Chat("Minou")
+
+print(chien.parler())      # Rex dit : Woof !
+print(chat.parler())       # Minou dit : Miaou !
+print(chien.se_deplacer()) # Rex court
+print(chat.se_deplacer())  # Minou marche silencieusement
 ```
 
 ---
 layout: default
 ---
 
-# Encapsulation et propriétés 🔒
+# Encapsulation 🔒
+
+### Protection des données
+
+**Niveaux d'encapsulation :**
+- Public : accessible partout
+- Protected : accessible dans la classe et les enfants
+- Private : accessible seulement dans la classe
+
+---
+
+# Attributs Publics
+
+```python
+class Compte:
+    def __init__(self, titulaire, solde=0):
+        self.titulaire = titulaire  # Public
+        self.solde = solde          # Public
+    
+    def deposer(self, montant):
+        self.solde += montant
+        return f"Dépôt de {montant}€ effectué"
+    
+    def retirer(self, montant):
+        if montant <= self.solde:
+            self.solde -= montant
+            return f"Retrait de {montant}€ effectué"
+        else:
+            return "Solde insuffisant"
+```
+
+---
+
+# Attributs Protected
+
+```python
+class CompteSecurise:
+    def __init__(self, titulaire, solde=0):
+        self.titulaire = titulaire
+        self._solde = solde  # Protected (convention)
+    
+    def deposer(self, montant):
+        if montant > 0:
+            self._solde += montant
+            return f"Dépôt de {montant}€ effectué"
+        return "Montant invalide"
+    
+    def get_solde(self):
+        return self._solde
+```
+
+---
+
+# Attributs Private
+
+```python
+class ComptePrive:
+    def __init__(self, titulaire, solde=0):
+        self.titulaire = titulaire
+        self.__solde = solde  # Private
+    
+    def deposer(self, montant):
+        if montant > 0:
+            self.__solde += montant
+            return f"Dépôt de {montant}€ effectué"
+        return "Montant invalide"
+    
+    def get_solde(self):
+        return self.__solde
+    
+    def set_solde(self, nouveau_solde):
+        if nouveau_solde >= 0:
+            self.__solde = nouveau_solde
+```
+
+---
+layout: default
+---
+
+# Propriétés 🎯
 
 ### Contrôle d'accès aux attributs
+
+**Avantages des propriétés :**
+- Contrôle d'accès
+- Validation automatique
+- Interface propre
+- Calculs dynamiques
+
+---
+
+# Propriété Simple
+
+```python
+class Rectangle:
+    def __init__(self, largeur, hauteur):
+        self._largeur = largeur
+        self._hauteur = hauteur
+    
+    @property
+    def largeur(self):
+        return self._largeur
+    
+    @largeur.setter
+    def largeur(self, valeur):
+        if valeur > 0:
+            self._largeur = valeur
+        else:
+            raise ValueError("La largeur doit être positive")
+```
+
+---
+
+# Propriété Calculée
+
+```python
+    @property
+    def aire(self):
+        return self._largeur * self._hauteur
+    
+    @property
+    def perimetre(self):
+        return 2 * (self._largeur + self._hauteur)
+```
+
+---
+
+# Utilisation des Propriétés
+
+```python
+# Utilisation
+rect = Rectangle(5, 3)
+print(f"Largeur: {rect.largeur}")
+print(f"Aire: {rect.aire}")
+print(f"Périmètre: {rect.perimetre}")
+
+# Modification
+rect.largeur = 6
+print(f"Nouvelle aire: {rect.aire}")
+```
+
+---
+layout: default
+---
+
+# Méthodes de classe et statiques 🏭
+
+### Méthodes au niveau de la classe
+
+**Types de méthodes :**
+- Méthodes d'instance : `self`
+- Méthodes de classe : `@classmethod`
+- Méthodes statiques : `@staticmethod`
+
+---
+
+# Méthodes de Classe
+
+```python
+class Date:
+    def __init__(self, jour, mois, annee):
+        self.jour = jour
+        self.mois = mois
+        self.annee = annee
+    
+    @classmethod
+    def from_string(cls, date_str):
+        """Crée une date à partir d'une chaîne 'JJ/MM/AAAA'"""
+        jour, mois, annee = map(int, date_str.split('/'))
+        return cls(jour, mois, annee)
+    
+    @classmethod
+    def aujourd_hui(cls):
+        """Crée une date pour aujourd'hui"""
+        from datetime import date
+        aujourd_hui = date.today()
+        return cls(aujourd_hui.day, aujourd_hui.month, aujourd_hui.year)
+```
+
+---
+
+# Méthodes Statiques
+
+```python
+    @staticmethod
+    def est_valide(jour, mois, annee):
+        """Vérifie si une date est valide"""
+        if mois < 1 or mois > 12:
+            return False
+        if jour < 1 or jour > 31:
+            return False
+        return True
+    
+    @staticmethod
+    def est_bissextile(annee):
+        """Vérifie si une année est bissextile"""
+        return annee % 4 == 0 and (annee % 100 != 0 or annee % 400 == 0)
+```
+
+---
+
+# Utilisation des Méthodes
+
+```python
+# Utilisation
+date1 = Date.from_string("15/03/2024")
+date2 = Date.aujourd_hui()
+
+print(f"Date1: {date1.jour}/{date1.mois}/{date1.annee}")
+print(f"Date2: {date2.jour}/{date2.mois}/{date2.annee}")
+
+# Méthodes statiques
+print(Date.est_valide(32, 13, 2024))  # False
+print(Date.est_bissextile(2024))       # True
+```
+
+---
+layout: default
+---
+
+# Héritage multiple 🔀
+
+### Héritage de plusieurs classes
+
+**Avantages :**
+- Réutilisation de code
+- Flexibilité
+- Composition de comportements
+
+**Attention :**
+- Complexité
+- Conflits de noms
+- Ordre de résolution
+
+---
+
+# Classes de Base
+
+```python
+class Volant:
+    def voler(self):
+        return "Je vole dans les airs"
+
+class Nageant:
+    def nager(self):
+        return "Je nage dans l'eau"
+
+class Marcheur:
+    def marcher(self):
+        return "Je marche sur terre"
+```
+
+---
+
+# Héritage Multiple
+
+```python
+class Canard(Marcheur, Nageant, Volant):
+    def __init__(self, nom):
+        self.nom = nom
+    
+    def se_presenter(self):
+        return f"Je suis {self.nom}, un canard"
+    
+    def faire_tout(self):
+        return f"{self.se_presenter()}. {self.marcher()}. {self.nager()}. {self.voler()}"
+```
+
+---
+
+# Utilisation de l'Héritage Multiple
+
+```python
+# Utilisation
+donald = Canard("Donald")
+print(donald.faire_tout())
+
+# Ordre de résolution des méthodes (MRO)
+print(Canard.__mro__)
+```
+
+---
+layout: default
+---
+
+# Classes abstraites 🎭
+
+### Interfaces et classes de base
+
+**Utilisation :**
+- Définir des interfaces
+- Forcer l'implémentation
+- Créer des contrats
+- Polymorphisme garanti
+
+---
+
+# Classe Abstraite
+
+```python
+from abc import ABC, abstractmethod
+
+class Forme(ABC):
+    @abstractmethod
+    def calculer_aire(self):
+        pass
+    
+    @abstractmethod
+    def calculer_perimetre(self):
+        pass
+    
+    def afficher_info(self):
+        return f"Aire: {self.calculer_aire()}, Périmètre: {self.calculer_perimetre()}"
+```
+
+---
+
+# Implémentation des Classes Abstraites
+
+```python
+class Cercle(Forme):
+    def __init__(self, rayon):
+        self.rayon = rayon
+    
+    def calculer_aire(self):
+        import math
+        return math.pi * self.rayon ** 2
+    
+    def calculer_perimetre(self):
+        import math
+        return 2 * math.pi * self.rayon
+
+class Rectangle(Forme):
+    def __init__(self, largeur, hauteur):
+        self.largeur = largeur
+        self.hauteur = hauteur
+    
+    def calculer_aire(self):
+        return self.largeur * self.hauteur
+    
+    def calculer_perimetre(self):
+        return 2 * (self.largeur + self.hauteur)
+```
+
+---
+
+# Utilisation des Classes Abstraites
+
+```python
+# Utilisation
+cercle = Cercle(5)
+rectangle = Rectangle(4, 6)
+
+print(cercle.afficher_info())
+print(rectangle.afficher_info())
+
+# Polymorphisme
+formes = [cercle, rectangle]
+for forme in formes:
+    print(f"Forme: {forme.afficher_info()}")
+```
+
+---
+layout: default
+---
+
+# Exercices Pratiques 🎯
+
+### Testez vos compétences
+
+**Exercice 1 :** Créez une hiérarchie de classes pour gérer différents types de véhicules (Voiture, Moto, Vélo) avec des méthodes communes et spécifiques.
+
+**Exercice 2 :** Implémentez une classe `Banque` avec des comptes sécurisés utilisant l'encapsulation et les propriétés.
+
+**Exercice 3 :** Créez une classe abstraite `Animal` avec des sous-classes concrètes et utilisez le polymorphisme.
+
+---
+
+# Solutions des Exercices 💡
+
+### Exercice 1 - Hiérarchie de Véhicules
+
+```python
+class Vehicule:
+    def __init__(self, marque, modele, annee):
+        self.marque = marque
+        self.modele = modele
+        self.annee = annee
+    
+    def demarrer(self):
+        return "Le véhicule démarre"
+    
+    def arreter(self):
+        return "Le véhicule s'arrête"
+    
+    def __str__(self):
+        return f"{self.marque} {self.modele} ({self.annee})"
+
+class Voiture(Vehicule):
+    def __init__(self, marque, modele, annee, portes=4):
+        super().__init__(marque, modele, annee)
+        self.portes = portes
+    
+    def demarrer(self):
+        return f"{super().demarrer()} en tournant la clé"
+    
+    def klaxonner(self):
+        return "Tut tut !"
+
+class Moto(Vehicule):
+    def demarrer(self):
+        return f"{super().demarrer()} en poussant le bouton"
+    
+    def faire_wheelie(self):
+        return "Wheeeelie !"
+```
+
+---
+
+# Solutions des Exercices (suite)
+
+### Exercice 2 - Classe Banque
 
 ```python
 class CompteBancaire:
@@ -154,494 +643,129 @@ class CompteBancaire:
     def deposer(self, montant):
         if montant > 0:
             self._solde += montant
-            self._historique.append(f"Dépôt: +{montant}")
-            return True
-        return False
+            self._historique.append(f"Dépôt: +{montant}€")
+            return f"Dépôt de {montant}€ effectué"
+        return "Montant invalide"
     
     def retirer(self, montant):
-        if 0 < montant <= self._solde:
+        if montant > 0 and montant <= self._solde:
             self._solde -= montant
-            self._historique.append(f"Retrait: -{montant}")
-            return True
-        return False
+            self._historique.append(f"Retrait: -{montant}€")
+            return f"Retrait de {montant}€ effectué"
+        return "Montant invalide ou solde insuffisant"
     
-    def obtenir_historique(self):
+    def get_historique(self):
         return self._historique.copy()
 
-# Utilisation
-compte = CompteBancaire("Alice", 1000)
-print(compte.solde)      # 1000
-compte.deposer(500)      # True
-compte.retirer(200)      # True
-print(compte.solde)      # 1300
-print(compte.obtenir_historique())
-```
-
----
-layout: default
----
-
-# Méthodes de classe et statiques ⚡
-
-### Différents types de méthodes
-
-```python
-class Mathematiques:
-    PI = 3.14159
-    
-    def __init__(self, valeur):
-        self.valeur = valeur
-    
-    def carre(self):
-        return self.valeur ** 2
-    
-    @classmethod
-    def creer_avec_pi(cls):
-        return cls(cls.PI)
-    
-    @staticmethod
-    def additionner(a, b):
-        return a + b
-    
-    @staticmethod
-    def factorielle(n):
-        if n <= 1:
-            return 1
-        return n * Mathematiques.factorielle(n - 1)
-
-# Utilisation
-math = Mathematiques(5)
-print(math.carre())                    # 25
-
-math_pi = Mathematiques.creer_avec_pi()
-print(math_pi.valeur)                  # 3.14159
-
-resultat = Mathematiques.additionner(3, 4)  # 7
-facto = Mathematiques.factorielle(5)        # 120
-```
-
----
-layout: default
----
-
-# Héritage multiple 🔗
-
-### Héritage de plusieurs classes
-
-```python
-class Volant:
-    def voler(self):
-        return "Je vole dans les airs"
-
-class Nageur:
-    def nager(self):
-        return "Je nage dans l'eau"
-
-class Canard(Volant, Nageur):
+class Banque:
     def __init__(self, nom):
         self.nom = nom
+        self._comptes = {}
     
-    def parler(self):
-        return f"{self.nom} dit : Coin coin !"
+    def creer_compte(self, titulaire, solde_initial=0):
+        compte = CompteBancaire(titulaire, solde_initial)
+        self._comptes[titulaire] = compte
+        return compte
     
-    def se_deplacer(self):
-        return f"{self.nom} peut voler et nager"
-
-# Utilisation
-donald = Canard("Donald")
-print(donald.voler())      # Je vole dans les airs
-print(donald.nager())      # Je nage dans l'eau
-print(donald.parler())     # Donald dit : Coin coin !
-
-# Méthode Resolution Order (MRO)
-print(Canard.__mro__)      # Ordre de résolution des méthodes
+    def get_compte(self, titulaire):
+        return self._comptes.get(titulaire)
 ```
 
 ---
-layout: default
----
 
-# Classes abstraites 🎨
+# Solutions des Exercices (fin)
 
-### Définition d'interfaces
+### Exercice 3 - Classes Abstraites Animal
 
 ```python
 from abc import ABC, abstractmethod
 
-class Forme(ABC):
-    @abstractmethod
-    def aire(self):
-        pass
-    
-    @abstractmethod
-    def perimetre(self):
-        pass
-
-class Rectangle(Forme):
-    def __init__(self, largeur, hauteur):
-        self.largeur = largeur
-        self.hauteur = hauteur
-    
-    def aire(self):
-        return self.largeur * self.hauteur
-    
-    def perimetre(self):
-        return 2 * (self.largeur + self.hauteur)
-
-class Cercle(Forme):
-    def __init__(self, rayon):
-        self.rayon = rayon
-    
-    def aire(self):
-        return 3.14159 * self.rayon ** 2
-    
-    def perimetre(self):
-        return 2 * 3.14159 * self.rayon
-
-# Utilisation
-formes = [Rectangle(5, 3), Cercle(4)]
-
-for forme in formes:
-    print(f"Aire: {forme.aire():.2f}")
-    print(f"Périmètre: {forme.perimetre():.2f}")
-```
-
----
-layout: default
----
-
-# Exercices pratiques 🎯
-
-### Exercice 1 : Système de gestion de bibliothèque
-
-Créez un système de bibliothèque avec :
-1. Classe Livre avec titre, auteur, ISBN
-2. Classe Membre avec nom, ID, livres empruntés
-3. Classe Bibliotheque pour gérer les livres et membres
-4. Fonctionnalités d'emprunt/retour
-
----
-layout: default
----
-
-# Exercices pratiques 🎯
-
-### Exercice 2 : Système de géométrie
-
-Créez un système de géométrie avec :
-1. Classe abstraite Forme
-2. Classes Rectangle, Cercle, Triangle
-3. Calculs d'aire et périmètre
-4. Comparaison de formes
-
----
-layout: default
----
-
-# Exercices pratiques 🎯
-
-### Exercice 3 : Système de gestion d'école
-
-Créez un système de gestion d'école avec :
-1. Classes Personne, Etudiant, Professeur
-2. Gestion des cours et notes
-3. Calcul de moyennes
-4. Rapports de performance
-
----
-layout: default
----
-
-# Solutions des exercices 💡
-
-### Exercice 1 : Système de gestion de bibliothèque
-
-```python
-from datetime import datetime, timedelta
-
-class Livre:
-    def __init__(self, titre, auteur, isbn):
-        self.titre = titre
-        self.auteur = auteur
-        self.isbn = isbn
-        self.disponible = True
-        self.emprunte_par = None
-        self.date_emprunt = None
-    
-    def __str__(self):
-        statut = "Disponible" if self.disponible else f"Emprunté par {self.emprunte_par}"
-        return f"{self.titre} par {self.auteur} ({self.isbn}) - {statut}"
-
-class Membre:
-    def __init__(self, nom, id_membre):
-        self.nom = nom
-        self.id_membre = id_membre
-        self.livres_empruntes = []
-    
-    def emprunter_livre(self, livre):
-        if livre.disponible:
-            livre.disponible = False
-            livre.emprunte_par = self.nom
-            livre.date_emprunt = datetime.now()
-            self.livres_empruntes.append(livre)
-            return True
-        return False
-    
-    def retourner_livre(self, livre):
-        if livre in self.livres_empruntes:
-            livre.disponible = True
-            livre.emprunte_par = None
-            livre.date_emprunt = None
-            self.livres_empruntes.remove(livre)
-            return True
-        return False
-
-class Bibliotheque:
-    def __init__(self):
-        self.livres = []
-        self.membres = []
-    
-    def ajouter_livre(self, livre):
-        self.livres.append(livre)
-    
-    def ajouter_membre(self, membre):
-        self.membres.append(membre)
-    
-    def rechercher_livre(self, titre=None, auteur=None, isbn=None):
-        resultats = []
-        for livre in self.livres:
-            if (titre is None or titre.lower() in livre.titre.lower()) and \
-               (auteur is None or auteur.lower() in livre.auteur.lower()) and \
-               (isbn is None or isbn == livre.isbn):
-                resultats.append(livre)
-        return resultats
-    
-    def livres_disponibles(self):
-        return [livre for livre in self.livres if livre.disponible]
-    
-    def livres_empruntes(self):
-        return [livre for livre in self.livres if not livre.disponible]
-```
-
----
-layout: default
----
-
-# Solutions des exercices 💡
-
-### Exercice 2 : Système de géométrie
-
-```python
-from abc import ABC, abstractmethod
-import math
-
-class Forme(ABC):
-    @abstractmethod
-    def aire(self):
-        pass
-    
-    @abstractmethod
-    def perimetre(self):
-        pass
-    
-    def __lt__(self, autre):
-        return self.aire() < autre.aire()
-    
-    def __eq__(self, autre):
-        return abs(self.aire() - autre.aire()) < 0.001
-
-class Rectangle(Forme):
-    def __init__(self, largeur, hauteur):
-        self.largeur = largeur
-        self.hauteur = hauteur
-    
-    def aire(self):
-        return self.largeur * self.hauteur
-    
-    def perimetre(self):
-        return 2 * (self.largeur + self.hauteur)
-    
-    def __str__(self):
-        return f"Rectangle({self.largeur}x{self.hauteur})"
-
-class Cercle(Forme):
-    def __init__(self, rayon):
-        self.rayon = rayon
-    
-    def aire(self):
-        return math.pi * self.rayon ** 2
-    
-    def perimetre(self):
-        return 2 * math.pi * self.rayon
-    
-    def __str__(self):
-        return f"Cercle(r={self.rayon})"
-
-class Triangle(Forme):
-    def __init__(self, a, b, c):
-        self.a = a
-        self.b = b
-        self.c = c
-    
-    def aire(self):
-        # Formule de Héron
-        s = (self.a + self.b + self.c) / 2
-        return math.sqrt(s * (s - self.a) * (s - self.b) * (s - self.c))
-    
-    def perimetre(self):
-        return self.a + self.b + self.c
-    
-    def __str__(self):
-        return f"Triangle({self.a}, {self.b}, {self.c})"
-
-# Utilisation
-formes = [
-    Rectangle(5, 3),
-    Cercle(4),
-    Triangle(3, 4, 5)
-]
-
-# Tri par aire
-formes_triees = sorted(formes)
-for forme in formes_triees:
-    print(f"{forme}: Aire={forme.aire():.2f}, Périmètre={forme.perimetre():.2f}")
-```
-
----
-layout: default
----
-
-# Solutions des exercices 💡
-
-### Exercice 3 : Système de gestion d'école
-
-```python
-from abc import ABC, abstractmethod
-from typing import List, Dict
-
-class Personne(ABC):
+class Animal(ABC):
     def __init__(self, nom, age):
         self.nom = nom
         self.age = age
     
     @abstractmethod
-    def role(self):
+    def faire_son(self):
         pass
+    
+    @abstractmethod
+    def se_deplacer(self):
+        pass
+    
+    def se_presenter(self):
+        return f"Je suis {self.nom}, j'ai {self.age} ans"
 
-class Etudiant(Personne):
-    def __init__(self, nom, age, id_etudiant):
-        super().__init__(nom, age)
-        self.id_etudiant = id_etudiant
-        self.notes = {}
-        self.cours_suivis = []
+class Chien(Animal):
+    def faire_son(self):
+        return "Woof !"
     
-    def role(self):
-        return "Étudiant"
-    
-    def ajouter_note(self, cours, note):
-        if cours not in self.notes:
-            self.notes[cours] = []
-        self.notes[cours].append(note)
-    
-    def moyenne_cours(self, cours):
-        if cours in self.notes and self.notes[cours]:
-            return sum(self.notes[cours]) / len(self.notes[cours])
-        return 0
-    
-    def moyenne_generale(self):
-        if not self.notes:
-            return 0
-        moyennes = [self.moyenne_cours(cours) for cours in self.notes]
-        return sum(moyennes) / len(moyennes)
+    def se_deplacer(self):
+        return "Je cours"
 
-class Professeur(Personne):
-    def __init__(self, nom, age, specialite):
-        super().__init__(nom, age)
-        self.specialite = specialite
-        self.cours_enseignes = []
+class Chat(Animal):
+    def faire_son(self):
+        return "Miaou !"
     
-    def role(self):
-        return "Professeur"
-    
-    def ajouter_cours(self, cours):
-        self.cours_enseignes.append(cours)
+    def se_deplacer(self):
+        return "Je marche silencieusement"
 
-class Cours:
-    def __init__(self, nom, professeur):
-        self.nom = nom
-        self.professeur = professeur
-        self.etudiants = []
+class Oiseau(Animal):
+    def faire_son(self):
+        return "Cui cui !"
     
-    def ajouter_etudiant(self, etudiant):
-        if etudiant not in self.etudiants:
-            self.etudiants.append(etudiant)
-            etudiant.cours_suivis.append(self.nom)
-    
-    def moyenne_classe(self):
-        if not self.etudiants:
-            return 0
-        moyennes = [etudiant.moyenne_cours(self.nom) for etudiant in self.etudiants]
-        return sum(moyennes) / len(moyennes)
-
-class Ecole:
-    def __init__(self, nom):
-        self.nom = nom
-        self.etudiants = []
-        self.professeurs = []
-        self.cours = []
-    
-    def ajouter_etudiant(self, etudiant):
-        self.etudiants.append(etudiant)
-    
-    def ajouter_professeur(self, professeur):
-        self.professeurs.append(professeur)
-    
-    def ajouter_cours(self, cours):
-        self.cours.append(cours)
-    
-    def rapport_performance(self):
-        rapport = {
-            'nombre_etudiants': len(self.etudiants),
-            'nombre_professeurs': len(self.professeurs),
-            'nombre_cours': len(self.cours),
-            'moyenne_ecole': 0,
-            'meilleurs_etudiants': [],
-            'cours_performance': {}
-        }
-        
-        if self.etudiants:
-            moyennes = [etudiant.moyenne_generale() for etudiant in self.etudiants]
-            rapport['moyenne_ecole'] = sum(moyennes) / len(moyennes)
-            
-            # Meilleurs étudiants
-            etudiants_tries = sorted(self.etudiants, key=lambda e: e.moyenne_generale(), reverse=True)
-            rapport['meilleurs_etudiants'] = [(e.nom, e.moyenne_generale()) for e in etudiants_tries[:3]]
-        
-        # Performance par cours
-        for cours in self.cours:
-            rapport['cours_performance'][cours.nom] = cours.moyenne_classe()
-        
-        return rapport
+    def se_deplacer(self):
+        return "Je vole"
 ```
 
 ---
-layout: default
+
+# Test du Polymorphisme
+
+```python
+# Test du polymorphisme
+animaux = [
+    Chien("Rex", 3),
+    Chat("Minou", 2),
+    Oiseau("Titi", 1)
+]
+
+for animal in animaux:
+    print(f"{animal.se_presenter()}")
+    print(f"  Son: {animal.faire_son()}")
+    print(f"  Déplacement: {animal.se_deplacer()}")
+    print()
+```
+
 ---
 
-# Prochaines étapes 🎯
+# Points Clés à Retenir 🎯
 
-### Ce qui nous attend
+### Résumé de la programmation orientée objet
 
-1. **Manipulation de fichiers** (I/O avancé)
-2. **Projet final intégrateur**
-3. **QCM de validation**
-4. **Débriefing et perspectives**
+**1. Concepts de base :**
+- Classes et objets
+- Attributs et méthodes
+- Constructeur `__init__`
 
-**Préparation :**
-- Maîtrisez la POO
-- Pratiquez l'héritage et le polymorphisme
-- Testez les exercices proposés
+**2. Héritage et polymorphisme :**
+- Réutilisation de code
+- Hiérarchies de classes
+- Polymorphisme
 
----
-src: './pages/10-fichiers-io.md'
---- 
+**3. Encapsulation :**
+- Protection des données
+- Propriétés
+- Méthodes de classe et statiques
+
+**4. Concepts avancés :**
+- Héritage multiple
+- Classes abstraites
+- Méthodes spéciales
+
+**5. Applications pratiques :**
+- Modélisation du monde réel
+- Réutilisation de code
+- Maintenance facilitée
+
+**Prêt pour la manipulation de fichiers !** 🚀 

@@ -25,6 +25,8 @@ routeAlias: 'rappel-fondamentaux'
 - Révision avant perfectionnement
 
 ---
+layout: default
+---
 
 # 1. Variables et Types - Niveau Avancé
 
@@ -75,6 +77,8 @@ f = copy.deepcopy(a)  # Copie profonde
 ```
 
 ---
+layout: default
+---
 
 # 2. Structures de Contrôle - Optimisations
 
@@ -98,634 +102,598 @@ for i in range(len(items)):
 # ✅ Plus efficace
 for item in items:
     print(item)
+```
 
-# ✅ Avec index si nécessaire
+---
+
+# Utilisation d'enumerate
+
+```python
+# ❌ Moins efficace
+for i in range(len(items)):
+    print(f"{i}: {items[i]}")
+
+# ✅ Plus efficace
 for i, item in enumerate(items):
     print(f"{i}: {item}")
 ```
 
 ---
 
-# List Comprehensions Avancées
+# List Comprehensions Optimisées
 
 ```python
-# List comprehension simple
-squares = [x**2 for x in range(10)]
+# ❌ Moins efficace
+resultat = []
+for i in range(10):
+    if i % 2 == 0:
+        resultat.append(i * 2)
 
-# Avec condition
-even_squares = [x**2 for x in range(10) if x % 2 == 0]
-
-# List comprehension imbriquée
-matrix = [[i+j for j in range(3)] for i in range(3)]
-
-# Dict comprehension
-square_dict = {x: x**2 for x in range(5)}
+# ✅ Plus efficace
+resultat = [i * 2 for i in range(10) if i % 2 == 0]
 ```
 
+---
+layout: default
 ---
 
 # 3. Fonctions - Concepts Avancés
 
-### Fonctionnalités avancées des fonctions
+### Fonctions de niveau expert
 
 **Concepts avancés :**
-- Annotations de type
-- Arguments variables (`*args`, `**kwargs`)
-- Fonctions lambda avancées
 - Fonctions d'ordre supérieur
+- Closures et scope
+- Décorateurs de base
+- Fonctions génératrices
 
 ---
 
-# Fonctions avec Annotations de Type
+# Fonctions d'Ordre Supérieur
 
 ```python
-# Fonctions avec annotations de type
-def greet(name: str, age: int = 18) -> str:
-    return f"Hello {name}, you are {age} years old"
+def appliquer_fonction(fonction, liste):
+    """Applique une fonction à chaque élément d'une liste"""
+    return [fonction(x) for x in liste]
 
-# Fonction avec types complexes
-from typing import List, Dict, Optional
+def carre(x):
+    return x ** 2
 
-def process_data(items: List[int], config: Optional[Dict] = None) -> List[str]:
-    if config is None:
-        config = {}
-    return [str(item) for item in items]
-```
-
----
-
-# Arguments Variables
-
-```python
-# Fonctions avec *args et **kwargs
-def flexible_func(*args, **kwargs):
-    print(f"Positional args: {args}")
-    print(f"Keyword args: {kwargs}")
+def cube(x):
+    return x ** 3
 
 # Utilisation
-flexible_func(1, 2, 3, name="John", age=30)
-
-# Fonction avec paramètres mixtes
-def mixed_func(required, *args, optional=None, **kwargs):
-    print(f"Required: {required}")
-    print(f"Args: {args}")
-    print(f"Optional: {optional}")
-    print(f"Kwargs: {kwargs}")
+nombres = [1, 2, 3, 4, 5]
+carres = appliquer_fonction(carre, nombres)
+cubes = appliquer_fonction(cube, nombres)
 ```
 
 ---
 
-# Fonctions Lambda Avancées
+# Closures
 
 ```python
-# Fonctions lambda avec reduce
-from functools import reduce
-numbers = [1, 2, 3, 4, 5]
-sum_squares = reduce(lambda x, y: x + y**2, numbers, 0)
+def creer_multiplicateur(facteur):
+    """Crée une fonction qui multiplie par le facteur"""
+    def multiplier(x):
+        return x * facteur
+    return multiplier
 
-# Lambda avec filter et map
-even_numbers = list(filter(lambda x: x % 2 == 0, numbers))
-doubled = list(map(lambda x: x * 2, numbers))
+# Utilisation
+double = creer_multiplicateur(2)
+triple = creer_multiplicateur(3)
 
-# Lambda avec sorted
-names = ["Alice", "Bob", "Charlie"]
-sorted_names = sorted(names, key=lambda x: len(x))
+print(double(5))  # 10
+print(triple(5))  # 15
 ```
 
+---
+layout: default
 ---
 
 # 4. Collections - Utilisation Avancée
 
 ### Techniques avancées avec les collections
 
-**Collections spécialisées :**
-- `defaultdict` : évite les KeyError
-- `Counter` : comptage efficace
-- `deque` : file double-ended
-- `namedtuple` : tuples nommés
+**Optimisations :**
+- Choix de la bonne collection
+- Méthodes spécialisées
+- Performance des opérations
+- Patterns d'utilisation
 
 ---
 
-# Dictionnaires Avancés
+# Choix de la Bonne Collection
 
 ```python
-# defaultdict - évite les KeyError
-from collections import defaultdict
+# List : ordre important, doublons autorisés
+liste = [1, 2, 2, 3, 4, 4, 5]
 
+# Set : ordre non important, doublons interdits
+ensemble = {1, 2, 3, 4, 5}
+
+# Dict : paires clé-valeur
+dictionnaire = {"a": 1, "b": 2, "c": 3}
+
+# Tuple : immuable, ordre important
+tuple_immutable = (1, 2, 3)
+```
+
+---
+
+# Méthodes Spécialisées
+
+```python
+from collections import defaultdict, Counter, deque
+
+# defaultdict : dictionnaire avec valeur par défaut
 dd = defaultdict(list)
-dd['a'].append(1)  # Pas besoin de vérifier si 'a' existe
+dd["a"].append(1)  # Pas besoin de vérifier si la clé existe
 
-# Counter - comptage efficace
-from collections import Counter
+# Counter : compteur d'éléments
+compteur = Counter("hello")
+print(compteur)  # Counter({'l': 2, 'h': 1, 'e': 1, 'o': 1})
 
-text = "hello world"
-char_count = Counter(text)
-most_common = char_count.most_common(3)
+# deque : file double-ended
+file = deque([1, 2, 3])
+file.append(4)      # Ajoute à droite
+file.appendleft(0)  # Ajoute à gauche
+```
+
+---
+layout: default
+---
+
+# 5. Gestion d'Erreurs - Patterns Avancés
+
+### Gestion d'erreurs sophistiquée
+
+**Patterns avancés :**
+- Gestion hiérarchique des exceptions
+- Context managers personnalisés
+- Exceptions personnalisées
+- Logging avancé
+
+---
+
+# Gestion Hiérarchique des Exceptions
+
+```python
+def traiter_donnees(donnees):
+    """Traite des données avec gestion d'erreurs hiérarchique"""
+    try:
+        # Conversion en nombres
+        nombres = [float(x) for x in donnees]
+        
+        # Calculs
+        moyenne = sum(nombres) / len(nombres)
+        return moyenne
+        
+    except ValueError as e:
+        print(f"Erreur de conversion : {e}")
+        return None
+        
+    except ZeroDivisionError:
+        print("Liste vide")
+        return None
+        
+    except Exception as e:
+        print(f"Erreur inattendue : {e}")
+        return None
 ```
 
 ---
 
-# Sets et Opérations Ensemblistes
+# Context Manager Personnalisé
 
 ```python
-# Sets avancés
-set1 = {1, 2, 3, 4}
-set2 = {3, 4, 5, 6}
-
-# Opérations ensemblistes
-union = set1 | set2
-intersection = set1 & set2
-difference = set1 - set2
-symmetric_diff = set1 ^ set2
-
-# Frozenset (immutable)
-fs = frozenset([1, 2, 3])
-```
-
----
-
-# 5. Gestion d'Erreurs - Bonnes Pratiques
-
-### Gestion d'erreurs robuste et efficace
-
-**Bonnes pratiques :**
-- Utiliser des context managers
-- Gérer les exceptions spécifiques
-- Éviter les `except: pass`
-- Logger les erreurs appropriément
-
----
-
-# Context Managers Personnalisés
-
-```python
-# Context manager avec contextlib
-from contextlib import contextmanager
-
-@contextmanager
-def timer():
-    import time
-    start = time.time()
-    yield
-    end = time.time()
-    print(f"Temps d'exécution: {end - start}")
+class GestionnaireRessource:
+    def __init__(self, nom):
+        self.nom = nom
+        self.ressource = None
+    
+    def __enter__(self):
+        print(f"Ouverture de {self.nom}")
+        self.ressource = f"ressource_{self.nom}"
+        return self.ressource
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        print(f"Fermeture de {self.nom}")
+        if exc_type:
+            print(f"Erreur lors de l'utilisation : {exc_val}")
+        return False  # Propager l'exception
 
 # Utilisation
-with timer():
-    # Code à mesurer
-    pass
+with GestionnaireRessource("fichier") as ressource:
+    print(f"Utilisation de {ressource}")
 ```
 
 ---
-
-# Gestion d'Erreurs Spécifique
-
-```python
-# Gestion d'erreurs spécifique
-try:
-    result = risky_operation()
-except (ValueError, TypeError) as e:
-    logger.error(f"Erreur de type: {e}")
-except Exception as e:
-    logger.error(f"Erreur inattendue: {e}")
-    raise  # Re-lève l'exception
-```
-
+layout: default
 ---
 
-# 6. Programmation Orientée Objet - Concepts Avancés
+# 6. Programmation Orientée Objet - Avancé
 
-### POO avancée et bonnes pratiques
+### Concepts POO avancés
 
 **Concepts avancés :**
-- Propriétés et encapsulation
-- Méthodes de classe et statiques
+- Méthodes spéciales
+- Propriétés et descripteurs
 - Héritage multiple
 - Classes abstraites
 
 ---
 
-# Propriétés et Encapsulation
+# Méthodes Spéciales Avancées
 
 ```python
-# Propriétés et encapsulation
-class BankAccount:
-    def __init__(self, balance):
-        self._balance = balance
+class Vecteur:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
     
-    @property
-    def balance(self):
-        return self._balance
+    def __add__(self, autre):
+        return Vecteur(self.x + autre.x, self.y + autre.y)
     
-    @balance.setter
-    def balance(self, value):
-        if value < 0:
-            raise ValueError("Le solde ne peut pas être négatif")
-        self._balance = value
+    def __sub__(self, autre):
+        return Vecteur(self.x - autre.x, self.y - autre.y)
+    
+    def __mul__(self, scalaire):
+        return Vecteur(self.x * scalaire, self.y * scalaire)
+    
+    def __eq__(self, autre):
+        return self.x == autre.x and self.y == autre.y
+    
+    def __str__(self):
+        return f"Vecteur({self.x}, {self.y})"
 ```
 
 ---
 
-# Méthodes de Classe et Statiques
+# Propriétés et Descripteurs
 
 ```python
-# Méthodes de classe et statiques
-class MathUtils:
-    @staticmethod
-    def add(x, y):
-        return x + y
+class Rectangle:
+    def __init__(self, largeur, hauteur):
+        self._largeur = largeur
+        self._hauteur = hauteur
     
-    @classmethod
-    def from_string(cls, string):
-        x, y = map(int, string.split(','))
-        return cls(x, y)
-
-# Utilisation
-result = MathUtils.add(5, 3)
-obj = MathUtils.from_string("10,20")
+    @property
+    def largeur(self):
+        return self._largeur
+    
+    @largeur.setter
+    def largeur(self, valeur):
+        if valeur <= 0:
+            raise ValueError("La largeur doit être positive")
+        self._largeur = valeur
+    
+    @property
+    def aire(self):
+        return self._largeur * self._hauteur
 ```
 
+---
+layout: default
 ---
 
 # 7. Modules et Packages - Organisation
 
-### Structure de projet professionnelle
+### Organisation avancée du code
 
-**Structure recommandée :**
-- Séparation claire des responsabilités
-- Packages avec `__init__.py`
-- Tests unitaires
-- Documentation
-
----
-
-# Structure de Projet
-
-```python
-# Structure recommandée
-my_project/
-├── src/
-│   └── my_package/
-│       ├── __init__.py
-│       ├── core.py
-│       └── utils.py
-├── tests/
-│   └── test_core.py
-├── docs/
-├── requirements.txt
-└── setup.py
-```
+**Concepts avancés :**
+- Structure de packages
+- Imports relatifs vs absolus
+- `__init__.py` avancé
+- Namespace packages
 
 ---
 
-# __init__.py Avancé
+# Structure de Package
 
 ```python
-# __init__.py avancé
-from .core import main_function
-from .utils import helper_function
+# mypackage/
+# ├── __init__.py
+# ├── core/
+# │   ├── __init__.py
+# │   ├── utils.py
+# │   └── validators.py
+# ├── models/
+# │   ├── __init__.py
+# │   └── user.py
+# └── tests/
+#     ├── __init__.py
+#     └── test_core.py
+
+# __init__.py principal
+from .core.utils import helper_function
+from .models.user import User
 
 __version__ = "1.0.0"
-__all__ = ["main_function", "helper_function"]
-
-# Configuration du package
-def setup_package():
-    """Configuration initiale du package"""
-    pass
+__all__ = ["helper_function", "User"]
 ```
 
 ---
 
-# 8. Manipulation de Fichiers - Techniques Avancées
+# Imports Relatifs vs Absolus
 
-### Gestion de fichiers robuste
+```python
+# Import absolu (recommandé)
+from mypackage.core.utils import helper_function
+from mypackage.models.user import User
 
-**Techniques avancées :**
-- `pathlib` pour la gestion des chemins
-- Gestion d'erreurs robuste
-- Context managers personnalisés
-- Encodage approprié
+# Import relatif (dans le package)
+from .core.utils import helper_function
+from ..models.user import User
+
+# Import avec alias
+import mypackage.core.utils as utils
+from mypackage.models import user as user_model
+```
+
+---
+layout: default
+---
+
+# 8. Manipulation de Fichiers - Avancé
+
+### Techniques avancées de manipulation de fichiers
+
+**Concepts avancés :**
+- Gestion de gros fichiers
+- Formats spécialisés
+- Compression et chiffrement
+- Monitoring de fichiers
 
 ---
 
-# Pathlib - Approche Moderne
+# Lecture de Gros Fichiers
 
 ```python
-# Pathlib - approche moderne
-from pathlib import Path
+def traiter_gros_fichier(chemin, taille_buffer=8192):
+    """Traite un gros fichier par chunks"""
+    with open(chemin, 'r', encoding='utf-8') as fichier:
+        while True:
+            chunk = fichier.read(taille_buffer)
+            if not chunk:
+                break
+            yield chunk
 
-# Création de structure
-project_dir = Path("my_project")
-project_dir.mkdir(exist_ok=True)
-(project_dir / "data").mkdir(exist_ok=True)
-
-# Manipulation de chemins
-file_path = Path("my_folder/my_file.txt")
-parent_dir = file_path.parent
+# Utilisation
+for chunk in traiter_gros_fichier("gros_fichier.txt"):
+    # Traitement du chunk
+    print(f"Traité {len(chunk)} caractères")
 ```
 
 ---
 
-# Lecture/Écriture Robuste
+# Formats Spécialisés
 
 ```python
-# Lecture/écriture avec gestion d'erreurs
-def safe_read_file(file_path):
+import json
+import csv
+import pickle
+
+# JSON avec gestion d'erreurs
+def lire_json_securise(chemin):
     try:
-        with open(file_path, 'r', encoding='utf-8') as f:
-            return f.read()
+        with open(chemin, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except json.JSONDecodeError as e:
+        print(f"Erreur JSON : {e}")
+        return None
     except FileNotFoundError:
-        print(f"Fichier {file_path} non trouvé")
+        print("Fichier non trouvé")
         return None
-    except UnicodeDecodeError:
-        print(f"Erreur d'encodage pour {file_path}")
-        return None
+
+# CSV avec validation
+def lire_csv_valide(chemin):
+    with open(chemin, 'r', encoding='utf-8') as f:
+        reader = csv.DictReader(f)
+        for ligne in reader:
+            # Validation de chaque ligne
+            if valider_ligne(ligne):
+                yield ligne
 ```
 
 ---
-
-# 9. Bonnes Pratiques - Code Professionnel
-
-### Standards de qualité du code
-
-**Standards :**
-- PEP 8 pour le style
-- Docstrings appropriées
-- Annotations de type
-- Gestion d'erreurs
-
+layout: default
 ---
 
-# PEP 8 - Style de Code
+# 9. Performance et Optimisation - Base
 
-```python
-# PEP 8 - Style de code
-def calculate_average(numbers: list[float]) -> float:
-    """Calcule la moyenne d'une liste de nombres.
-    
-    Args:
-        numbers: Liste de nombres flottants
-        
-    Returns:
-        float: La moyenne calculée
-        
-    Raises:
-        ValueError: Si la liste est vide
-    """
-    if not numbers:
-        raise ValueError("La liste ne peut pas être vide")
-    
-    return sum(numbers) / len(numbers)
-```
-
----
-
-# Annotations de Type
-
-```python
-# Docstrings et annotations
-from typing import Optional, List, Dict, Any
-
-def process_data(
-    items: List[int], 
-    config: Optional[Dict[str, Any]] = None
-) -> List[str]:
-    """Traite une liste de données avec configuration optionnelle."""
-    if config is None:
-        config = {}
-    return [str(item) for item in items]
-```
-
----
-
-# 10. Performance et Optimisation - Bases
-
-### Premiers concepts d'optimisation
+### Premiers pas en optimisation
 
 **Concepts de base :**
 - Profiling simple
 - Optimisation des boucles
-- Choix des structures de données
-- Éviter les anti-patterns
+- Choix de structures de données
+- Éviter les pièges courants
 
 ---
 
 # Profiling Simple
 
 ```python
-# Profiling simple
 import time
 import cProfile
+import pstats
 
-def profile_function(func):
-    def wrapper(*args, **kwargs):
-        profiler = cProfile.Profile()
-        profiler.enable()
-        result = func(*args, **kwargs)
-        profiler.disable()
-        profiler.print_stats(sort='cumulative')
-        return result
-    return wrapper
+def fonction_lente():
+    """Fonction à profiler"""
+    resultat = 0
+    for i in range(1000000):
+        resultat += i
+    return resultat
+
+# Profiling avec time
+debut = time.time()
+resultat = fonction_lente()
+fin = time.time()
+print(f"Temps d'exécution : {fin - debut:.4f} secondes")
+
+# Profiling avec cProfile
+profiler = cProfile.Profile()
+profiler.enable()
+fonction_lente()
+profiler.disable()
+stats = pstats.Stats(profiler)
+stats.sort_stats('cumulative')
+stats.print_stats(10)
 ```
 
 ---
 
-# Optimisation des Boucles
+# Optimisation des Structures de Données
 
 ```python
-# Optimisation des boucles
 # ❌ Moins efficace
-result = []
-for i in range(1000):
-    result.append(i * 2)
+def rechercher_inefficace(liste, valeur):
+    return valeur in liste  # O(n)
 
-# ✅ Plus efficace
-result = [i * 2 for i in range(1000)]
+# ✅ Plus efficace avec set
+def rechercher_efficace(ensemble, valeur):
+    return valeur in ensemble  # O(1)
 
-# ✅ Avec générateur pour la mémoire
-result = (i * 2 for i in range(1000000))
+# Comparaison
+import time
+
+liste_grande = list(range(100000))
+set_grand = set(range(100000))
+valeur_recherche = 99999
+
+# Test avec liste
+debut = time.time()
+rechercher_inefficace(liste_grande, valeur_recherche)
+fin = time.time()
+temps_liste = fin - debut
+
+# Test avec set
+debut = time.time()
+rechercher_efficace(set_grand, valeur_recherche)
+fin = time.time()
+temps_set = fin - debut
+
+print(f"Liste : {temps_liste:.6f}s")
+print(f"Set : {temps_set:.6f}s")
 ```
 
 ---
+layout: default
+---
 
-# Exercices de Révision 🎯
+# 10. Bonnes Pratiques - Niveau Avancé
 
-### Testez vos connaissances
+### Écrire du code professionnel
 
-**Exercice 1 :** Écrivez une fonction qui prend une liste de nombres et retourne un dictionnaire avec les statistiques (min, max, moyenne, médiane).
-
-**Exercice 2 :** Créez une classe `Logger` qui utilise un context manager pour logger automatiquement les entrées/sorties de fonctions.
-
-**Exercice 3 :** Implémentez un décorateur `@retry` qui relance une fonction jusqu'à 3 fois en cas d'échec.
+**Bonnes pratiques :**
+- Style de code (PEP 8)
+- Documentation
+- Tests unitaires
+- Gestion des erreurs
 
 ---
 
-# Solutions des Exercices 💡
-
-### Exercice 1 - Statistiques
+# Style de Code (PEP 8)
 
 ```python
-from statistics import mean, median
-from typing import Dict, List
-
-def get_statistics(numbers: List[float]) -> Dict[str, float]:
-    if not numbers:
+# ✅ Bon style
+def calculer_moyenne(nombres):
+    """Calcule la moyenne d'une liste de nombres.
+    
+    Args:
+        nombres (list): Liste de nombres
+        
+    Returns:
+        float: Moyenne des nombres
+        
+    Raises:
+        ValueError: Si la liste est vide
+    """
+    if not nombres:
         raise ValueError("La liste ne peut pas être vide")
     
-    return {
-        'min': min(numbers),
-        'max': max(numbers),
-        'mean': mean(numbers),
-        'median': median(numbers)
-    }
+    return sum(nombres) / len(nombres)
+
+# ❌ Mauvais style
+def calc_moy(n):
+    if len(n)==0:raise ValueError("vide")
+    return sum(n)/len(n)
 ```
 
 ---
 
-# Test des Statistiques
+# Tests Unitaires de Base
 
 ```python
-# Test
-numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-stats = get_statistics(numbers)
-print(stats)
-# {'min': 1, 'max': 10, 'mean': 5.5, 'median': 5.5}
-```
+import unittest
 
----
-
-# Solutions des Exercices (suite)
-
-### Exercice 2 - Logger avec Context Manager
-
-```python
-import logging
-from contextlib import contextmanager
-from typing import Callable, Any
-
-class Logger:
-    def __init__(self, name: str):
-        self.logger = logging.getLogger(name)
-        self.logger.setLevel(logging.INFO)
+class TestCalculerMoyenne(unittest.TestCase):
+    def test_moyenne_normale(self):
+        """Test avec des nombres normaux"""
+        resultat = calculer_moyenne([1, 2, 3, 4, 5])
+        self.assertEqual(resultat, 3.0)
     
-    @contextmanager
-    def log_function(self, func_name: str):
-        self.logger.info(f"Entrée dans {func_name}")
-        try:
-            yield
-            self.logger.info(f"Sortie normale de {func_name}")
-        except Exception as e:
-            self.logger.error(f"Erreur dans {func_name}: {e}")
-            raise
+    def test_moyenne_zero(self):
+        """Test avec des zéros"""
+        resultat = calculer_moyenne([0, 0, 0])
+        self.assertEqual(resultat, 0.0)
+    
+    def test_liste_vide(self):
+        """Test avec une liste vide"""
+        with self.assertRaises(ValueError):
+            calculer_moyenne([])
+
+if __name__ == "__main__":
+    unittest.main()
 ```
 
 ---
-
-# Utilisation du Logger
-
-```python
-# Utilisation
-logger = Logger("my_app")
-with logger.log_function("ma_fonction"):
-    # Code de la fonction
-    pass
-```
-
----
-
-# Solutions des Exercices (fin)
-
-### Exercice 3 - Décorateur Retry
-
-```python
-import time
-from functools import wraps
-from typing import Callable, Any
-
-def retry(max_attempts: int = 3, delay: float = 1.0):
-    def decorator(func: Callable) -> Callable:
-        @wraps(func)
-        def wrapper(*args, **kwargs) -> Any:
-            last_exception = None
-            
-            for attempt in range(max_attempts):
-                try:
-                    return func(*args, **kwargs)
-                except Exception as e:
-                    last_exception = e
-                    if attempt < max_attempts - 1:
-                        print(f"Tentative {attempt + 1} échouée: {e}")
-                        time.sleep(delay)
-            
-            raise last_exception
-        return wrapper
-    return decorator
-```
-
----
-
-# Test du Décorateur Retry
-
-```python
-# Utilisation
-@retry(max_attempts=3, delay=0.5)
-def risky_function():
-    import random
-    if random.random() < 0.7:
-        raise ValueError("Échec aléatoire")
-    return "Succès!"
-
-# Test
-try:
-    result = risky_function()
-    print(result)
-except ValueError as e:
-    print(f"Échec final: {e}")
-```
-
+layout: default
 ---
 
 # Points Clés à Retenir 🎯
 
 ### Résumé des fondamentaux avancés
 
-**1. Types et Mutabilité :**
-- Comprendre la différence entre types mutables/immutables
-- Maîtriser les références et copies
+**1. Types et références :**
+- Compréhension immutables vs mutables
+- Gestion des copies et références
+- Optimisation des structures de données
 
-**2. Optimisation :**
-- Utiliser les bonnes structures de données
-- Éviter les anti-patterns de performance
+**2. Structures de contrôle :**
+- Optimisation des boucles
+- Utilisation d'enumerate
+- List comprehensions efficaces
 
-**3. Bonnes Pratiques :**
-- Suivre PEP 8
-- Écrire du code lisible et maintenable
-- Documenter correctement
+**3. Fonctions avancées :**
+- Fonctions d'ordre supérieur
+- Closures et scope
+- Patterns fonctionnels
 
-**4. Gestion d'Erreurs :**
-- Utiliser les context managers
-- Gérer les exceptions de manière appropriée
+**4. Collections spécialisées :**
+- Choix de la bonne collection
+- Méthodes spécialisées (defaultdict, Counter)
+- Performance des opérations
 
----
+**5. Gestion d'erreurs :**
+- Patterns hiérarchiques
+- Context managers personnalisés
+- Logging approprié
 
-# Préparation au Perfectionnement 🚀
+**6. POO avancée :**
+- Méthodes spéciales
+- Propriétés et descripteurs
+- Héritage multiple
 
-### Vous êtes prêt pour les concepts avancés !
+**7. Organisation :**
+- Structure de packages
+- Imports relatifs vs absolus
+- Bonnes pratiques
 
-**Prochaines étapes :**
-- Décorateurs et générateurs
-- Métaclasses et introspection
-- Programmation asynchrone
-- Design patterns
-- Optimisation avancée
+**8. Performance :**
+- Profiling de base
+- Optimisation des structures
+- Éviter les pièges courants
 
-**Compétences consolidées :**
-✅ Maîtrise des types Python
-✅ Optimisation des structures de contrôle
-✅ Fonctions avancées
-✅ Collections spécialisées
-✅ Gestion d'erreurs robuste
-✅ POO avancée
-✅ Bonnes pratiques de code
-
-**Prêt pour la suite !** 🎉 
+**Prêt pour les décorateurs et générateurs !** 🚀 
