@@ -118,7 +118,11 @@ routeAlias: 'sommaire-perfectionnement'
 <div class="flex flex-col gap-2">
 <Link to="design-patterns">📐 Design patterns</Link>
 <Link to="optimisation-performance">🚀 Optimisation et performance</Link>
-<Link to="frameworks-web">🌐 Frameworks web (Flask/Django)</Link>
+<Link to="frameworks-web">🌐 Frameworks web (Introduction)</Link>
+<Link to="django-complet">🎯 Django - Cours complet</Link>
+<Link to="flask-complet">⚡ Flask - Cours complet</Link>
+<Link to="exercices-django">🏗️ Exercices Django</Link>
+<Link to="exercices-flask">🔧 Exercices Flask</Link>
 <Link to="data-science">📊 Data Science avec Python</Link>
 <Link to="exercices-perfectionnement">🎯 Exercices avancés</Link>
 <Link to="qcm-perfectionnement">✅ QCM perfectionnement</Link>
@@ -300,5 +304,21 @@ src: './pages/20-optimisation-performance.md'
 
 ---
 src: './pages/21-frameworks-web.md'
+---
+
+---
+src: './pages/22-django-complet.md'
+---
+
+---
+src: './pages/23-flask-complet.md'
+---
+
+---
+src: './pages/24-exercices-django.md'
+---
+
+---
+src: './pages/25-exercices-flask.md'
 ---
 
