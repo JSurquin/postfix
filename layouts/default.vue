@@ -16,20 +16,23 @@
     <div
       class="absolute bottom-0 p-4 w-full justify-end -ml-16 mt-auto flex items-center w-full z-50"
     >
-      <Link class="dark:!text-purple-300" to="sommaire">
+      <Link class="dark:!text-purple-300" to="sommaire-initiation">
         Revenir au sommaire
       </Link>
     </div>
-    <!-- Ajout du logo en bas à gauche -->
-    <div
-      class="absolute bottom-0 left-0 p-4 z-50"
-      style="width: 64px; height: 64px"
-    >
-      <img
-        src="https://www.andromed.fr/andromedark.png"
-        alt="Logo"
-        class="rounded-full"
-      />
+    <!-- Ajout des logos en bas à gauche -->
+    <div class="absolute -bottom-2 left-0 p-4 z-50 flex gap-4">
+      <div style="width: 32px; height: 32px">
+        <img src="/ascent.png" alt="Logo Ascent" class="rounded-full" />
+        <!-- src="https://www.andromed.fr/andromedark.png" -->
+      </div>
+      <div style="width: 32px; height: 32px">
+        <img
+          src="/minarm.png"
+          alt="Logo Ministère des Armées"
+          class="rounded-full"
+        />
+      </div>
     </div>
   </div>
 </template>
