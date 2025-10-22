@@ -4,7 +4,7 @@ colorSchema: "auto"
 layout: intro
 highlighter: shiki
 # https://sli.dev/custom/highlighters.html
-title: Formation Python 2025
+title: Formation PostgreSQL 2025
 # download: true
 #transition: slide-left
 # remoteAssets: false
@@ -14,7 +14,7 @@ title: Formation Python 2025
 #   timeout: 300000000
 #   pdfOptions:
 #     format: A4
-download: "https://python.andromed.fr/slides.pdf"
+download: "https://psql.andromed.fr/slides.pdf"
 themeConfig:
   logoHeader: "/avatar.png"
   eventLogo: "https://img2.storyblok.com/352x414/f/84560/2388x414/23d8eb4b8d/vue-amsterdam-with-name.png"
@@ -23,9 +23,9 @@ themeConfig:
   #- "@slidev/addon-sharp-long-code"
 ---
 
-# Python 2025
+# PostgreSQL 2025
 
-🐍 Une formation présentée par Ascent et Andromed.
+🐘 Une formation présentée par Ascent et Andromed.
 
 <div class="pt-12">
   <span @click="next" class="px-2 p-3 rounded cursor-pointer hover:bg-white hover:bg-opacity-10 neon-border">
@@ -53,13 +53,13 @@ Fondateur <a  href="https://www.andromed.fr/"><logos-storyblok-icon  mr-1/>Andro
 
 ---
 layout: text-image
-media: 'https://i.pinimg.com/originals/f5/5e/80/f55e8059ea945abfd6804b887dd4a0af.gif'
-caption: 'PYTHON 2025'
+media: 'https://www.postgresql.org/media/img/about/press/elephant.png'
+caption: 'POSTGRESQL 2025'
 ---
 
-# DISCLAIMER 🐍
+# DISCLAIMER 🐘
 
-### Dans cette formation nous allons voir les concepts fondamentaux et avancés de Python en 2025.
+### Dans cette formation nous allons voir les concepts fondamentaux et avancés de PostgreSQL en 2025.
 
 ---
 layout: two-cols
@@ -68,30 +68,29 @@ routeAlias: 'sommaire-initiation'
 
 <a name="SOMMAIRE-INITIATION" id="sommaire-initiation"></a>
 
-# SOMMAIRE PYTHON - INITIATION 📜
-
-### Formation pratique en 5 jours
+# SOMMAIRE POSTGRESQL - INITIATION 📜
 
 <br>
 
 <div class="flex flex-col gap-2">
-<Link to="introduction-python">🐍 Introduction à Python</Link>
-<Link to="installation-environnement">⚙️ Installation et environnement</Link>
-<Link to="premiers-pas">🚀 Premiers pas avec Python</Link>
-<Link to="variables-types">📊 Variables et types de données</Link>
-<Link to="structures-controle">🔄 Structures de contrôle</Link>
-<Link to="fonctions">🔧 Fonctions et modules</Link>
-<Link to="collections">📦 Collections (listes, tuples, dictionnaires)</Link>
-<Link to="gestion-erreurs">⚠️ Gestion des erreurs</Link>
+<Link to="introduction-postgresql">🐘 Introduction à PostgreSQL</Link>
+<Link to="installation-configuration">⚙️ Installation et configuration</Link>
+<Link to="premiers-pas-psql">🚀 Premiers pas avec PostgreSQL</Link>
+<Link to="types-donnees">📊 Types de données</Link>
+<Link to="requetes-select">🔍 Requêtes SELECT de base</Link>
+<Link to="jointures-relations">🔗 Jointures et relations</Link>
+<Link to="fonctions-agregation">📈 Fonctions d'agrégation</Link>
+<Link to="sous-requetes-cte">🔄 Sous-requêtes et CTE</Link>
 </div>
 ::right::
 
 <div class="flex flex-col gap-2">
-<Link to="fichiers-io">📁 Manipulation de fichiers</Link>
-<Link to="programmation-objet">🏗️ Programmation orientée objet</Link>
-<Link to="exercices-initiation">🎯 Exercices pratiques</Link>
-<Link to="projet-final-initiation">🎉 Projet final</Link>
-<Link to="qcm-initiation">✅ QCM de validation</Link>
+<Link to="manipulation-donnees">✏️ Manipulation de données (INSERT, UPDATE, DELETE)</Link>
+<Link to="creation-gestion-tables">🏗️ Création et gestion de tables</Link>
+<Link to="contraintes-index">🔐 Contraintes et index</Link>
+<Link to="vues">👁️ Vues et vues matérialisées</Link>
+<Link to="exercices-debutant">🎯 Exercices pratiques débutant</Link>
+<Link to="qcm-initiation">✅ QCM de validation initiation</Link>
 </div>
 
 ---
@@ -99,33 +98,28 @@ layout: two-cols
 routeAlias: 'sommaire-perfectionnement'
 ---
 
-# SOMMAIRE PYTHON - PERFECTIONNEMENT 📜
-
-### Formation avancée en 4 jours
+# SOMMAIRE POSTGRESQL - PERFECTIONNEMENT 📜
 
 <br>
 
 <div class="flex flex-col gap-2">
-<Link to="rappel-fondamentaux">🔄 Rappel des fondamentaux</Link>
-<Link to="decorateurs-generateurs">🎭 Décorateurs et générateurs</Link>
-<Link to="context-managers">🔧 Context managers</Link>
-<Link to="metaclasses">🏗️ Métaclasses et introspection</Link>
-<Link to="async-await">⚡ Programmation asynchrone</Link>
-<Link to="testing">🧪 Tests et TDD</Link>
+<Link to="transactions-concurrence">💼 Transactions et gestion de concurrence</Link>
+<Link to="fonctions-procedures">🔧 Fonctions et procédures stockées</Link>
+<Link to="triggers">⚡ Triggers</Link>
+<Link to="optimisation-performance">🚀 Optimisation et performance</Link>
+<Link to="securite-utilisateurs">🔒 Sécurité et gestion des utilisateurs</Link>
+<Link to="sauvegarde-restauration">💾 Sauvegarde et restauration</Link>
 </div>
 ::right::
 
 <div class="flex flex-col gap-2">
-<Link to="design-patterns">📐 Design patterns</Link>
-<Link to="optimisation-performance">🚀 Optimisation et performance</Link>
-<Link to="frameworks-web">🌐 Frameworks web (Introduction)</Link>
-<Link to="django-complet">🎯 Django - Cours complet</Link>
-<Link to="flask-complet">⚡ Flask - Cours complet</Link>
-<Link to="exercices-django">🏗️ Exercices Django</Link>
-<Link to="exercices-flask">🔧 Exercices Flask</Link>
-<Link to="data-science">📊 Data Science avec Python</Link>
-<Link to="exercices-perfectionnement">🎯 Exercices avancés</Link>
+<Link to="json-types-avances">📦 JSON et types avancés</Link>
+<Link to="extensions-postgresql">🧩 Extensions PostgreSQL</Link>
+<Link to="replication-ha">🔄 Réplication et haute disponibilité</Link>
+<Link to="exercices-intermediaire">🎯 Exercices pratiques intermédiaire</Link>
+<Link to="exercices-avance">🏆 Exercices pratiques avancé</Link>
 <Link to="qcm-perfectionnement">✅ QCM perfectionnement</Link>
+<Link to="projet-final">🎉 Projet final</Link>
 </div>
 
 ---
@@ -133,48 +127,47 @@ layout: two-cols
 routeAlias: 'programme-initiation'
 ---
 
-## PROGRAMME INITIATION - 5 JOURS 📅
+## PROGRAMME INITIATION POSTGRESQL 📅
 
-### Structure pédagogique optimisée
+**Jour 1 - Introduction et installation**
 
-**Jour 1 - Introduction et environnement**
-
-- Introduction à Python et son écosystème
+- Introduction à PostgreSQL et son écosystème
 - Installation et configuration de l'environnement
-- Premier programme "Hello World"
-- Variables et types de données de base
+- Premiers pas avec psql et pgAdmin
+- Types de données de base
 - Exercices pratiques d'introduction
 
 ::right::
 
-**Jour 2 - Structures de contrôle**
+**Jour 2 - Requêtes de base**
 
-- Conditions et opérateurs logiques
-- Boucles (for, while)
-- Structures de données simples
-- Exercices sur les structures de contrôle
-- Mini-projet : calculateur simple
+- Requêtes SELECT simples
+- Filtrage avec WHERE
+- Tri et limitation des résultats
+- Jointures (INNER, LEFT, RIGHT, FULL)
+- Exercices sur les requêtes de base
 
-**Jour 3 - Fonctions et modules**
+**Jour 3 - Fonctions et agrégations**
 
-- Définition et utilisation des fonctions
-- Paramètres et valeurs de retour
-- Modules et packages
-- Gestion des erreurs (try/except)
-- Exercices sur les fonctions
+- Fonctions d'agrégation (COUNT, SUM, AVG, MIN, MAX)
+- GROUP BY et HAVING
+- Sous-requêtes et CTE (Common Table Expressions)
+- Exercices sur les agrégations
 
-**Jour 4 - Collections avancées**
+---
 
-- Listes et leurs méthodes
-- Tuples et leurs spécificités
-- Dictionnaires et sets
-- Manipulation de fichiers
-- Exercices sur les collections
+**Jour 4 - Manipulation de données**
 
-**Jour 5 - POO et projet final**
+- INSERT, UPDATE, DELETE
+- Création et modification de tables
+- Contraintes (PRIMARY KEY, FOREIGN KEY, UNIQUE, CHECK)
+- Index et performance
+- Exercices sur la manipulation de données
 
-- Concepts de la programmation orientée objet
-- Classes, objets, héritage
+**Jour 5 - Vues et projet**
+
+- Vues simples et matérialisées
+- Bonnes pratiques de modélisation
 - Projet final intégrateur
 - QCM de validation
 - Débriefing et perspectives
@@ -184,141 +177,148 @@ layout: two-cols
 routeAlias: 'programme-perfectionnement'
 ---
 
-## PROGRAMME PERFECTIONNEMENT - 4 JOURS 📅
+## PROGRAMME PERFECTIONNEMENT POSTGRESQL 📅
 
 ### Formation avancée pour développeurs expérimentés
 
-**Jour 1 - Fonctionnalités avancées**
+**Jour 1 - Transactions et fonctions**
 
-- Rappel des fondamentaux
-- Décorateurs et leurs applications
-- Générateurs et itérateurs
-- Context managers
-- Exercices sur les fonctionnalités avancées
+- Transactions et niveaux d'isolation
+- Gestion de la concurrence
+- Fonctions et procédures stockées (PL/pgSQL)
+- Triggers et automatisation
+- Exercices sur les fonctions avancées
 
 ::right::
 
-**Jour 2 - Métaprogrammation et performance**
+**Jour 2 - Optimisation et performance**
 
-- Métaclasses et introspection
-- Programmation asynchrone (async/await)
-- Optimisation et profiling
-- Design patterns en Python
-- Exercices de métaprogrammation
+- Analyse des requêtes (EXPLAIN)
+- Optimisation des index
+- Partitionnement de tables
+- Tuning de PostgreSQL
+- Exercices d'optimisation
 
-**Jour 3 - Frameworks et écosystème**
+**Jour 3 - Sécurité et administration**
 
-- Frameworks web (Flask vs Django)
-- Tests unitaires et TDD
-- Intégration continue
-- Bonnes pratiques de développement
-- Exercices sur les frameworks
+- Gestion des utilisateurs et rôles
+- Permissions et privilèges
+- Sauvegarde et restauration (pg_dump, pg_restore)
+- Point-in-time recovery
+- Exercices d'administration
 
-**Jour 4 - Data Science et projet final**
+**Jour 4 - Types avancés et projet**
 
-- Introduction à la data science
-- Pandas, NumPy, Matplotlib
-- Machine Learning avec scikit-learn
+- Types JSON et JSONB
+- Extensions (PostGIS, pg_trgm, etc.)
+- Réplication et haute disponibilité
 - Projet final avancé
 - QCM et débriefing
 
 ---
-src: './pages/01-introduction-python.md'
+src: './pages/01-introduction-postgresql.md'
 ---
 
 ---
-src: './pages/02-installation-environnement.md'
+src: './pages/02-installation-configuration.md'
 ---
 
 ---
-src: './pages/03-premiers-pas.md'
+src: './pages/03-premiers-pas-psql.md'
 ---
 
 ---
-src: './pages/04-variables-types.md'
+src: './pages/04-types-donnees.md'
 ---
 
 ---
-src: './pages/05-structures-controle.md'
+src: './pages/05-requetes-select.md'
 ---
 
 ---
-src: './pages/06-fonctions.md'
+src: './pages/06-jointures-relations.md'
 ---
 
 ---
-src: './pages/07-collections.md'
+src: './pages/07-fonctions-agregation.md'
 ---
 
 ---
-src: './pages/08-gestion-erreurs.md'
+src: './pages/08-sous-requetes-cte.md'
 ---
 
 ---
-src: './pages/09-programmation-objet.md'
+src: './pages/09-manipulation-donnees.md'
 ---
 
 ---
-src: './pages/10-fichiers-io.md'
+src: './pages/10-creation-gestion-tables.md'
 ---
 
 ---
-src: './pages/11-projet-final.md'
+src: './pages/11-contraintes-index.md'
 ---
 
 ---
-src: './pages/12-qcm-initiation.md'
+src: './pages/12-vues.md'
 ---
 
 ---
-src: './pages/13-rappel-fondamentaux.md'
+src: './pages/13-transactions-concurrence.md'
 ---
 
 ---
-src: './pages/14-decorateurs-generateurs.md'
+src: './pages/14-fonctions-procedures.md'
 ---
 
 ---
-src: './pages/15-context-managers.md'
+src: './pages/15-triggers.md'
 ---
 
 ---
-src: './pages/16-metaclasses.md'
+src: './pages/16-optimisation-performance.md'
 ---
 
 ---
-src: './pages/17-async-await.md'
+src: './pages/17-securite-utilisateurs.md'
 ---
 
 ---
-src: './pages/18-testing.md'
+src: './pages/18-sauvegarde-restauration.md'
 ---
 
 ---
-src: './pages/19-design-patterns.md'
+src: './pages/19-json-types-avances.md'
 ---
 
 ---
-src: './pages/20-optimisation-performance.md'
+src: './pages/20-extensions-postgresql.md'
 ---
 
 ---
-src: './pages/21-frameworks-web.md'
+src: './pages/21-replication-ha.md'
 ---
 
 ---
-src: './pages/22-django-complet.md'
+src: './pages/22-exercices-debutant.md'
 ---
 
 ---
-src: './pages/23-flask-complet.md'
+src: './pages/23-exercices-intermediaire.md'
 ---
 
 ---
-src: './pages/24-exercices-django.md'
+src: './pages/24-exercices-avance.md'
 ---
 
 ---
-src: './pages/25-exercices-flask.md'
+src: './pages/25-qcm-initiation.md'
 ---
 
+---
+src: './pages/26-qcm-perfectionnement.md'
+---
+
+---
+src: './pages/27-projet-final.md'
+---
