@@ -723,8 +723,6 @@ Vous avez maintenant un Postfix fonctionnel ! 🎉
 
 Dans le prochain module, nous allons plonger dans **l'architecture interne de Postfix** pour comprendre comment tout fonctionne sous le capot.
 
----
-
 <div class="pt-12">
   <span @click="next" class="px-2 p-3 rounded cursor-pointer hover:bg-white hover:bg-opacity-10 neon-border">
     Module suivant : Architecture et fonctionnement <carbon:arrow-right class="inline"/>

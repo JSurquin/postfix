@@ -1,0 +1,87 @@
+---
+layout: question
+---
+
+# QCM - Module 3 : Architecture de Postfix
+
+## Question 1
+
+Quel processus est le "chef d'orchestre" de Postfix ?
+
+A) smtpd  
+B) qmgr  
+C) master  
+D) cleanup
+
+---
+
+### ✅ Réponse : C
+
+Le processus **master** est le chef d'orchestre. Il lance tous les autres processus, surveille leur santé et les redémarre si nécessaire.
+
+---
+
+## Question 2
+
+Quel processus gère les files d'attente et décide quand envoyer les messages ?
+
+A) smtpd  
+B) qmgr (queue manager)  
+C) pickup  
+D) smtp
+
+---
+
+### ✅ Réponse : B
+
+**qmgr** (queue manager) est le CŒUR de Postfix. Il gère toutes les files d'attente et décide quand envoyer les messages.
+
+---
+
+## Question 3
+
+Dans quelle file d'attente se trouvent les messages en cours de livraison ?
+
+A) maildrop  
+B) incoming  
+C) active  
+D) deferred
+
+---
+
+### ✅ Réponse : C
+
+La file **active** contient les messages prêts à être envoyés et en cours de livraison (max 20 000 par défaut).
+
+---
+
+## Exercice pratique - Module 3
+
+### 🎯 Objectif
+Observer l'architecture de Postfix en action
+
+### 📋 Tâches (10 minutes)
+
+1. **Observer les processus** :
+```bash
+ps aux | grep postfix
+pstree -p $(pgrep -o master)
+```
+
+2. **Suivre un message** :
+```bash
+# Envoyer un email
+echo "Test" | mail -s "Test architecture" $USER
+
+# Suivre dans les logs
+tail -f /var/log/mail.log | grep "postfix"
+```
+
+3. **Explorer les queues** :
+```bash
+sudo ls -la /var/spool/postfix/active/
+sudo postqueue -p
+```
+
+**Bonus** : Utilisez `postcat -q QUEUE_ID` pour lire un message
+
