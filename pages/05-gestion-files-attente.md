@@ -37,13 +37,7 @@ Postfix utilise plusieurs files d'attente dans `/var/spool/postfix/` :
 
 ### 📂 maildrop
 
-**Rôle** : Point d'entrée pour les emails locaux
-
-**Processus** : `pickup` surveille ce répertoire
-
-**Durée** : Quelques secondes maximum
-
----
+**Rôle** : Point d'entrée pour les emails locaux - **Processus** : `pickup` surveille ce répertoire - **Durée** : Quelques secondes maximum
 
 **Comment les emails arrivent ici** :
 
@@ -58,57 +52,25 @@ echo "Test" | sendmail user@example.com
 
 ### 📂 incoming (hold en Postfix récent)
 
-**Rôle** : Emails en cours de nettoyage
+**Rôle** : Emails en cours de nettoyage - **Processus** : `cleanup` traite les messages ici - **Durée** : Très courte (quelques secondes)
 
-**Processus** : `cleanup` traite les messages ici
-
-**Durée** : Très courte (quelques secondes)
-
----
-
-**Que fait cleanup ?**
-- Ajoute les headers manquants (Message-ID, Date)
-- Complète les adresses
-- Extrait les destinataires
-- Prépare le message pour la queue
+**Que fait cleanup ?** Ajoute les headers manquants (Message-ID, Date) - Complète les adresses - Extrait les destinataires - Prépare le message pour la queue
 
 ---
 
 ### 📂 active
 
-**Rôle** : Messages en cours de livraison **immédiate**
+**Rôle** : Messages en cours de livraison **immédiate** - **Processus** : `qmgr` (Queue Manager) gère cette queue - **Taille limitée** : Par défaut 20 000 messages max
 
-**Processus** : `qmgr` (Queue Manager) gère cette queue
-
-**Taille limitée** : Par défaut 20 000 messages max
-
----
-
-**Pourquoi limiter la taille ?**
-
-Si `active` était illimitée, Postfix pourrait charger des millions de messages en mémoire et crasher !
-
-La limitation force Postfix à ne traiter que ce qu'il peut gérer.
+**Pourquoi limiter la taille ?** Si `active` était illimitée, Postfix pourrait charger des millions de messages en mémoire et crasher ! La limitation force Postfix à ne traiter que ce qu'il peut gérer.
 
 ---
 
 ### 📂 deferred
 
-**Rôle** : Messages en échec temporaire
+**Rôle** : Messages en échec temporaire - **Processus** : `qmgr` planifie les retentatives - **Durée** : Jusqu'à `maximal_queue_lifetime` (5 jours par défaut)
 
-**Processus** : `qmgr` planifie les retentatives
-
-**Durée** : Jusqu'à `maximal_queue_lifetime` (5 jours par défaut)
-
----
-
-**Raisons courantes de defer** :
-- Serveur destinataire injoignable
-- Timeout de connexion
-- Erreur temporaire (4xx SMTP)
-- Trop de connexions simultanées
-
----
+**Raisons courantes de defer** : Serveur destinataire injoignable - Timeout de connexion - Erreur temporaire (4xx SMTP) - Trop de connexions simultanées
 
 **Algorithme de retry** :
 
@@ -127,37 +89,17 @@ Puis toutes les heures jusqu'à 5 jours
 
 ### 📂 hold
 
-**Rôle** : Messages mis en attente **manuellement**
+**Rôle** : Messages mis en attente **manuellement** - **Processus** : Aucun automatique (administration manuelle) - **Durée** : Jusqu'à libération manuelle
 
-**Processus** : Aucun automatique (administration manuelle)
-
-**Durée** : Jusqu'à libération manuelle
-
----
-
-**Cas d'usage** :
-- Inspection manuelle d'emails suspects
-- Mise en pause temporaire de certains messages
-- Investigation de problèmes
-- Filtrage manuel
+**Cas d'usage** : Inspection manuelle d'emails suspects - Mise en pause temporaire de certains messages - Investigation de problèmes - Filtrage manuel
 
 ---
 
 ### 📂 corrupt
 
-**Rôle** : Messages corrompus (fichiers illisibles)
+**Rôle** : Messages corrompus (fichiers illisibles) - **Processus** : Aucun (pour investigation) - **Durée** : Jusqu'à suppression manuelle
 
-**Processus** : Aucun (pour investigation)
-
-**Durée** : Jusqu'à suppression manuelle
-
----
-
-**Comment un message devient corrupt ?**
-- Crash pendant l'écriture
-- Problème disque
-- Bug (très rare)
-- Manipulation manuelle incorrecte
+**Comment un message devient corrupt ?** Crash pendant l'écriture - Problème disque - Bug (très rare) - Manipulation manuelle incorrecte
 
 ---
 
@@ -191,22 +133,14 @@ DEF456GHI     5678 Fri Dec 13 10:35:00  admin@example.com
 
 ---
 
-**Décryptage** :
-
-- **ABC123DEF** : Queue ID du message
-- **1234** : Taille en bytes
-- **Fri Dec 13 10:30:00** : Date/heure d'arrivée
-- **sender@example.com** : Expéditeur
-- **user@domain.com** : Destinataire
-
----
+**Décryptage** : **ABC123DEF** (Queue ID du message) - **1234** (Taille en bytes) - **Fri Dec 13 10:30:00** (Date/heure d'arrivée) - **sender@example.com** (Expéditeur) - **user@domain.com** (Destinataire)
 
 **Message en deferred** :
 
 ```
 DEF456GHI     5678 Fri Dec 13 10:35:00  admin@example.com
-                         (connect to mail.server.com[1.2.3.4]:25: Connection refused)
-                                         contact@server.com
+                        (connect to mail.server.com[1.2.3.4]:25: Connection refused)
+                                        contact@server.com
 ```
 
 L'erreur est affichée entre parenthèses.
@@ -223,25 +157,17 @@ qshape active
 qshape deferred
 ```
 
----
-
 **Exemple de sortie** :
 
 ```
-                         T  5 10 20 40 80 160 320 640 1280 1280+
-                TOTAL 1234  0  0  0  0  0   5   10  50  100  1069
-           example.com  500  0  0  0  0  0   0    5  25   50   420
-           domain.com   300  0  0  0  0  0   2    3  20   30   245
-           server.com   200  0  0  0  0  0   1    1   3   10   185
+                        T  5 10 20 40 80 160 320 640 1280 1280+
+               TOTAL 1234  0  0  0  0  0   5   10  50  100  1069
+          example.com  500  0  0  0  0  0   0    5  25   50   420
+          domain.com   300  0  0  0  0  0   2    3  20   30   245
+          server.com   200  0  0  0  0  0   1    1   3   10   185
 ```
 
----
-
-**Lecture** :
-
-- **T** : Total de messages
-- **Colonnes** : Nombre de messages par tranche d'âge (en minutes)
-- **example.com** : 500 messages pour ce domaine, dont 420 de plus de 1280 minutes (vieux !)
+**Lecture** : **T** (Total de messages) - **Colonnes** (Nombre de messages par tranche d'âge en minutes) - **example.com** (500 messages pour ce domaine, dont 420 de plus de 1280 minutes - vieux !)
 
 ---
 
@@ -255,8 +181,6 @@ qshape deferred
 postqueue -p
 ```
 
----
-
 **Forcer l'envoi immédiat de tous les messages** :
 
 ```bash
@@ -264,8 +188,6 @@ sudo postqueue -f
 ```
 
 (Utile après avoir résolu un problème réseau)
-
----
 
 **Forcer l'envoi d'un message spécifique** :
 

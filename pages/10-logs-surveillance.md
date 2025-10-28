@@ -32,15 +32,11 @@ Les logs sont votre **meilleur ami** pour :
 /var/log/mail.warn       # Avertissements
 ```
 
----
-
 ### 📂 Rocky Linux / Red Hat
 
 ```
 /var/log/maillog         # Tous les logs mail
 ```
-
----
 
 ### 📂 Postfix 3.4+
 
@@ -61,13 +57,7 @@ Dec 13 10:30:15 mail postfix/smtpd[1234]: ABC123DEF: client=example.com[1.2.3.4]
 
 ---
 
-**Décryptage** :
-
-- `Dec 13 10:30:15` : Date et heure
-- `mail` : Hostname du serveur
-- `postfix/smtpd[1234]` : Service Postfix (smtpd) et PID (1234)
-- `ABC123DEF` : Queue ID du message
-- `client=example.com[1.2.3.4]` : Informations supplémentaires
+**Décryptage** : `Dec 13 10:30:15` (Date et heure) - `mail` (Hostname du serveur) - `postfix/smtpd[1234]` (Service Postfix et PID) - `ABC123DEF` (Queue ID du message) - `client=example.com[1.2.3.4]` (Informations supplémentaires)
 
 ---
 
@@ -89,15 +79,7 @@ Dec 13 10:30:16 mail postfix/qmgr[1236]: ABC123DEF: removed
 
 ---
 
-**Parcours complet** :
-
-1. **smtpd** : Message reçu de `sender.com`
-2. **cleanup** : Nettoyage et attribution d'un message-id
-3. **qmgr** : Mise en queue, expéditeur et taille
-4. **smtp** : Envoi réussi vers `dest@example.com`
-5. **qmgr** : Message supprimé de la queue
-
----
+**Parcours complet** : 1. **smtpd** (Message reçu de `sender.com`) - 2. **cleanup** (Nettoyage et attribution d'un message-id) - 3. **qmgr** (Mise en queue, expéditeur et taille) - 4. **smtp** (Envoi réussi vers `dest@example.com`) - 5. **qmgr** (Message supprimé de la queue)
 
 ### 🔎 Rechercher un message
 
@@ -115,20 +97,7 @@ sudo grep ABC123DEF /var/log/mail.log
 postfix/smtp[1234]: ABC123: to=<user@example.com>, relay=mail.example.com[1.2.3.4]:25, delay=0.52, delays=0.01/0/0.02/0.49, dsn=2.0.0, status=sent (250 2.0.0 Ok: queued as DEF456)
 ```
 
----
-
-**Informations clés** :
-
-- `to` : Destinataire
-- `relay` : Serveur qui a accepté l'email
-- `delay` : Délai total (secondes)
-- `delays` : Détails (a/b/c/d)
-  - a : Temps avant queue
-  - b : Temps dans queue
-  - c : Temps de connexion
-  - d : Temps de transmission
-- `dsn` : Code de statut (2.x.x = succès)
-- `status=sent` : Envoi réussi
+**Informations clés** : `to` (Destinataire) - `relay` (Serveur qui a accepté l'email) - `delay` (Délai total en secondes) - `delays` (Détails a/b/c/d : temps avant queue/dans queue/connexion/transmission) - `dsn` (Code de statut 2.x.x = succès) - `status=sent` (Envoi réussi)
 
 ---
 
@@ -138,13 +107,7 @@ postfix/smtp[1234]: ABC123: to=<user@example.com>, relay=mail.example.com[1.2.3.
 postfix/smtp[1234]: ABC123: to=<user@example.com>, relay=mail.example.com[1.2.3.4]:25, delay=5.2, delays=0.01/5/0.02/0.17, dsn=4.4.1, status=deferred (connect to mail.example.com[1.2.3.4]:25: Connection timed out)
 ```
 
----
-
-**Code 4.x.x** = Erreur temporaire
-
-Le message sera réessayé plus tard.
-
----
+**Code 4.x.x** = Erreur temporaire - Le message sera réessayé plus tard.
 
 ## ❌ Messages rejetés
 
@@ -152,15 +115,7 @@ Le message sera réessayé plus tard.
 postfix/smtpd[1234]: NOQUEUE: reject: RCPT from unknown[1.2.3.4]: 554 5.7.1 <spammer@spam.com>: Sender address rejected: Access denied; from=<spammer@spam.com> to=<user@example.com>
 ```
 
----
-
-**NOQUEUE** : Message rejeté avant même d'entrer en queue
-
-**554 5.7.1** : Code d'erreur permanente
-
-**Sender address rejected** : Raison du rejet
-
----
+**NOQUEUE** : Message rejeté avant même d'entrer en queue - **554 5.7.1** : Code d'erreur permanente - **Sender address rejected** : Raison du rejet
 
 ## 🔥 Messages rebondis (bounce)
 
@@ -168,11 +123,7 @@ postfix/smtpd[1234]: NOQUEUE: reject: RCPT from unknown[1.2.3.4]: 554 5.7.1 <spa
 postfix/smtp[1234]: ABC123: to=<invalid@nonexistent.com>, relay=mail.nonexistent.com[1.2.3.4]:25, delay=2.5, delays=0.01/0/0.5/2, dsn=5.1.1, status=bounced (host mail.nonexistent.com[1.2.3.4] said: 550 5.1.1 <invalid@nonexistent.com>: Recipient address rejected: User unknown)
 ```
 
----
-
-**Code 5.x.x** = Erreur permanente
-
-Un email de bounce sera envoyé à l'expéditeur.
+**Code 5.x.x** = Erreur permanente - Un email de bounce sera envoyé à l'expéditeur.
 
 ---
 

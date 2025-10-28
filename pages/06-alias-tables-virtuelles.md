@@ -27,15 +27,11 @@ Les alias et les domaines virtuels permettent de :
 
 **Virtual** : Pour les domaines **virtuels** (pas de compte système)
 
----
-
 **Analogie** :
 
-**Alias** = Boîte aux lettres partagée dans votre immeuble
-- root → admin@example.com
+**Alias** = Boîte aux lettres partagée dans votre immeuble (root → admin@example.com)
 
-**Virtual** = Redirection postale vers une autre adresse
-- contact@domain1.com → support@domain2.com
+**Virtual** = Redirection postale vers une autre adresse (contact@domain1.com → support@domain2.com)
 
 ---
 
@@ -44,8 +40,6 @@ Les alias et les domaines virtuels permettent de :
 ## Le fichier /etc/aliases
 
 Le fichier `/etc/aliases` gère les redirections des comptes système.
-
----
 
 ### 📝 Format du fichier
 
@@ -58,8 +52,6 @@ postmaster: root
 webmaster: root
 root: admin@example.com
 ```
-
----
 
 ### 🔍 Structure
 
@@ -99,8 +91,6 @@ sudo nano /etc/aliases
 echo "contact: john@example.com" | sudo tee -a /etc/aliases
 ```
 
----
-
 ### 🔄 Compiler les alias
 
 **Important** : Après modification, il faut recompiler !
@@ -111,11 +101,7 @@ sudo newaliases
 sudo postalias /etc/aliases
 ```
 
----
-
 Cela crée une base de données binaire `/etc/aliases.db` que Postfix utilise.
-
----
 
 ### ✅ Tester un alias
 
@@ -157,8 +143,6 @@ root: admin@example.com
 dev-team: :include:/etc/postfix/team-dev.txt
 ```
 
----
-
 ### 📬 Alias avec plusieurs destinations
 
 ```sql
@@ -168,8 +152,6 @@ support: john@example.com, jane@example.com, support-archive
 # support-archive peut être un autre alias
 support-archive: /var/mail/support-archive.txt
 ```
-
----
 
 ### 🔧 Alias vers un programme
 

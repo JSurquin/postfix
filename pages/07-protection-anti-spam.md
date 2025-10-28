@@ -80,28 +80,13 @@ Quand un serveur se connecte à vous :
 
 ### 📋 RBL populaires en 2025
 
-**Spamhaus ZEN** (le plus utilisé)
-- `zen.spamhaus.org`
-- Combine plusieurs listes
-- Très fiable, peu de faux positifs
+**Spamhaus ZEN** (le plus utilisé) : `zen.spamhaus.org` - Combine plusieurs listes - Très fiable, peu de faux positifs
 
----
+**Barracuda** : `b.barracudacentral.org` - Spécialisé dans les botnets
 
-**Barracuda**
-- `b.barracudacentral.org`
-- Spécialisé dans les botnets
+**SpamCop** : `bl.spamcop.net` - Basé sur les signalements utilisateurs
 
----
-
-**SpamCop**
-- `bl.spamcop.net`
-- Basé sur les signalements utilisateurs
-
----
-
-**SORBS**
-- `dnsbl.sorbs.net`
-- Détecte les proxys ouverts et relais
+**SORBS** : `dnsbl.sorbs.net` - Détecte les proxys ouverts et relais
 
 ---
 
@@ -122,11 +107,7 @@ smtpd_recipient_restrictions =
 
 ### ⚠️ Attention aux faux positifs !
 
-Les RBL peuvent blacklister des IPs légitimes.
-
-**Solution** : Utiliser plusieurs RBL et scorer (on verra ça plus tard avec SpamAssassin)
-
----
+Les RBL peuvent blacklister des IPs légitimes. **Solution** : Utiliser plusieurs RBL et scorer (on verra ça plus tard avec SpamAssassin)
 
 ### ✅ Tester si une IP est blacklistée
 
@@ -144,8 +125,6 @@ dig 4.3.2.1.zen.spamhaus.org
 
 Limiter le nombre de connexions par IP pour empêcher le flood.
 
----
-
 ### ⚙️ Configuration avec Anvil
 
 ```sql
@@ -159,15 +138,7 @@ smtpd_client_connection_rate_limit = 30
 anvil_rate_time_unit = 60s
 ```
 
----
-
-**Exemple** : Avec ces paramètres, une IP peut :
-- Maximum 10 connexions simultanées
-- Maximum 30 nouvelles connexions par minute
-
-Au-delà → Rejet temporaire
-
----
+**Exemple** : Avec ces paramètres, une IP peut avoir maximum 10 connexions simultanées et 30 nouvelles connexions par minute. Au-delà → Rejet temporaire
 
 ### 📊 Messages par connexion
 
@@ -182,15 +153,11 @@ smtpd_client_message_rate_limit = 100
 
 Technique basée sur le principe : **les spammeurs ne réessaient pas**.
 
----
-
 ### 🔍 Fonctionnement
 
 1. Premier email d'un expéditeur inconnu → Rejet temporaire (450)
 2. Serveur légitime réessaie après quelques minutes → Accepté
 3. Spammer abandonne immédiatement → Bloqué
-
----
 
 ### 📦 Installation de Postgrey
 
@@ -201,8 +168,6 @@ sudo apt install postgrey
 # Rocky Linux
 sudo dnf install postgrey
 ```
-
----
 
 ### ⚙️ Configuration Postfix
 

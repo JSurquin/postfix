@@ -30,15 +30,9 @@ En 2025, ces trois standards sont **obligatoires** pour toute infrastructure mai
 
 **DMARC** : "Comment traiter les emails qui échouent SPF/DKIM ?"
 
----
-
 ## Analogie
 
-**SPF** = Liste des facteurs autorisés
-
-**DKIM** = Cachet officiel de la poste
-
-**DMARC** = Politique de traitement des lettres suspectes
+**SPF** = Liste des facteurs autorisés - **DKIM** = Cachet officiel de la poste - **DMARC** = Politique de traitement des lettres suspectes
 
 ---
 
@@ -74,13 +68,7 @@ v=spf1 mx a ip4:203.0.113.10 -all
 
 ---
 
-**Décryptage** :
-
-- `v=spf1` : Version SPF
-- `mx` : Les serveurs MX du domaine peuvent envoyer
-- `a` : Le serveur A du domaine peut envoyer
-- `ip4:203.0.113.10` : Cette IP peut envoyer
-- `-all` : Rejeter tout le reste
+**Décryptage** : `v=spf1` (Version SPF) - `mx` (Les serveurs MX du domaine peuvent envoyer) - `a` (Le serveur A du domaine peut envoyer) - `ip4:203.0.113.10` (Cette IP peut envoyer) - `-all` (Rejeter tout le reste)
 
 ---
 
@@ -91,8 +79,6 @@ v=spf1 mx a ip4:203.0.113.10 -all
 ```
 v=spf1 a -all
 ```
-
----
 
 **mx** : Autorise les serveurs MX du domaine
 
@@ -108,15 +94,11 @@ v=spf1 mx -all
 v=spf1 ip4:203.0.113.10 ip4:203.0.113.0/24 -all
 ```
 
----
-
 **ip6:IP** : Autorise une IP IPv6
 
 ```
 v=spf1 ip6:2001:db8::1 -all
 ```
-
----
 
 **include:domaine** : Inclut le SPF d'un autre domaine
 
@@ -126,11 +108,7 @@ v=spf1 include:_spf.google.com -all
 
 (Utile si vous utilisez Gmail pour envoyer)
 
----
-
-**exists:domaine** : Vérifie l'existence d'un enregistrement A
-
-(Rarement utilisé)
+**exists:domaine** : Vérifie l'existence d'un enregistrement A (Rarement utilisé)
 
 ---
 
@@ -144,15 +122,11 @@ v=spf1 +mx -all
 v=spf1 mx -all
 ```
 
----
-
 **-** : FAIL (rejeté)
 
 ```
 v=spf1 mx -all
 ```
-
----
 
 **~** : SOFTFAIL (suspect mais pas rejeté)
 
@@ -160,25 +134,15 @@ v=spf1 mx -all
 v=spf1 mx ~all
 ```
 
----
-
 **?** : NEUTRAL (neutre, pas de recommandation)
 
 ```
 v=spf1 mx ?all
 ```
 
----
-
 ### 💡 Quelle fin choisir ?
 
-**-all** : Strict (recommandé si vous contrôlez tous vos serveurs)
-
-**~all** : Permissif (si vous avez peur de bloquer des emails légitimes)
-
-**?all** : Très permissif (déconseillé)
-
----
+**-all** : Strict (recommandé si vous contrôlez tous vos serveurs) - **~all** : Permissif (si vous avez peur de bloquer des emails légitimes) - **?all** : Très permissif (déconseillé)
 
 En 2025, utilisez **-all** si possible !
 
@@ -192,8 +156,6 @@ En 2025, utilisez **-all** si possible !
 - Gmail (G Suite) pour certains utilisateurs
 - Service marketing (ex: Mailchimp)
 
----
-
 ### 📋 Étape 2 : Construire l'enregistrement
 
 ```
@@ -205,27 +167,17 @@ v=spf1
   -all
 ```
 
----
-
 ### 🌐 Étape 3 : Ajouter l'enregistrement DNS
 
-**Type** : TXT
-
-**Nom** : `example.com` (ou `@`)
-
-**Valeur** :
+**Type** : TXT - **Nom** : `example.com` (ou `@`) - **Valeur** :
 
 ```
 v=spf1 a mx ip4:203.0.113.10 -all
 ```
 
----
-
 ### ⏱️ Étape 4 : Attendre la propagation DNS
 
 Cela peut prendre de quelques minutes à 48 heures.
-
----
 
 ### ✅ Étape 5 : Tester
 
@@ -237,12 +189,7 @@ dig example.com TXT +short | grep spf
 nslookup -type=TXT example.com
 ```
 
----
-
-**Outils en ligne** :
-
-- https://mxtoolbox.com/spf.aspx
-- https://www.kitterman.com/spf/validate.html
+**Outils en ligne** : https://mxtoolbox.com/spf.aspx - https://www.kitterman.com/spf/validate.html
 
 ---
 

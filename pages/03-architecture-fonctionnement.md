@@ -23,23 +23,11 @@ Pensez à une usine où chaque ouvrier a une tâche précise : c'est exactement 
 
 ### 🎯 Principes fondamentaux
 
-**Séparation des privilèges**
-- Chaque processus tourne avec le minimum de droits nécessaires
-- Si un processus est compromis, les dégâts sont limités
+**Séparation des privilèges** : Chaque processus tourne avec le minimum de droits nécessaires - Si un processus est compromis, les dégâts sont limités
 
----
+**Architecture modulaire** : Chaque tâche est gérée par un processus dédié - Facile de remplacer ou désactiver un composant - Isolation des pannes
 
-**Architecture modulaire**
-- Chaque tâche est gérée par un processus dédié
-- Facile de remplacer ou désactiver un composant
-- Isolation des pannes
-
----
-
-**Communication par files d'attente**
-- Les processus ne se parlent pas directement
-- Ils communiquent via des fichiers dans des répertoires
-- Robustesse : si un processus crash, les messages ne sont pas perdus
+**Communication par files d'attente** : Les processus ne se parlent pas directement - Ils communiquent via des fichiers dans des répertoires - Robustesse : si un processus crash, les messages ne sont pas perdus
 
 ---
 
@@ -77,14 +65,7 @@ Pensez à une usine où chaque ouvrier a une tâche précise : c'est exactement 
 
 ## Le processus Master
 
-Le **master** est le chef d'orchestre. C'est lui qui :
-
-- Lance tous les autres processus
-- Surveille leur santé
-- Les redémarre en cas de crash
-- Gère leur cycle de vie
-
----
+Le **master** est le chef d'orchestre. C'est lui qui lance tous les autres processus, surveille leur santé, les redémarre en cas de crash et gère leur cycle de vie.
 
 ### 📋 Configuration du master
 
@@ -123,16 +104,7 @@ smtp      inet  n       -       y       -       -       smtpd
 
 **Rôle** : Recevoir les emails depuis Internet ou les clients
 
----
-
-**Responsabilités** :
-- Écoute sur le port 25 (ou 587 pour submission)
-- Dialogue SMTP avec les clients
-- Applique les restrictions et politiques
-- Accepte ou rejette les messages
-- Passe les messages acceptés à `cleanup`
-
----
+**Responsabilités** : Écoute sur le port 25 (ou 587 pour submission) - Dialogue SMTP avec les clients - Applique les restrictions et politiques - Accepte ou rejette les messages - Passe les messages acceptés à `cleanup`
 
 **Analogie** : C'est le réceptionniste de l'hôtel qui accueille les clients et vérifie leurs réservations.
 
@@ -142,14 +114,7 @@ smtp      inet  n       -       y       -       -       smtpd
 
 **Rôle** : Récupérer les emails déposés localement
 
----
-
-**Responsabilités** :
-- Surveille le répertoire `maildrop/`
-- Récupère les emails déposés par les programmes locaux (via `sendmail`)
-- Passe les messages à `cleanup`
-
----
+**Responsabilités** : Surveille le répertoire `maildrop/` - Récupère les emails déposés par les programmes locaux (via `sendmail`) - Passe les messages à `cleanup`
 
 **Analogie** : C'est l'employé qui ramasse le courrier déposé dans la boîte aux lettres interne.
 
@@ -159,16 +124,7 @@ smtp      inet  n       -       y       -       -       smtpd
 
 **Rôle** : Nettoyer et normaliser les messages
 
----
-
-**Responsabilités** :
-- Ajoute les en-têtes manquants (Date, Message-ID, etc.)
-- Complète les adresses (user → user@domain.com)
-- Extrait les destinataires des en-têtes
-- Écrit le message dans la file `incoming/`
-- Notifie le `qmgr`
-
----
+**Responsabilités** : Ajoute les en-têtes manquants (Date, Message-ID, etc.) - Complète les adresses (user → user@domain.com) - Extrait les destinataires des en-têtes - Écrit le message dans la file `incoming/` - Notifie le `qmgr`
 
 **Analogie** : C'est le service qualité qui vérifie que le courrier est conforme avant expédition.
 
@@ -176,20 +132,9 @@ smtp      inet  n       -       y       -       -       smtpd
 
 ### 📊 qmgr (Queue manager)
 
-**Rôle** : Gérer les files d'attente
+**Rôle** : Gérer les files d'attente - C'est le **cœur** de Postfix !
 
-C'est le **cœur** de Postfix !
-
----
-
-**Responsabilités** :
-- Surveille les files d'attente
-- Décide quand envoyer les messages
-- Choisit le bon processus de livraison
-- Gère les tentatives et les délais
-- Optimise l'envoi (regroupe par destination)
-
----
+**Responsabilités** : Surveille les files d'attente - Décide quand envoyer les messages - Choisit le bon processus de livraison - Gère les tentatives et les délais - Optimise l'envoi (regroupe par destination)
 
 **Analogie** : C'est le chef de gare qui décide quels trains partent, quand, et vers où.
 
@@ -199,16 +144,7 @@ C'est le **cœur** de Postfix !
 
 **Rôle** : Envoyer les emails vers d'autres serveurs
 
----
-
-**Responsabilités** :
-- Se connecte aux serveurs destinataires
-- Négocie TLS si possible
-- Transmet le message
-- Gère les erreurs temporaires (retry) et permanentes
-- Notifie le `qmgr` du résultat
-
----
+**Responsabilités** : Se connecte aux serveurs destinataires - Négocie TLS si possible - Transmet le message - Gère les erreurs temporaires (retry) et permanentes - Notifie le `qmgr` du résultat
 
 **Analogie** : C'est le facteur qui livre le courrier chez le destinataire.
 
@@ -218,15 +154,7 @@ C'est le **cœur** de Postfix !
 
 **Rôle** : Livrer les emails locaux
 
----
-
-**Responsabilités** :
-- Livre les emails dans les boîtes locales
-- Gère les fichiers `.forward`
-- Applique les alias
-- Peut invoquer des programmes externes (filtres)
-
----
+**Responsabilités** : Livre les emails dans les boîtes locales - Gère les fichiers `.forward` - Applique les alias - Peut invoquer des programmes externes (filtres)
 
 **Analogie** : C'est le facteur qui distribue le courrier dans les boîtes aux lettres de l'immeuble.
 
@@ -236,14 +164,7 @@ C'est le **cœur** de Postfix !
 
 **Rôle** : Gérer les rebonds (emails non délivrés)
 
----
-
-**Responsabilités** :
-- Génère les messages de non-délivrance (bounce)
-- Notifie l'expéditeur en cas d'échec définitif
-- Gère les messages d'avertissement (delay warning)
-
----
+**Responsabilités** : Génère les messages de non-délivrance (bounce) - Notifie l'expéditeur en cas d'échec définitif - Gère les messages d'avertissement (delay warning)
 
 **Analogie** : C'est le service retour qui renvoie le courrier avec la mention "n'habite pas à l'adresse indiquée".
 
@@ -253,12 +174,7 @@ C'est le **cœur** de Postfix !
 
 **Rôle** : Réécriture d'adresses
 
----
-
-**Responsabilités** :
-- Résout les adresses (lookup DNS)
-- Applique les règles de réécriture
-- Détermine le transport approprié
+**Responsabilités** : Résout les adresses (lookup DNS) - Applique les règles de réécriture - Détermine le transport approprié
 
 ---
 
@@ -266,73 +182,42 @@ C'est le **cœur** de Postfix !
 
 Postfix utilise plusieurs files d'attente dans `/var/spool/postfix/` :
 
----
-
 ### 📂 maildrop
 
-**Contenu** : Messages déposés localement par les programmes
-
-**Processus responsable** : `pickup`
-
+**Contenu** : Messages déposés localement par les programmes  
+**Processus responsable** : `pickup`  
 **Durée de vie** : Très courte (quelques secondes)
-
----
 
 ### 📂 incoming
 
-**Contenu** : Messages reçus, en cours de nettoyage
-
-**Processus responsable** : `cleanup`
-
+**Contenu** : Messages reçus, en cours de nettoyage  
+**Processus responsable** : `cleanup`  
 **Durée de vie** : Courte (secondes à minutes)
-
----
 
 ### 📂 active
 
-**Contenu** : Messages en cours de livraison
-
-**Processus responsable** : `qmgr`
-
+**Contenu** : Messages en cours de livraison  
+**Processus responsable** : `qmgr`  
 **Taille limite** : Contrôlée (évite la saturation mémoire)
-
----
 
 ### 📂 deferred
 
-**Contenu** : Messages en échec temporaire
-
-**Processus responsable** : `qmgr`
-
+**Contenu** : Messages en échec temporaire  
+**Processus responsable** : `qmgr`  
 **Durée de vie** : Jusqu'à 5 jours par défaut
 
----
-
-Les messages en `deferred` sont retentés selon un algorithme exponentiel :
-- 1ère tentative : immédiat
-- 2ème : après quelques minutes
-- 3ème : après 15-30 minutes
-- 4ème : après 1 heure
-- etc.
-
----
+Les messages en `deferred` sont retentés selon un algorithme exponentiel : 1ère tentative immédiate, 2ème après quelques minutes, 3ème après 15-30 minutes, 4ème après 1 heure, etc.
 
 ### 📂 hold
 
-**Contenu** : Messages mis en attente manuellement
-
-**Processus responsable** : Admin (vous !)
-
+**Contenu** : Messages mis en attente manuellement  
+**Processus responsable** : Admin (vous !)  
 **Durée de vie** : Jusqu'à libération manuelle
-
----
 
 ### 📂 corrupt
 
-**Contenu** : Messages corrompus
-
-**Processus responsable** : Aucun (pour investigation)
-
+**Contenu** : Messages corrompus  
+**Processus responsable** : Aucun (pour investigation)  
 **Durée de vie** : Jusqu'à suppression manuelle
 
 ---
@@ -476,8 +361,6 @@ Suivons un email de bout en bout !
 
 Les processus Postfix communiquent via :
 
----
-
 ### 🔌 Sockets Unix
 
 Fichiers spéciaux dans `/var/spool/postfix/` :
@@ -490,25 +373,15 @@ ls -la /var/spool/postfix/public/
 # showq
 ```
 
----
-
 ### 📬 Files système
 
 Messages = fichiers dans les répertoires de queue
 
-Format optimisé pour :
-- Rapidité d'accès
-- Intégrité (pas de corruption en cas de crash)
-- Atomicité des opérations
-
----
+Format optimisé pour : Rapidité d'accès - Intégrité (pas de corruption en cas de crash) - Atomicité des opérations
 
 ### 🔒 Locking
 
-Postfix utilise des verrous (locks) pour éviter :
-- Les accès concurrents au même fichier
-- Les race conditions
-- La corruption de données
+Postfix utilise des verrous (locks) pour éviter : Les accès concurrents au même fichier - Les race conditions - La corruption de données
 
 ---
 
@@ -825,39 +698,15 @@ sudo qshape deferred
 
 ### 💡 Architecture
 
-**Master = Chef d'orchestre**
-- Lance et surveille tous les processus
-- Configuré via `master.cf`
+**Master = Chef d'orchestre** : Lance et surveille tous les processus - Configuré via `master.cf`
 
----
+**Processus spécialisés** : `smtpd` (Réception) - `smtp` (Envoi) - `qmgr` (Gestion des files) - `cleanup` (Normalisation) - `local` (Livraison locale)
 
-**Processus spécialisés**
-- `smtpd` : Réception
-- `smtp` : Envoi
-- `qmgr` : Gestion des files
-- `cleanup` : Normalisation
-- `local` : Livraison locale
+**Files d'attente** : `maildrop` → `incoming` → `active` → livraison - `deferred` pour les échecs temporaires - `hold` pour mise en attente manuelle
 
----
+**Sécurité** : Chroot pour la plupart des processus - Séparation des privilèges - Principe du moindre privilège
 
-**Files d'attente**
-- `maildrop` → `incoming` → `active` → livraison
-- `deferred` pour les échecs temporaires
-- `hold` pour mise en attente manuelle
-
----
-
-**Sécurité**
-- Chroot pour la plupart des processus
-- Séparation des privilèges
-- Principe du moindre privilège
-
----
-
-**Communication**
-- Sockets Unix entre processus
-- Fichiers dans les queues
-- Pas de communication directe
+**Communication** : Sockets Unix entre processus - Fichiers dans les queues - Pas de communication directe
 
 ---
 
@@ -869,15 +718,11 @@ sudo qshape deferred
 2. Identifiez le PID du master
 3. Comptez combien de processus `smtpd` tournent
 
----
-
 ### 🎯 Exercice 2 : Suivre un message
 
 1. Envoyez un email de test
 2. Notez son Queue ID dans les logs
 3. Suivez son parcours complet à travers les processus
-
----
 
 ### 🎯 Exercice 3 : Explorer les queues
 
@@ -888,8 +733,6 @@ sudo qshape deferred
 ```bash
 sudo postcat -q QUEUE_ID
 ```
-
----
 
 ### 🎯 Exercice 4 : Modifier master.cf
 

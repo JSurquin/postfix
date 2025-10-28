@@ -23,11 +23,7 @@ Chaque exercice est conçu pour renforcer un concept spécifique.
 
 Les exercices sont classés par **difficulté** :
 
-⭐ **Facile** : Configuration de base
-
-⭐⭐ **Moyen** : Configuration avancée
-
-⭐⭐⭐ **Difficile** : Troubleshooting et intégration
+⭐ **Facile** : Configuration de base - ⭐⭐ **Moyen** : Configuration avancée - ⭐⭐⭐ **Difficile** : Troubleshooting et intégration
 
 ---
 
@@ -37,15 +33,11 @@ Les exercices sont classés par **difficulté** :
 
 Installer et configurer un serveur Postfix fonctionnel.
 
----
-
 ## 📋 Prérequis
 
 - Serveur Linux (Ubuntu 22.04+ ou Rocky Linux 9+)
 - Accès root/sudo
 - Nom de domaine configuré en DNS
-
----
 
 ## 🔧 Tâches
 
@@ -109,29 +101,17 @@ cat ~/Maildir/new/*
 
 Configurer correctement les enregistrements DNS pour votre serveur mail.
 
----
-
 ## 📋 Prérequis
 
-- Accès à la configuration DNS de votre domaine
-- Serveur Postfix installé
-
----
+- Accès à la configuration DNS de votre domaine - Serveur Postfix installé
 
 ## 🔧 Tâches
 
-1. Créez un enregistrement A pour `mail.example.com`
-2. Créez un enregistrement MX pour `example.com`
-3. Configurez le PTR (reverse DNS)
-4. Vérifiez tous les enregistrements
-
----
+1. Créez un enregistrement A pour `mail.example.com` - 2. Créez un enregistrement MX pour `example.com` - 3. Configurez le PTR (reverse DNS) - 4. Vérifiez tous les enregistrements
 
 ## ✅ Critères de validation
 
-- `dig mail.example.com A` retourne votre IP
-- `dig example.com MX` retourne `mail.example.com`
-- `dig -x VOTRE_IP` retourne `mail.example.com`
+- `dig mail.example.com A` retourne votre IP - `dig example.com MX` retourne `mail.example.com` - `dig -x VOTRE_IP` retourne `mail.example.com`
 
 ---
 

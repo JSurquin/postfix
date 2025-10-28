@@ -26,9 +26,7 @@ Un serveur mail contient des données **critiques** :
 
 ## Analogie
 
-Imaginez perdre tous vos emails professionnels des 5 dernières années en une seconde...
-
-**Les sauvegardes ne sont pas optionnelles !**
+Imaginez perdre tous vos emails professionnels des 5 dernières années en une seconde... **Les sauvegardes ne sont pas optionnelles !**
 
 ---
 
@@ -49,8 +47,6 @@ Imaginez perdre tous vos emails professionnels des 5 dernières années en une s
 └── ...
 ```
 
----
-
 ## 🔑 Clés DKIM
 
 ```
@@ -64,8 +60,6 @@ Imaginez perdre tous vos emails professionnels des 5 dernières années en une s
         ├── mail.private
         └── mail.txt
 ```
-
----
 
 ## 🔒 Certificats SSL
 
@@ -106,11 +100,7 @@ Imaginez perdre tous vos emails professionnels des 5 dernières années en une s
 └── ...
 ```
 
----
-
 ⚠️ **Note** : La queue change constamment. Sauvegarder la queue complète n'est généralement pas nécessaire.
-
----
 
 ## 🗄️ Bases de données
 
@@ -130,39 +120,17 @@ pg_dump mailserver > /backup/maildb.sql
 
 ## Règle 3-2-1
 
-**3** copies de vos données
+**3** copies de vos données - **2** supports différents - **1** copie hors site
 
-**2** supports différents
-
-**1** copie hors site
-
----
-
-**Exemple** :
-
-1. Données originales sur le serveur
-2. Sauvegarde locale sur disque externe
-3. Sauvegarde distante sur un autre serveur/cloud
-
----
+**Exemple** : 1. Données originales sur le serveur - 2. Sauvegarde locale sur disque externe - 3. Sauvegarde distante sur un autre serveur/cloud
 
 ## Fréquence de sauvegarde
 
-**Configuration** : Quotidienne (voire après chaque modification)
-
-**Mailboxes** : 2-4 fois par jour (selon criticité)
-
-**Bases de données** : Quotidienne ou après chaque changement
-
----
+**Configuration** : Quotidienne (voire après chaque modification) - **Mailboxes** : 2-4 fois par jour (selon criticité) - **Bases de données** : Quotidienne ou après chaque changement
 
 ## Rétention
 
-**Court terme** : 7 jours (sauvegardes complètes)
-
-**Moyen terme** : 4 semaines (sauvegardes hebdomadaires)
-
-**Long terme** : 1 an (sauvegardes mensuelles)
+**Court terme** : 7 jours (sauvegardes complètes) - **Moyen terme** : 4 semaines (sauvegardes hebdomadaires) - **Long terme** : 1 an (sauvegardes mensuelles)
 
 ---
 

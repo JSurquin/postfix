@@ -37,47 +37,23 @@ paramètre = valeur1,
 
 ### 🔍 Règles de syntaxe
 
-**Commentaires** : Lignes commençant par `#`
+**Commentaires** : `# texte` - **Continuation** : indentation ou backslash - **Variables** : `$mydomain` - **Listes** : virgules ou espaces
 
 ```sql
-# Ceci est un commentaire
-myhostname = mail.example.com  # Commentaire en fin de ligne
-```
+# Commentaire
+myhostname = mail.example.com  # Commentaire fin de ligne
 
----
-
-**Continuation de ligne** : Indentation ou backslash
-
-```sql
-# Avec indentation
+# Continuation avec indentation
 smtpd_recipient_restrictions = 
     permit_mynetworks,
     reject_unauth_destination
 
-# Avec backslash
-smtpd_banner = $myhostname ESMTP \
-    $mail_name ($mail_version)
-```
-
----
-
-**Variables** : Préfixées par `$`
-
-```sql
+# Variables
 mydomain = example.com
-myorigin = $mydomain  # Vaut "example.com"
-```
+myorigin = $mydomain
 
----
-
-**Listes** : Séparées par des virgules ou espaces
-
-```sql
-# Avec virgules
+# Listes
 mydestination = $myhostname, localhost, $mydomain
-
-# Avec espaces (équivalent)
-mydestination = $myhostname localhost $mydomain
 ```
 
 ---
@@ -109,10 +85,7 @@ myhostname = mail.example.com
 
 ---
 
-**Important** : 
-- Doit correspondre au PTR (reverse DNS)
-- Utilisé dans les en-têtes des emails
-- Première chose que voient les autres serveurs
+**Important** : Doit correspondre au PTR (reverse DNS) - Utilisé dans les en-têtes des emails - Première chose que voient les autres serveurs
 
 ---
 
@@ -123,8 +96,6 @@ Le nom de votre domaine
 ```sql
 mydomain = example.com
 ```
-
----
 
 Par défaut, Postfix déduit `mydomain` depuis `myhostname` :
 
@@ -143,13 +114,7 @@ Le domaine qui apparaît dans le champ `From:` des emails locaux
 myorigin = $mydomain
 ```
 
----
-
-**Exemple** : 
-
-Sans `myorigin`, un email de `root` apparaîtrait comme `root@mail.example.com`
-
-Avec `myorigin = $mydomain`, il apparaît comme `root@example.com` (plus propre !)
+**Exemple** : Sans `myorigin`, un email de `root` apparaîtrait comme `root@mail.example.com`. Avec `myorigin = $mydomain`, il apparaît comme `root@example.com` (plus propre !)
 
 ---
 
@@ -170,8 +135,6 @@ inet_interfaces = localhost
 inet_interfaces = 192.168.1.10, 127.0.0.1
 ```
 
----
-
 **Attention** : Si vous changez vers `all`, assurez-vous que votre firewall est configuré !
 
 ---
@@ -191,8 +154,6 @@ inet_protocols = ipv4
 inet_protocols = ipv6
 ```
 
----
-
 En 2025, `all` est recommandé, mais si vous n'avez pas d'IPv6 configuré, mettez `ipv4` pour éviter des warnings.
 
 ---
@@ -205,8 +166,6 @@ Adresses IP externes (si derrière un NAT/proxy)
 # Si votre serveur est en 192.168.1.10 mais exposé en 203.0.113.10
 proxy_interfaces = 203.0.113.10
 ```
-
----
 
 Postfix considère ces adresses comme "locales" même si elles ne sont pas directement sur ses interfaces.
 
@@ -222,8 +181,6 @@ Domaines pour lesquels Postfix accepte les emails comme destination finale
 mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain
 ```
 
----
-
 **Exemples** :
 
 ```sql
@@ -237,10 +194,7 @@ mydestination =
 mydestination = example.com, example.org, localhost
 ```
 
----
-
 **Attention** : Ne confondez pas `mydestination` et `relay_domains` !
-
 - `mydestination` : Postfix **livre localement**
 - `relay_domains` : Postfix **relaie ailleurs**
 
@@ -257,8 +211,6 @@ relay_domains =
 # Relais pour certains domaines
 relay_domains = subsidiary.example.com, partner.com
 ```
-
----
 
 **Important** : Attention aux open relays !
 
@@ -286,8 +238,6 @@ mynetworks = 127.0.0.0/8, 192.168.1.0/24
 mynetworks_style = subnet
 ```
 
----
-
 **Méthode de détection** :
 
 ```sql
@@ -300,8 +250,6 @@ mynetworks_style = subnet
 # class : Toute la classe réseau (très dangereux !)
 mynetworks_style = class
 ```
-
----
 
 💡 **Bonne pratique** : Spécifiez toujours `mynetworks` manuellement, ne laissez pas Postfix deviner.
 
@@ -322,23 +270,13 @@ relayhost = [smtp.example.com]
 relayhost = [smtp.example.com]:587
 ```
 
----
-
 **Les crochets [ ]** : Désactivent le lookup MX
 
-Sans crochets : `relayhost = smtp.example.com`
-→ Postfix cherche l'enregistrement MX de smtp.example.com
+Sans crochets : `relayhost = smtp.example.com` → Postfix cherche l'enregistrement MX de smtp.example.com
 
-Avec crochets : `relayhost = [smtp.example.com]`
-→ Postfix se connecte directement à smtp.example.com
+Avec crochets : `relayhost = [smtp.example.com]` → Postfix se connecte directement à smtp.example.com
 
----
-
-**Cas d'usage** :
-
-- Serveur derrière un FAI qui bloque le port 25
-- Application qui envoie via le serveur mail de l'entreprise
-- Serveur avec IP blacklistée qui passe par un relais propre
+**Cas d'usage** : Serveur derrière un FAI qui bloque le port 25 - Application qui envoie via le serveur mail de l'entreprise - Serveur avec IP blacklistée qui passe par un relais propre
 
 ---
 
@@ -356,15 +294,7 @@ home_mailbox = Maildir/
 home_mailbox = mail/
 ```
 
----
-
-**Maildir** est recommandé car :
-- Plus sûr (pas de corruption d'un fichier énorme)
-- Plus rapide (accès concurrent possible)
-- Compatible avec IMAP
-- Standard moderne
-
----
+**Maildir** est recommandé car : Plus sûr (pas de corruption d'un fichier énorme) - Plus rapide (accès concurrent possible) - Compatible avec IMAP - Standard moderne
 
 ### 📦 mail_spool_directory
 
@@ -374,11 +304,7 @@ Répertoire des mailbox système (format mbox)
 mail_spool_directory = /var/mail
 ```
 
----
-
 Si vous utilisez Maildir, ce paramètre est ignoré.
-
----
 
 ### 💾 message_size_limit
 
@@ -392,16 +318,7 @@ message_size_limit = 52428800
 message_size_limit = 0
 ```
 
----
-
-**Calcul** : 
-
-```
-10 MB = 10 * 1024 * 1024 = 10485760 bytes
-50 MB = 50 * 1024 * 1024 = 52428800 bytes
-```
-
----
+**Calcul** : 10 MB = 10 * 1024 * 1024 = 10485760 bytes - 50 MB = 50 * 1024 * 1024 = 52428800 bytes
 
 ### 📫 mailbox_size_limit
 
@@ -414,8 +331,6 @@ mailbox_size_limit = 0
 # 1 GB pour mbox
 mailbox_size_limit = 1073741824
 ```
-
----
 
 Avec Maildir, ce paramètre n'a pas de sens (chaque email est un fichier séparé).
 
@@ -438,16 +353,12 @@ smtpd_banner = $myhostname ESMTP
 smtpd_banner = $myhostname ESMTP - No spam please
 ```
 
----
-
 **Sécurité** : Ne révélez pas votre version de Postfix !
 
 ```
 ❌ 220 mail.example.com ESMTP Postfix (Ubuntu 3.6.4)
 ✅ 220 mail.example.com ESMTP
 ```
-
----
 
 ### 🕐 delay_warning_time
 
@@ -460,8 +371,6 @@ delay_warning_time = 4h
 # Désactiver les avertissements
 delay_warning_time = 0h
 ```
-
----
 
 ### ⏱️ maximal_queue_lifetime
 
@@ -1099,8 +1008,6 @@ inet_interfaces = all
 inet_protocols = ipv4
 ```
 
----
-
 ### 📦 Gardez une sauvegarde
 
 ```bash
@@ -1110,8 +1017,6 @@ sudo cp /etc/postfix/main.cf /etc/postfix/main.cf.backup
 # Avec date
 sudo cp /etc/postfix/main.cf /etc/postfix/main.cf.$(date +%Y%m%d)
 ```
-
----
 
 ### ✅ Testez toujours
 
@@ -1130,8 +1035,6 @@ sudo systemctl reload postfix
 echo "Test" | mail -s "Test" root
 ```
 
----
-
 ### 🔐 Sécurité avant performance
 
 Préférez toujours une configuration sécurisée à une configuration ultra-performante mais risquée.
@@ -1144,8 +1047,6 @@ mynetworks = 0.0.0.0/0
 mynetworks = 127.0.0.0/8
 smtpd_sasl_auth_enable = yes
 ```
-
----
 
 ### 📊 Loggez suffisamment
 
@@ -1171,23 +1072,17 @@ smtpd_tls_loglevel = 2
 3. Vérifiez avec `postconf -n`
 4. Testez l'envoi d'un email local
 
----
-
 ### 🎯 Exercice 2 : Restrictions
 
 1. Ajoutez les restrictions recommandées
 2. Testez d'envoyer un email sans authentification
 3. Consultez les logs pour voir le rejet
 
----
-
 ### 🎯 Exercice 3 : Taille des messages
 
 1. Limitez la taille des messages à 10 MB
 2. Tentez d'envoyer un fichier de 15 MB
 3. Observez l'erreur dans les logs
-
----
 
 ### 🎯 Exercice 4 : Bannière
 
@@ -1206,36 +1101,13 @@ telnet mail.example.com 25
 
 ### 💡 Configuration
 
-**Fichier** : `/etc/postfix/main.cf`
+**Fichier** : `/etc/postfix/main.cf` - **Format** : `paramètre = valeur` - **Vérification** : `postfix check` - **Rechargement** : `systemctl reload postfix`
 
-**Format** : `paramètre = valeur`
+**Paramètres essentiels** : `myhostname`, `mydomain`, `myorigin` (Identité) - `inet_interfaces`, `mynetworks` (Réseau) - `mydestination`, `relay_domains` (Destinations) - Restrictions (Sécurité)
 
-**Vérification** : `postfix check`
+**Commandes utiles** : `postconf` (Voir la config) - `postconf -n` (Voir les modifs uniquement) - `postconf -e` (Modifier un paramètre)
 
-**Rechargement** : `systemctl reload postfix`
-
----
-
-**Paramètres essentiels** :
-- `myhostname`, `mydomain`, `myorigin` : Identité
-- `inet_interfaces`, `mynetworks` : Réseau
-- `mydestination`, `relay_domains` : Destinations
-- Restrictions : Sécurité
-
----
-
-**Commandes utiles** :
-- `postconf` : Voir la config
-- `postconf -n` : Voir les modifs uniquement
-- `postconf -e` : Modifier un paramètre
-
----
-
-**Sécurité** :
-- Toujours inclure `reject_unauth_destination`
-- Ne jamais faire un open relay
-- Limiter `mynetworks` au strict nécessaire
-- Masquer les informations dans la bannière
+**Sécurité** : Toujours inclure `reject_unauth_destination` - Ne jamais faire un open relay - Limiter `mynetworks` au strict nécessaire - Masquer les informations dans la bannière
 
 ---
 

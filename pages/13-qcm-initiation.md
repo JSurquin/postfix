@@ -13,13 +13,7 @@ routeAlias: 'qcm-initiation'
 
 # Instructions
 
-**Format** : QCM avec une seule bonne réponse par question
-
-**Durée** : 30 minutes
-
-**Score minimum** : 70% (21/30)
-
-**Consignes** : Lisez attentivement chaque question avant de répondre
+**Format** : QCM avec une seule bonne réponse par question - **Durée** : 30 minutes - **Score minimum** : 70% (21/30) - **Consignes** : Lisez attentivement chaque question avant de répondre
 
 ---
 
@@ -29,21 +23,11 @@ routeAlias: 'qcm-initiation'
 
 Postfix est un :
 
-A) MUA (Mail User Agent)
-
-B) MTA (Mail Transfer Agent)
-
-C) MDA (Mail Delivery Agent)
-
-D) POP3 server
-
----
+A) MUA (Mail User Agent) - B) MTA (Mail Transfer Agent) - C) MDA (Mail Delivery Agent) - D) POP3 server
 
 ### ✅ Réponse correcte
 
-**B) MTA (Mail Transfer Agent)**
-
-Postfix est un MTA qui achemine les emails entre serveurs.
+**B) MTA (Mail Transfer Agent)** - Postfix est un MTA qui achemine les emails entre serveurs.
 
 ---
 
@@ -85,53 +69,23 @@ D) cleanup
 
 ### ✅ Réponse correcte
 
-**C) qmgr**
-
-Le Queue Manager (qmgr) gère toutes les files d'attente.
-
----
+**C) qmgr** - Le Queue Manager (qmgr) gère toutes les files d'attente.
 
 ## Question 4
 
-La commande pour recharger la configuration Postfix sans interruption est :
-
-A) `systemctl restart postfix`
-
-B) `systemctl reload postfix`
-
-C) `postfix restart`
-
-D) `postfix refresh`
-
----
+La commande pour recharger la configuration Postfix sans interruption est : A) `systemctl restart postfix` - B) `systemctl reload postfix` - C) `postfix restart` - D) `postfix refresh`
 
 ### ✅ Réponse correcte
 
-**B) `systemctl reload postfix`**
-
-Reload recharge la config sans couper les connexions.
-
----
+**B) `systemctl reload postfix`** - Reload recharge la config sans couper les connexions.
 
 ## Question 5
 
-L'enregistrement DNS obligatoire pour un serveur mail est :
-
-A) A
-
-B) CNAME
-
-C) MX
-
-D) TXT
-
----
+L'enregistrement DNS obligatoire pour un serveur mail est : A) A - B) CNAME - C) MX - D) TXT
 
 ### ✅ Réponse correcte
 
-**C) MX**
-
-L'enregistrement MX indique le serveur mail du domaine.
+**C) MX** - L'enregistrement MX indique le serveur mail du domaine.
 
 ---
 

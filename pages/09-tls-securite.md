@@ -23,29 +23,17 @@ TLS (Transport Layer Security) chiffre les communications entre serveurs SMTP.
 
 ## Analogie
 
-**Sans TLS** : Envoyer une carte postale
-- Tout le monde peut la lire en chemin
+**Sans TLS** : Envoyer une carte postale (Tout le monde peut la lire en chemin)
 
-**Avec TLS** : Envoyer une lettre scellée
-- Seul le destinataire peut l'ouvrir
+**Avec TLS** : Envoyer une lettre scellée (Seul le destinataire peut l'ouvrir)
 
 ---
 
 ## TLS vs SSL
 
-SSL (Secure Sockets Layer) est l'ancien nom.
+SSL (Secure Sockets Layer) est l'ancien nom. TLS (Transport Layer Security) est la version moderne.
 
-TLS (Transport Layer Security) est la version moderne.
-
----
-
-**Versions** :
-- SSL 2.0 : Obsolète et vulnérable
-- SSL 3.0 : Obsolète et vulnérable
-- TLS 1.0 : Déprécié
-- TLS 1.1 : Déprécié
-- TLS 1.2 : OK mais ancien
-- **TLS 1.3** : Recommandé en 2025 ✅
+**Versions** : SSL 2.0 (Obsolète et vulnérable) - SSL 3.0 (Obsolète et vulnérable) - TLS 1.0 (Déprécié) - TLS 1.1 (Déprécié) - TLS 1.2 (OK mais ancien) - **TLS 1.3** (Recommandé en 2025 ✅)
 
 ---
 
@@ -69,13 +57,7 @@ STARTTLS
 
 ### 🔐 SMTPS (port 465)
 
-**TLS immédiat** : Chiffré dès la connexion
-
-Obsolète depuis 1998, mais... revenu en 2018 !
-
-Supporté par Gmail, Outlook, etc.
-
----
+**TLS immédiat** : Chiffré dès la connexion - Obsolète depuis 1998, mais... revenu en 2018 ! - Supporté par Gmail, Outlook, etc.
 
 ### 📬 Submission (port 587)
 
