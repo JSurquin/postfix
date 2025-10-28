@@ -118,7 +118,7 @@ Postfix est conçu selon des principes stricts :
 
 ## L'écosystème Postfix en 2025
 
-Postfix ne fonctionne généralement pas seul : **Dovecot** (MDA IMAP/POP3) - **SpamAssassin/Rspamd** (anti-spam) - **ClamAV** (antivirus) - **Amavis** (interface filtrage) - **Postfixadmin** (interface web) - **Roundcube/Rainloop** (webmail) - **Grafana+Prometheus** (monitoring)
+Postfix ne fonctionne généralement pas seul : **Postfixadmin** (interface web) - **Roundcube/Rainloop** (webmail) - **Grafana+Prometheus** (monitoring) - **Rspamd** (anti-spam basique)
 
 ---
 
@@ -129,13 +129,13 @@ Une stack email moderne ressemble à ça :
 ```
 Internet
     ↓
-[Firewall / Load Balancer]
+[Firewall]
     ↓
-[Postfix MTA] ←→ [Bases de données externes (PostgreSQL/MySQL)]
+[Postfix MTA] ←→ [Fichiers de configuration locaux]
     ↓
-[Amavis + SpamAssassin + ClamAV]
+[Protection anti-spam basique]
     ↓
-[Dovecot MDA] ←→ [Stockage emails]
+[Stockage emails local]
     ↓
 [Clients : Thunderbird, Outlook, Webmail]
 ```
@@ -197,7 +197,7 @@ Pour administrer Postfix efficacement, vous devez maîtriser :
 
 **Sécurité** : Certificats SSL/TLS, authentification et autorisation, bonnes pratiques de hardening
 
-**Bases de données** (optionnel mais recommandé) : MySQL / PostgreSQL pour les domaines virtuels, LDAP pour l'intégration d'annuaire
+**Fichiers de configuration** : Configuration via fichiers texte simples et tables de correspondance
 
 ---
 
@@ -241,14 +241,10 @@ Nous utiliserons **Docker** pour certains exercices afin de faciliter les tests 
 
 À la fin de la formation perfectionnement, vous serez capable de :
 
-✅ Configurer des relais SMTP complexes  
-✅ Intégrer Postfix avec des bases de données externes  
-✅ Mettre en place une architecture haute disponibilité  
-✅ Optimiser les performances pour de gros volumes  
-✅ Implémenter des content filters et milters  
-✅ Intégrer Postfix avec Dovecot de manière optimale  
-✅ Diagnostiquer et résoudre des problèmes complexes  
-✅ Gérer un serveur mail en production de manière professionnelle
+✅ Configurer des relais SMTP simples  
+✅ Gérer les domaines virtuels avec des fichiers  
+✅ Diagnostiquer et résoudre des problèmes courants  
+✅ Gérer un serveur mail de base en production
 
 ---
 
@@ -284,9 +280,9 @@ Au cours de cette formation, nous allons construire progressivement un serveur m
 
 **Phase 3 - La protection** : Anti-spam (RBL, restrictions), anti-virus, content filtering
 
-**Phase 4 - L'intégration** : Domaines virtuels avec base de données, intégration Dovecot, webmail
+**Phase 4 - L'intégration** : Domaines virtuels avec fichiers, webmail basique
 
-**Phase 5 - La production** : Haute disponibilité, monitoring et alerting, sauvegarde et disaster recovery
+**Phase 5 - La production** : Monitoring basique, sauvegarde et restauration simple
 
 ---
 

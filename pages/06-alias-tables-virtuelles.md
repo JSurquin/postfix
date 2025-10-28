@@ -381,11 +381,9 @@ sudo ls -la /var/mail/vhosts/domain1.com/user1/
 
 ---
 
-## Domaines virtuels avec base de données
+## Domaines virtuels avec fichiers
 
-Pour gérer beaucoup d'utilisateurs, utilisez MySQL/PostgreSQL !
-
-Nous verrons ça en détail dans le module "Bases de données externes".
+Pour cette formation, nous nous concentrons sur la gestion via fichiers texte, plus simple à comprendre et maintenir pour des configurations de base.
 
 ## Canonical Mapping
 

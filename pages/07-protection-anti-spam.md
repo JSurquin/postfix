@@ -56,7 +56,7 @@ Pensez à un château fort :
 1. **Douves** : Restrictions réseau (RBL, rate limiting)
 2. **Remparts** : Restrictions SMTP (HELO, sender, recipient)
 3. **Gardes** : Vérifications d'authenticité (SPF, DKIM, DMARC)
-4. **Inspection** : Content filtering (SpamAssassin, Rspamd)
+4. **Inspection** : Filtrage basique du contenu
 
 ---
 
@@ -107,7 +107,7 @@ smtpd_recipient_restrictions =
 
 ### ⚠️ Attention aux faux positifs !
 
-Les RBL peuvent blacklister des IPs légitimes. **Solution** : Utiliser plusieurs RBL et scorer (on verra ça plus tard avec SpamAssassin)
+Les RBL peuvent blacklister des IPs légitimes. **Solution** : Utiliser plusieurs RBL et tester régulièrement
 
 ### ✅ Tester si une IP est blacklistée
 
@@ -409,50 +409,24 @@ sudo systemctl reload postfix
 
 ---
 
-# Couche 3 : Content Filtering
+# Couche 3 : Filtrage basique
 
-## SpamAssassin
+## Filtrage par mots-clés
 
-Le filtre anti-spam le plus populaire.
-
----
-
-### 📦 Installation
-
-```bash
-# Ubuntu/Debian
-sudo apt install spamassassin spamc
-
-# Rocky Linux
-sudo dnf install spamassassin
-```
+Pour une formation de base, nous nous concentrons sur les restrictions SMTP plutôt que sur les content filters avancés.
 
 ---
 
-### ⚙️ Configuration SpamAssassin
+### 📝 Filtrage basique par restrictions
 
-Fichier `/etc/spamassassin/local.cf` :
+Pour une formation de 2 jours, nous nous concentrons sur les **restrictions SMTP** qui sont plus simples et efficaces pour débuter :
 
-```perl
-# Score requis pour marquer comme spam
-required_score 5.0
+- **RBL** (DNS Blacklists)
+- **Rate limiting** 
+- **Greylisting**
+- **Restrictions HELO/sender/recipient**
 
-# Réécrire le sujet
-rewrite_header Subject [***SPAM***]
-
-# Utiliser Bayesian learning
-use_bayes 1
-bayes_auto_learn 1
-```
-
----
-
-### 🔧 Activer le service
-
-```bash
-sudo systemctl enable spamassassin
-sudo systemctl start spamassassin
-```
+Les content filters avancés (SpamAssassin, Rspamd) nécessitent une formation dédiée.
 
 ---
 

@@ -102,17 +102,9 @@ Imaginez perdre tous vos emails professionnels des 5 dernières années en une s
 
 ⚠️ **Note** : La queue change constamment. Sauvegarder la queue complète n'est généralement pas nécessaire.
 
-## 🗄️ Bases de données
+## 🗄️ Tables de correspondance
 
-Si vous utilisez MySQL/PostgreSQL pour les domaines virtuels :
-
-```bash
-# MySQL
-mysqldump -u root -p mailserver > /backup/maildb.sql
-
-# PostgreSQL
-pg_dump mailserver > /backup/maildb.sql
-```
+Les fichiers de tables (aliases, virtual, etc.) sont déjà inclus dans `/etc/postfix/` donc pas de sauvegarde supplémentaire nécessaire.
 
 ---
 
@@ -786,7 +778,7 @@ fi
 
 **Mailboxes** : `/var/mail/vhosts/`
 
-**Bases de données** : Dumps MySQL/PostgreSQL
+**Tables de correspondance** : Fichiers de configuration Postfix
 
 ---
 

@@ -512,9 +512,9 @@ Permet aux clients d'envoyer des emails après authentification (username + pass
 Type de mécanisme SASL
 
 ```sql
-# Dovecot (recommandé)
-smtpd_sasl_type = dovecot
-smtpd_sasl_path = private/auth
+# SASL basique (pour cette formation)
+# smtpd_sasl_type = cyrus
+# smtpd_sasl_path = smtpd
 
 # Cyrus SASL
 smtpd_sasl_type = cyrus
@@ -890,7 +890,7 @@ smtp_tls_protocols = >=TLSv1.2
 ```sql
 # === SASL ===
 smtpd_sasl_auth_enable = yes
-smtpd_sasl_type = dovecot
+smtpd_sasl_type = cyrus
 smtpd_sasl_path = private/auth
 smtpd_sasl_security_options = noanonymous
 ```
