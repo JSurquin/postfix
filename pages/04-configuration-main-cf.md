@@ -83,8 +83,6 @@ Le nom complet de votre serveur (FQDN - Fully Qualified Domain Name)
 myhostname = mail.example.com
 ```
 
----
-
 **Important** : Doit correspondre au PTR (reverse DNS) - Utilisé dans les en-têtes des emails - Première chose que voient les autres serveurs
 
 ---
@@ -388,8 +386,6 @@ maximal_queue_lifetime = 1d
 
 Après ce délai, un email de bounce est envoyé à l'expéditeur et le message est supprimé.
 
----
-
 ### ⏰ bounce_queue_lifetime
 
 Durée maximum pour les messages de bounce
@@ -439,7 +435,6 @@ Décryptons :
 
 Sans cette règle, votre serveur devient un open relay.
 
----
 
 ### 🚷 smtpd_sender_restrictions
 
@@ -506,8 +501,6 @@ Activer l'authentification SASL pour l'envoi d'emails
 smtpd_sasl_auth_enable = yes
 ```
 
----
-
 **SASL** = Simple Authentication and Security Layer
 
 Permet aux clients d'envoyer des emails après authentification (username + password).
@@ -551,8 +544,6 @@ Domaine SASL local
 smtpd_sasl_local_domain = $mydomain
 ```
 
----
-
 ## Paramètres TLS
 
 ### 🔒 smtpd_tls_cert_file
@@ -572,8 +563,6 @@ Chemin vers la clé privée SSL
 ```sql
 smtpd_tls_key_file = /etc/letsencrypt/live/mail.example.com/privkey.pem
 ```
-
----
 
 ### 🔐 smtpd_tls_security_level
 
@@ -596,8 +585,6 @@ smtpd_tls_security_level = verify
 ---
 
 En 2025, utilisez au minimum `may`, idéalement `encrypt` pour le port 587.
-
----
 
 ### 📤 smtp_tls_security_level
 
@@ -628,8 +615,6 @@ smtpd_tls_protocols = >=TLSv1.3
 ---
 
 ⚠️ **Important** : Désactivez TLS 1.0 et 1.1, ils sont obsolètes et vulnérables !
-
----
 
 ### 📜 smtpd_tls_loglevel
 
@@ -764,8 +749,6 @@ smtp_destination_rate_delay = 0s
 smtp_destination_rate_delay = 1s
 ```
 
----
-
 **Cas d'usage** : Certains serveurs (Gmail, Yahoo) limitent le taux d'emails reçus. Si vous envoyez trop vite, ils vous throttle ou blacklist.
 
 ---
@@ -794,8 +777,6 @@ Liste d'hôtes pour lesquels activer le debug
 # Activer debug pour example.com
 debug_peer_list = example.com, 203.0.113.10
 ```
-
----
 
 ### 🔍 debug_peer_level
 
@@ -939,8 +920,6 @@ postconf
 
 (Affiche TOUS les paramètres, même ceux par défaut)
 
----
-
 ### 📋 Voir uniquement les paramètres modifiés
 
 ```bash
@@ -957,8 +936,6 @@ postconf -n
 postconf myhostname
 postconf message_size_limit
 ```
-
----
 
 ### ✏️ Modifier un paramètre
 
@@ -981,8 +958,6 @@ sudo postfix check
 # Recharger
 sudo systemctl reload postfix
 ```
-
----
 
 ### 📚 Voir l'aide d'un paramètre
 

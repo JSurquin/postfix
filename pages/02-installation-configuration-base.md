@@ -42,8 +42,6 @@ free -h
 df -h
 ```
 
----
-
 ### 🌐 Configuration DNS préalable
 
 **Crucial !** Avant d'installer Postfix, votre DNS doit être correctement configuré.

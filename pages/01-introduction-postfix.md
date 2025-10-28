@@ -15,8 +15,6 @@ routeAlias: 'introduction-postfix'
 
 Postfix est un **MTA** (Mail Transfer Agent) créé par **Wietse Venema** dans les années 1990.
 
----
-
 ## Un MTA, c'est quoi exactement ?
 
 Imaginez le système postal : quand vous envoyez une lettre, elle passe par plusieurs centres de tri avant d'arriver à destination.
@@ -111,6 +109,8 @@ Postfix est conçu selon des principes stricts :
 **Postfix vs Exim** : Postfix plus simple, Exim plus flexible mais plus complexe. Postfix suffisant pour 95% des cas d'usage.
 
 **Postfix vs solutions cloud** : Choisir Postfix pour le contrôle total, la confidentialité, les gros volumes et les compétences techniques. Choisir le cloud pour la simplicité, les petits volumes (< 10 000/mois) et déléguer la gestion.
+
+---
 
 ## Les cas d'usage de Postfix
 

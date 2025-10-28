@@ -543,8 +543,6 @@ Gère les connexions TLS :
 - Vérification des certificats
 - Chiffrement/déchiffrement
 
----
-
 ### 📝 postlog
 
 **Rôle** : Logger centralisé
@@ -560,8 +558,6 @@ Reçoit les logs de tous les processus chrootés et les écrit dans syslog.
 ```bash
 ps aux | grep postfix
 ```
-
----
 
 Vous devriez voir :
 
@@ -582,14 +578,10 @@ postfix  postfix  smtpd
 sudo postfix status
 ```
 
----
-
 ```bash
 # Connexions actives sur le port 25
 sudo ss -tnp | grep :25
 ```
-
----
 
 ### 📬 Voir l'activité des queues
 
@@ -631,8 +623,6 @@ Pour suivre le message `ABC123` :
 ```bash
 sudo grep ABC123 /var/log/mail.log
 ```
-
----
 
 ### 📈 Statistiques en temps réel
 

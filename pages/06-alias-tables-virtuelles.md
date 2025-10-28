@@ -184,8 +184,6 @@ rm /tmp/email-$$.txt
 sudo chmod +x /usr/local/bin/ticket-system.sh
 ```
 
----
-
 ## Configuration dans main.cf
 
 ```sql
@@ -201,8 +199,6 @@ alias_database = hash:/etc/aliases
 # Les domaines virtuels
 
 Les domaines virtuels permettent de gérer plusieurs domaines sans créer de comptes système.
-
----
 
 ## Types de domaines virtuels
 
@@ -249,8 +245,6 @@ admin@domain1.com          admin@example.com
 @domain1.com               catchall@example.com
 ```
 
----
-
 ⚠️ **Attention** : Les règles spécifiques doivent être **avant** le catch-all !
 
 ---
@@ -292,8 +286,6 @@ virtual_alias_maps = hash:/etc/postfix/virtual
 ```bash
 sudo systemctl reload postfix
 ```
-
----
 
 ## Virtual Mailbox Domains
 
@@ -395,8 +387,6 @@ Pour gérer beaucoup d'utilisateurs, utilisez MySQL/PostgreSQL !
 
 Nous verrons ça en détail dans le module "Bases de données externes".
 
----
-
 ## Canonical Mapping
 
 Réécrire les adresses avant traitement.
@@ -426,15 +416,11 @@ john@localhost            john@example.com
 sender_canonical_maps = hash:/etc/postfix/sender_canonical
 ```
 
----
-
 **recipient_canonical_maps** : Réécrire le destinataire
 
 ```sql
 recipient_canonical_maps = hash:/etc/postfix/recipient_canonical
 ```
-
----
 
 **canonical_maps** : Réécrire les deux
 
@@ -457,8 +443,6 @@ sudo systemctl reload postfix
 
 Informer que l'adresse a changé.
 
----
-
 ### 📝 Fichier /etc/postfix/relocated
 
 ```sql
@@ -477,14 +461,10 @@ sales@oldcompany.com    contact@newcompany.com
 relocated_maps = hash:/etc/postfix/relocated
 ```
 
----
-
 ```bash
 sudo postmap /etc/postfix/relocated
 sudo systemctl reload postfix
 ```
-
----
 
 **Comportement** : Postfix rejette l'email avec un message :
 
@@ -498,8 +478,6 @@ User has moved to john@newcompany.com
 ## Transport Maps
 
 Définir comment et où livrer les emails.
-
----
 
 ### 📝 Fichier /etc/postfix/transport
 
@@ -525,8 +503,6 @@ domain3.com       relay:[relay.domain3.com]:587
 transport_maps = hash:/etc/postfix/transport
 ```
 
----
-
 ```bash
 sudo postmap /etc/postfix/transport
 sudo systemctl reload postfix
@@ -539,8 +515,6 @@ sudo systemctl reload postfix
 **Question** : Quelle priorité ?
 
 **Réponse** : Alias → Virtual → Local
-
----
 
 **Exemple** :
 

@@ -15,8 +15,6 @@ routeAlias: 'gestion-files-attente'
 
 Les files d'attente (queues) sont le **cœur** de Postfix. C'est là que les emails attendent d'être traités, envoyés, ou retentés en cas d'échec.
 
----
-
 ## Pourquoi des files d'attente ?
 
 Imaginez un bureau de poste :
@@ -32,8 +30,6 @@ Postfix fait exactement pareil !
 ## Les différentes queues
 
 Postfix utilise plusieurs files d'attente dans `/var/spool/postfix/` :
-
----
 
 ### 📂 maildrop
 
@@ -227,8 +223,6 @@ sudo postsuper -d ALL deferred
 sudo postsuper -d ALL hold
 ```
 
----
-
 **Mettre un message en hold** :
 
 ```bash
@@ -243,15 +237,11 @@ sudo postsuper -h QUEUE_ID
 sudo postsuper -H QUEUE_ID
 ```
 
----
-
 **Réorganiser les queues** (après un crash) :
 
 ```bash
 sudo postsuper -s
 ```
-
----
 
 ### 📖 postcat
 
@@ -295,15 +285,11 @@ This is a test email.
 mailq | tail -n 1
 ```
 
----
-
 **Lister les Queue IDs uniquement** :
 
 ```bash
 mailq | grep -E '^[A-F0-9]+' | awk '{print $1}'
 ```
-
----
 
 **Compter les messages par domaine destinataire** :
 
@@ -365,8 +351,6 @@ sudo postsuper -d ALL deferred
 
 Vous recevez des milliers de bounces pour des emails que vous n'avez pas envoyés !
 
----
-
 **Cause** : Spoofing d'adresse
 
 Des spammeurs utilisent votre domaine comme expéditeur. Les bounces vous reviennent.
@@ -381,8 +365,6 @@ sudo postsuper -d ALL bounce
 
 # Configurer SPF/DKIM/DMARC (voir module dédié)
 ```
-
----
 
 ### ⏸️ Scénario 3 : Pause temporaire
 
@@ -407,7 +389,6 @@ sudo postqueue -f
 
 **Symptôme** : Beaucoup d'emails suspects en queue
 
----
 
 **Diagnostic** :
 
@@ -532,8 +513,6 @@ fi
 */15 * * * * /usr/local/bin/check_queue.sh
 ```
 
----
-
 ### 📈 Métriques à surveiller
 
 **Nombre total de messages** :
@@ -550,7 +529,6 @@ mailq | tail -n 1 | awk '{print $5}'
 mailq | tail -n 1 | awk '{print $1}'
 ```
 
----
 
 **Messages en deferred** :
 
@@ -607,8 +585,6 @@ find /var/spool/postfix/deferred -type f -mtime +3 -delete
 ```bash
 sudo postsuper -d ALL bounce
 ```
-
----
 
 **Vérifier l'intégrité de la queue** :
 
@@ -794,11 +770,7 @@ sudo postsuper -h QUEUE_ID
 
 **Symptôme** : Messages restent en deferred sans tentative
 
----
-
 **Cause** : Postfix ne scanne pas assez souvent la queue
-
----
 
 **Solution** :
 
@@ -813,8 +785,6 @@ queue_run_delay = 60s
 # Ou forcer manuellement
 sudo postqueue -f
 ```
-
----
 
 ### ❌ Problème : Queue qui ne se vide jamais
 
@@ -899,15 +869,11 @@ active → deferred → retry → active (ou bounce après 5j)
 - `postcat -q` : Lire un message
 - `qshape` : Statistiques
 
----
-
 **Monitoring** :
 - Surveiller la taille de la queue
 - Alerter si > seuil
 - Vérifier régulièrement les deferred
 - Analyser les patterns d'erreurs
-
----
 
 **Optimisation** :
 - Ajuster `qmgr_message_active_limit`
@@ -925,4 +891,3 @@ Maintenant que vous savez gérer les queues, nous allons apprendre à configurer
     Module suivant : Alias et tables virtuelles <carbon:arrow-right class="inline"/>
   </span>
 </div>
-
