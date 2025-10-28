@@ -65,159 +65,104 @@ caption: 'POSTFIX 2025'
 
 ---
 layout: two-cols
-routeAlias: 'sommaire-initiation'
+routeAlias: 'sommaire-formation-intensive'
 ---
 
-<a name="SOMMAIRE-INITIATION" id="sommaire-initiation"></a>
+<a name="SOMMAIRE-FORMATION-INTENSIVE" id="sommaire-formation-intensive"></a>
 
-# SOMMAIRE POSTFIX - INITIATION 📜
+# FORMATION POSTFIX INTENSIVE - 2 JOURS (14H) 🚀
 
-<br>
+## ⚡ PROGRAMME ULTRA-CONCENTRÉ
 
 <div class="flex flex-col gap-2">
-<Link to="introduction-postfix">📧 Introduction à Postfix</Link>
-<Link to="installation-configuration-base">⚙️ Installation et configuration de base</Link>
-<Link to="architecture-fonctionnement">🏗️ Architecture et fonctionnement</Link>
-<Link to="configuration-main-cf">📝 Configuration du main.cf</Link>
-<Link to="gestion-files-attente">📬 Gestion des files d'attente</Link>
-<Link to="alias-tables-virtuelles">📋 Alias et tables virtuelles</Link>
-<Link to="protection-anti-spam">🛡️ Protection anti-spam de base</Link>
+<Link to="introduction-postfix">📧 Introduction à Postfix (30min)</Link>
+<Link to="installation-configuration-base">⚙️ Installation et config de base (1h30)</Link>
+<Link to="architecture-fonctionnement">🏗️ Architecture essentielle (45min)</Link>
+<Link to="configuration-main-cf">📝 Configuration main.cf (2h)</Link>
+<Link to="alias-tables-virtuelles">📋 Alias et domaines virtuels (1h)</Link>
+<Link to="dkim-spf-dmarc">🔐 DKIM, SPF, DMARC (1h30)</Link>
+<Link to="tls-securite">🔒 TLS et sécurité (1h)</Link>
 </div>
 ::right::
 
 <div class="flex flex-col gap-2">
-<Link to="dkim-spf-dmarc">🔐 DKIM, SPF et DMARC</Link>
-<Link to="tls-securite">🔒 TLS et sécurité des communications</Link>
-<Link to="logs-surveillance">📊 Logs et surveillance</Link>
-<Link to="sauvegarde-restauration">💾 Sauvegarde et restauration</Link>
-<Link to="exercices-debutant">🎯 Exercices pratiques débutant</Link>
-<Link to="qcm-initiation">✅ QCM de validation initiation</Link>
-</div>
-
----
-layout: two-cols
-routeAlias: 'sommaire-perfectionnement'
----
-
-# SOMMAIRE POSTFIX - PERFECTIONNEMENT 📜
-
-<br>
-
-<div class="flex flex-col gap-2">
-<Link to="relais-smtp-avances">🔄 Relais SMTP avancés</Link>
-<Link to="restrictions-politiques">⚖️ Restrictions et politiques</Link>
-<Link to="bases-donnees-externes">🗄️ Bases de données externes (MySQL/PostgreSQL)</Link>
-<Link to="haute-disponibilite">🔧 Haute disponibilité et réplication</Link>
-<Link to="performance-optimisation">🚀 Performance et optimisation</Link>
-<Link to="content-filters-milters">🔍 Content filters et milters</Link>
-</div>
-::right::
-
-<div class="flex flex-col gap-2">
-<Link to="integration-dovecot">📨 Intégration avec Dovecot</Link>
-<Link to="troubleshooting-avance">🔧 Troubleshooting avancé</Link>
-<Link to="exercices-intermediaire">🎯 Exercices pratiques intermédiaire</Link>
-<Link to="exercices-avance">🏆 Exercices pratiques avancé</Link>
-<Link to="qcm-perfectionnement">✅ QCM perfectionnement</Link>
-<Link to="projet-final">🎉 Projet final</Link>
+<Link to="protection-anti-spam">🛡️ Anti-spam essentiel (1h)</Link>
+<Link to="logs-surveillance">📊 Logs et monitoring (45min)</Link>
+<Link to="gestion-files-attente">📬 Files d'attente (30min)</Link>
+<Link to="sauvegarde-restauration">💾 Sauvegarde (30min)</Link>
+<Link to="exercices-debutant">🎯 TP pratiques (2h)</Link>
+<Link to="troubleshooting-essentiel">🔧 Troubleshooting (1h)</Link>
+<Link to="qcm-validation">✅ QCM final (30min)</Link>
 </div>
 
 ---
 layout: two-cols
-routeAlias: 'programme-initiation'
+routeAlias: 'programme-intensif'
 ---
 
-## PROGRAMME INITIATION POSTFIX 📅
+## PROGRAMME FORMATION INTENSIVE 📅
 
-**Jour 1 - Introduction et installation**
+**JOUR 1 (7h) - FONDAMENTAUX**
 
-- Introduction à Postfix et son écosystème
-- Histoire et philosophie de conception
-- Installation sur différentes distributions Linux
-- Configuration de base et tests de fonctionnement
-- Premiers envois d'emails locaux
+- **9h00-9h30** : Introduction Postfix (30min)
+- **9h30-11h00** : Installation & config de base (1h30)
+- **11h15-12h00** : Architecture essentielle (45min)
+- **13h00-15h00** : Configuration main.cf (2h)
+- **15h15-16h15** : Alias et domaines virtuels (1h)
+- **16h30-18h00** : DKIM, SPF, DMARC (1h30)
 
 ::right::
 
-**Jour 2 - Architecture et configuration**
+**JOUR 2 (7h) - SÉCURITÉ & PRATIQUE**
 
-- Comprendre l'architecture modulaire de Postfix
-- Le fichier main.cf en détail
-- Les files d'attente (queue management)
-- Alias et redirections d'emails
-- Tables virtuelles et domaines virtuels
-
-**Jour 3 - Sécurité de base**
-
-- Protection contre le spam (RBL, restrictions)
-- Configuration DKIM pour l'authentification
-- Mise en place SPF et DMARC
-- Chiffrement TLS des communications
-- Certificats SSL/Let's Encrypt
+- **9h00-10h00** : TLS et sécurité (1h)
+- **10h15-11h15** : Anti-spam essentiel (1h)
+- **11h30-12h15** : Logs et monitoring (45min)
+- **13h00-13h30** : Files d'attente (30min)
+- **13h30-14h00** : Sauvegarde (30min)
+- **14h15-16h15** : TP pratiques (2h)
+- **16h30-17h30** : Troubleshooting (1h)
+- **17h30-18h00** : QCM final (30min)
 
 ---
 
-**Jour 4 - Administration et maintenance**
+## 🎯 OBJECTIFS DE LA FORMATION INTENSIVE
 
-- Analyse des logs Postfix
-- Outils de surveillance (postqueue, mailq, postsuper)
-- Gestion des files d'attente
-- Sauvegarde et restauration de configuration
-- Résolution de problèmes courants
+**À la fin de ces 2 jours, vous saurez :**
 
-**Jour 5 - Pratique et validation**
-
-- Exercices pratiques guidés
-- Configuration complète d'un serveur mail
-- Tests d'envoi et de réception
-- QCM de validation des connaissances
-- Débriefing et perspectives
+✅ **Installer et configurer** Postfix sur Linux
+✅ **Comprendre l'architecture** modulaire de Postfix  
+✅ **Configurer le main.cf** pour vos besoins
+✅ **Gérer les domaines virtuels** et alias
+✅ **Sécuriser** avec DKIM, SPF, DMARC et TLS
+✅ **Protéger contre le spam** efficacement
+✅ **Surveiller et diagnostiquer** les problèmes
+✅ **Sauvegarder et restaurer** votre configuration
 
 ---
-layout: two-cols
-routeAlias: 'programme-perfectionnement'
----
 
-## PROGRAMME PERFECTIONNEMENT POSTFIX 📅
+## 📚 RESSOURCES COMPLÉMENTAIRES
 
-### Formation avancée pour administrateurs expérimentés
+**Documentation officielle :**
+- [Postfix Documentation](http://www.postfix.org/documentation.html)
+- [Postfix Configuration Parameters](http://www.postfix.org/postconf.5.html)
 
-**Jour 1 - Relais et bases de données**
+**Outils utiles :**
+- [MXToolbox](https://mxtoolbox.com/) - Tests DNS et blacklists
+- [Mail-tester](https://www.mail-tester.com/) - Test de qualité des emails
+- [DKIM Validator](https://dkimvalidator.com/) - Validation DKIM
 
-- Configuration de relais SMTP complexes
-- Authentification SASL
-- Intégration MySQL/PostgreSQL
-- Domaines virtuels avancés
-- Politiques de restriction avancées
-
-::right::
-
-**Jour 2 - Haute disponibilité et performance**
-
-- Architecture haute disponibilité
-- Load balancing et failover
-- Optimisation des performances
-- Tuning pour gros volumes
-- Clustering et réplication
-
-**Jour 3 - Filtrage et intégrations**
-
-- Content filters (SpamAssassin, Amavis)
-- Milters (filtres de contenu)
-- Antivirus (ClamAV)
-- Intégration avec Dovecot (LMTP, auth)
-- Politiques de sécurité avancées
-
-**Jour 4 - Projet et troubleshooting**
-
-- Troubleshooting avancé
-- Analyse de performances
-- Projet final complet
-- QCM de validation
-- Débriefing et certification
+**Pour aller plus loin :**
+- Formation "Postfix Avancé" (3 jours)
+- Formation "Dovecot + Postfix" (2 jours)
+- Formation "Sécurité Email Avancée" (2 jours)
 
 ---
 src: './pages/01-introduction-postfix.md'
+---
+
+---
+src: './pages/qcm-module-01.md'
 ---
 
 ---
@@ -225,7 +170,15 @@ src: './pages/02-installation-configuration-base.md'
 ---
 
 ---
+src: './pages/qcm-module-02.md'
+---
+
+---
 src: './pages/03-architecture-fonctionnement.md'
+---
+
+---
+src: './pages/qcm-module-03.md'
 ---
 
 ---
@@ -233,7 +186,15 @@ src: './pages/04-configuration-main-cf.md'
 ---
 
 ---
+src: './pages/qcm-module-04.md'
+---
+
+---
 src: './pages/05-gestion-files-attente.md'
+---
+
+---
+src: './pages/qcm-module-05.md'
 ---
 
 ---
@@ -241,7 +202,15 @@ src: './pages/06-alias-tables-virtuelles.md'
 ---
 
 ---
+src: './pages/qcm-module-06.md'
+---
+
+---
 src: './pages/07-protection-anti-spam.md'
+---
+
+---
+src: './pages/qcm-module-07.md'
 ---
 
 ---
@@ -249,7 +218,15 @@ src: './pages/08-dkim-spf-dmarc.md'
 ---
 
 ---
+src: './pages/qcm-module-08.md'
+---
+
+---
 src: './pages/09-tls-securite.md'
+---
+
+---
+src: './pages/qcm-module-09.md'
 ---
 
 ---
@@ -257,7 +234,15 @@ src: './pages/10-logs-surveillance.md'
 ---
 
 ---
+src: './pages/qcm-module-10.md'
+---
+
+---
 src: './pages/11-sauvegarde-restauration.md'
+---
+
+---
+src: './pages/qcm-module-11.md'
 ---
 
 ---
@@ -266,52 +251,4 @@ src: './pages/12-exercices-debutant.md'
 
 ---
 src: './pages/13-qcm-initiation.md'
----
-
----
-src: './pages/14-relais-smtp-avances.md'
----
-
----
-src: './pages/15-restrictions-politiques.md'
----
-
----
-src: './pages/16-bases-donnees-externes.md'
----
-
----
-src: './pages/17-haute-disponibilite.md'
----
-
----
-src: './pages/18-performance-optimisation.md'
----
-
----
-src: './pages/19-content-filters-milters.md'
----
-
----
-src: './pages/20-integration-dovecot.md'
----
-
----
-src: './pages/21-troubleshooting-avance.md'
----
-
----
-src: './pages/22-exercices-intermediaire.md'
----
-
----
-src: './pages/23-exercices-avance.md'
----
-
----
-src: './pages/24-qcm-perfectionnement.md'
----
-
----
-src: './pages/25-projet-final.md'
 ---
