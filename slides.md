@@ -68,7 +68,7 @@ layout: two-cols
 routeAlias: 'sommaire-formation-intensive'
 ---
 
-<a name="SOMMAIRE-FORMATION-INTENSIVE" id="sommaire-formation-intensive"></a>
+<a name="SOMMAIRE-FORMATION-INTENSIVE" id="sommaire-initiation"></a>
 
 # FORMATION POSTFIX INTENSIVE - 2 JOURS (14H) 🚀
 
