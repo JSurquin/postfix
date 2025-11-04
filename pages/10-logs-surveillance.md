@@ -79,7 +79,17 @@ Dec 13 10:30:16 mail postfix/qmgr[1236]: ABC123DEF: removed
 
 ---
 
-**Parcours complet** : 1. **smtpd** (Message reçu de `sender.com`) - 2. **cleanup** (Nettoyage et attribution d'un message-id) - 3. **qmgr** (Mise en queue, expéditeur et taille) - 4. **smtp** (Envoi réussi vers `dest@example.com`) - 5. **qmgr** (Message supprimé de la queue)
+**Parcours complet** : 
+
+- 1. **smtpd** (Message reçu de `sender.com`)
+
+- 2. **cleanup** (Nettoyage et attribution d'un message-id)
+
+- 3. **qmgr** (Mise en queue, expéditeur et taille)
+
+- 4. **smtp** (Envoi réussi vers `dest@example.com`)
+
+- 5. **qmgr** (Message supprimé de la queue)
 
 ### 🔎 Rechercher un message
 

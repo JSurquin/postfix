@@ -95,6 +95,8 @@ sudo chown -R opendkim:opendkim /etc/opendkim/keys/
 sudo cat /etc/opendkim/keys/votredomaine.local/default.txt
 ```
 
+---
+
 5. **Ajouter l'enregistrement DNS** :
 ```bash
 default._domainkey.votredomaine.local. IN TXT "v=DKIM1; k=rsa; p=VOTRE_CLE_PUBLIQUE"

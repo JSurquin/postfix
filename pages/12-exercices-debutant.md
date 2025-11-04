@@ -23,7 +23,11 @@ Chaque exercice est conçu pour renforcer un concept spécifique.
 
 Les exercices sont classés par **difficulté** :
 
-⭐ **Facile** : Configuration de base - ⭐⭐ **Moyen** : Configuration avancée - ⭐⭐⭐ **Difficile** : Troubleshooting et intégration
+- ⭐ **Facile** : Configuration de base
+
+- ⭐⭐ **Moyen** : Configuration avancée
+
+- ⭐⭐⭐ **Difficile** : Troubleshooting et intégration
 
 ---
 

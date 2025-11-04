@@ -47,6 +47,8 @@ Imaginez perdre tous vos emails professionnels des 5 dernières années en une s
 └── ...
 ```
 
+---
+
 ## 🔑 Clés DKIM
 
 ```

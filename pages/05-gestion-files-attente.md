@@ -862,6 +862,8 @@ active → deferred → retry → active (ou bounce après 5j)
 
 ---
 
+<small>
+
 **Commandes essentielles** :
 - `mailq` / `postqueue -p` : Voir la queue
 - `postsuper -d` : Supprimer
@@ -879,6 +881,8 @@ active → deferred → retry → active (ou bounce après 5j)
 - Ajuster `qmgr_message_active_limit`
 - Configurer `queue_run_delay`
 - Adapter `smtp_destination_concurrency_limit`
+
+</small>
 
 ---
 

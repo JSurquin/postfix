@@ -86,6 +86,8 @@ echo "Test alias" | mail -s "Test" postmaster
 ls ~/Maildir/new/
 ```
 
+---
+
 3. **Configurer un domaine virtuel** :
 ```bash
 # Dans main.cf

@@ -140,6 +140,8 @@ v=spf1 mx ~all
 v=spf1 mx ?all
 ```
 
+---
+
 ### 💡 Quelle fin choisir ?
 
 **-all** : Strict (recommandé si vous contrôlez tous vos serveurs) - **~all** : Permissif (si vous avez peur de bloquer des emails légitimes) - **?all** : Très permissif (déconseillé)
@@ -166,6 +168,8 @@ v=spf1
   include:servers.mcsv.net 
   -all
 ```
+
+---
 
 ### 🌐 Étape 3 : Ajouter l'enregistrement DNS
 

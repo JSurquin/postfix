@@ -304,6 +304,8 @@ mail_spool_directory = /var/mail
 
 Si vous utilisez Maildir, ce paramètre est ignoré.
 
+---
+
 ### 💾 message_size_limit
 
 Taille maximum d'un message (headers + body)
@@ -357,6 +359,8 @@ smtpd_banner = $myhostname ESMTP - No spam please
 ❌ 220 mail.example.com ESMTP Postfix (Ubuntu 3.6.4)
 ✅ 220 mail.example.com ESMTP
 ```
+
+---
 
 ### 🕐 delay_warning_time
 

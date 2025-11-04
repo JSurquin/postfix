@@ -77,6 +77,8 @@ Installer et configurer Postfix pour la première fois
    - `inet_interfaces = all`
    - `mydestination = $myhostname, localhost, $mydomain`
 
+---
+
 3. **Test** : Envoyez un email de test local :
 ```bash
 echo "Test Postfix" | mail -s "Test" $USER

@@ -93,6 +93,8 @@ echo "Backup completed: $DATE"
 ls -lh $BACKUP_DIR/
 ```
 
+---
+
 2. **Rendre exécutable et tester** :
 ```bash
 chmod +x backup-postfix.sh

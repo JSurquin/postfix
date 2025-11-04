@@ -65,6 +65,8 @@ D) `reject_unknown_sender_domain`
 
 ## Exercice pratique - Module 7
 
+<small>
+
 ### 🎯 Objectif
 Mettre en place une protection anti-spam basique
 
@@ -103,3 +105,4 @@ sudo tail -f /var/log/mail.log | grep reject
 
 **Bonus** : Installez et configurez Postgrey pour le greylisting
 
+</small>

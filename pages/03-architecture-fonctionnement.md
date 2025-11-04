@@ -180,6 +180,8 @@ smtp      inet  n       -       y       -       -       smtpd
 
 ## Les files d'attente
 
+<small>
+
 Postfix utilise plusieurs files d'attente dans `/var/spool/postfix/` :
 
 ### 📂 maildrop
@@ -219,6 +221,8 @@ Les messages en `deferred` sont retentés selon un algorithme exponentiel : 1èr
 **Contenu** : Messages corrompus  
 **Processus responsable** : Aucun (pour investigation)  
 **Durée de vie** : Jusqu'à suppression manuelle
+
+</small>
 
 ---
 
@@ -702,6 +706,8 @@ sudo qshape deferred
 
 ## Exercice pratique
 
+<small>
+
 ### 🎯 Exercice 1 : Observer l'architecture
 
 1. Listez tous les processus Postfix actifs
@@ -729,6 +735,8 @@ sudo postcat -q QUEUE_ID
 1. Augmentez le nombre max de processus `smtpd` à 200
 2. Ajoutez le service submission sur le port 587
 3. Rechargez Postfix et vérifiez que le port est ouvert
+
+</small>
 
 ---
 

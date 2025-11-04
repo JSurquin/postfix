@@ -92,6 +92,8 @@ sudo postconf -e "smtp_tls_security_level = may"
 sudo postconf -e "smtp_tls_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1"
 ```
 
+---
+
 4. **Configurer le port 587** :
 ```bash
 # Dans /etc/postfix/master.cf, décommenter/ajouter :

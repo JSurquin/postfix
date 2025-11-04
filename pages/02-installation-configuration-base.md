@@ -524,6 +524,8 @@ smtpd_timeout = 300s
 smtp_helo_timeout = 60s
 ```
 
+---
+
 ### 🔒 Restrictions de base
 
 ```sql
@@ -713,30 +715,34 @@ Avant de passer au module suivant, vérifiez que :
 
 ## Exercice pratique
 
-### 🎯 Exercice 1 : Installation complète
+<small>
+
+#### 🎯 Exercice 1 : Installation complète
 
 1. Installez Postfix sur votre système
 2. Configurez le `main.cf` avec vos paramètres
 3. Envoyez un email à root
 4. Vérifiez qu'il est bien arrivé
 
-### 🎯 Exercice 2 : Configuration des alias
+#### 🎯 Exercice 2 : Configuration des alias
 
 1. Créez un alias pour rediriger `contact@` vers votre email
 2. Testez l'envoi à `contact@localhost`
 3. Vérifiez la réception
 
-### 🎯 Exercice 3 : Analyse de logs
+#### 🎯 Exercice 3 : Analyse de logs
 
 1. Envoyez plusieurs emails
 2. Suivez les logs en temps réel
 3. Identifiez les étapes de traitement du message
 
-### 🎯 Exercice 4 : Docker
+#### 🎯 Exercice 4 : Docker
 
 1. Créez un conteneur Postfix avec Docker
 2. Configurez-le pour accepter les emails sur le port 2525
 3. Testez l'envoi depuis l'extérieur du conteneur
+
+</small>
 
 ---
 

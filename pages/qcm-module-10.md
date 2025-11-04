@@ -90,6 +90,8 @@ sudo grep "status=deferred" /var/log/mail.log | tail -20
 sudo grep "status=bounced" /var/log/mail.log | tail -20
 ```
 
+---
+
 4. **Statistiques des rejets** :
 ```bash
 sudo grep "reject:" /var/log/mail.log | wc -l
