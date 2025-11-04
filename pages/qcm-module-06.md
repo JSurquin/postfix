@@ -1,6 +1,4 @@
 ---
-layout: question
----
 
 # QCM - Module 6 : Alias et tables virtuelles
 
@@ -9,8 +7,11 @@ layout: question
 Après avoir modifié `/etc/aliases`, quelle commande faut-il exécuter ?
 
 A) `postfix reload`  
+
 B) `newaliases`  
+
 C) `systemctl restart postfix`  
+
 D) Aucune, c'est automatique
 
 ---
@@ -26,8 +27,11 @@ D) Aucune, c'est automatique
 Quelle est la différence entre alias et virtual ?
 
 A) Il n'y a pas de différence  
+
 B) Alias = domaines locaux, Virtual = domaines non locaux  
+
 C) Virtual = plus récent que Alias  
+
 D) Alias = plus sécurisé
 
 ---
@@ -43,8 +47,11 @@ D) Alias = plus sécurisé
 Comment créer un catch-all pour un domaine virtuel ?
 
 A) `*@example.com admin@example.com`  
+
 B) `@example.com admin@example.com`  
+
 C) `catchall@example.com admin@example.com`  
+
 D) `example.com admin@example.com`
 
 ---

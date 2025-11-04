@@ -50,6 +50,39 @@ df -h
 
 #### Enregistrements DNS nécessaires
 
+> Ou enregistrer ces enregistrements DNS ?
+> - Vous pouvez enregistrer ces enregistrements DNS chez votre hébergeur/FAI.
+
+ Pour tester localement seulement
+
+  - Vous pouvez modifier le fichier `/etc/hosts` sur votre machine pour "simuler" l'enregistrement A :
+
+  ```bash
+  # Modifier le fichier /etc/hosts
+  sudo nano /etc/hosts
+  ```
+
+  <br/>
+
+  ```
+  127.0.0.1 mail.example.com
+  ```
+
+  <br/>
+
+  ```bash
+  # Redémarrer le service DNS
+  sudo systemctl restart systemd-resolved
+  ```
+
+L’enregistrement MX n’est pas nécessaire pour les tests internes.
+
+- Le PTR n’a pas d’importance pour les tests locaux (il sert uniquement pour la réputation d’envoi vers Internet).
+
+- Vous pourrez envoyer des mails localement à root@localhost ou à user@tondomaine.local sans souci.
+
+---
+
 **Enregistrement A** : Pointe vers l'IP de votre serveur
 
 ```
@@ -170,6 +203,8 @@ Vous devriez voir le processus `master` écouter sur le port 25.
 **Files d'attente** : `/var/spool/postfix/` (incoming, active, deferred, hold, corrupt)
 
 **Logs** : `/var/log/mail.log` (Ubuntu/Debian) - `/var/log/maillog` (Rocky/Red Hat)
+
+---
 
 ## Configuration de base du main.cf
 
@@ -404,6 +439,8 @@ sudo newaliases
 # ou
 sudo postalias /etc/aliases
 ```
+
+---
 
 ### ✅ Tester un alias
 

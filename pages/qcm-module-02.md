@@ -1,6 +1,4 @@
 ---
-layout: question
----
 
 # QCM - Module 2 : Installation et configuration
 
@@ -9,8 +7,11 @@ layout: question
 Quel est le paramètre obligatoire pour définir le nom complet du serveur ?
 
 A) `mydomain`  
+
 B) `myhostname`  
+
 C) `myorigin`  
+
 D) `inet_interfaces`
 
 ---
@@ -26,8 +27,11 @@ D) `inet_interfaces`
 Quelle commande permet de recharger la configuration sans couper les connexions ?
 
 A) `systemctl restart postfix`  
+
 B) `systemctl reload postfix`  
+
 C) `postfix restart`  
+
 D) `killall postfix`
 
 ---
@@ -43,8 +47,11 @@ D) `killall postfix`
 Quel enregistrement DNS est OBLIGATOIRE pour un serveur mail ?
 
 A) A  
+
 B) CNAME  
+
 C) MX  
+
 D) TXT
 
 ---
@@ -80,3 +87,28 @@ ls ~/Maildir/new/
 
 **Aide** : En cas de problème, utilisez `postfix check`
 
+---
+
+### ✅ Réponse :
+
+```bash
+# Installation
+sudo apt install postfix
+
+# Configuration
+sudo nano /etc/postfix/main.cf
+```
+
+```bash
+# Rechargement de la configuration
+sudo systemctl reload postfix
+
+# Test d'envoi
+echo "Test Postfix" | mail -s "Test" $USER
+ls ~/Maildir/new/
+```
+
+```bash
+# Vérification des logs
+tail -f /var/log/mail.log
+```

@@ -1,6 +1,4 @@
 ---
-layout: question
----
 
 # QCM - Module 5 : Gestion des files d'attente
 
@@ -9,8 +7,11 @@ layout: question
 Quelle commande affiche la file d'attente Postfix ?
 
 A) `postfix queue`  
+
 B) `mailq` ou `postqueue -p`  
+
 C) `qmgr -l`  
+
 D) `postcat`
 
 ---
@@ -26,8 +27,11 @@ D) `postcat`
 Combien de temps un message reste-t-il dans la queue deferred par défaut ?
 
 A) 1 heure  
+
 B) 24 heures  
+
 C) 5 jours  
+
 D) Indéfiniment
 
 ---
@@ -43,8 +47,11 @@ Par défaut, `maximal_queue_lifetime = 5d` (5 jours). Après ça, un bounce est 
 Quelle commande permet de supprimer UN message spécifique de la queue ?
 
 A) `postqueue -d QUEUE_ID`  
+
 B) `postsuper -d QUEUE_ID`  
+
 C) `mailq --delete QUEUE_ID`  
+
 D) `postfix delete QUEUE_ID`
 
 ---

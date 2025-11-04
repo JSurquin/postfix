@@ -1,6 +1,5 @@
 ---
-layout: question
----
+
 
 # QCM - Module 7 : Protection anti-spam
 
@@ -9,8 +8,11 @@ layout: question
 Que signifie RBL ?
 
 A) Real-time Block List  
+
 B) Realtime Blackhole List  
+
 C) Reverse Blacklist  
+
 D) Reject Bad Links
 
 ---
@@ -26,8 +28,11 @@ D) Reject Bad Links
 Quel est le principe du greylisting ?
 
 A) Bloquer tous les emails gris  
+
 B) Rejeter temporairement les nouveaux expéditeurs  
+
 C) Mettre en liste grise les spammeurs  
+
 D) Filtrer les emails sans couleur
 
 ---
@@ -43,8 +48,11 @@ Le greylisting **rejette temporairement** (code 450) les emails d'expéditeurs i
 Quelle restriction doit TOUJOURS être présente pour éviter un open relay ?
 
 A) `reject_invalid_hostname`  
+
 B) `reject_non_fqdn_sender`  
+
 C) `reject_unauth_destination`  
+
 D) `reject_unknown_sender_domain`
 
 ---

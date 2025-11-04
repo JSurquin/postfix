@@ -23,6 +23,40 @@ Un MTA fait exactement la même chose, mais pour vos emails !
 
 ---
 
+## Qu'est ce qu'un DNS ?
+
+1️⃣ DNS = Domain Name System
+  - Littéralement : système de noms de domaine
+  - C’est comme un annuaire téléphonique d’internet : il traduit des noms faciles à retenir (ex : example.fr) en adresses IP (ex : 93.22.332.10) que les ordinateurs comprennent.
+
+---
+
+2️⃣ Comment ça fonctionne concrètement
+
+- Quand vous tapez example.fr dans votre navigateur ou que vous envoyez un mail à user@example.fr  ou que vous faites une requête HTTP à http://example.fr :
+
+<br/>
+
+1. Votre ordinateur demande au DNS : "quelle est l'IP de example.fr ?"
+2. Le DNS répond : “c'est 93.22.332.10” (via un enregistrement A).
+3. Ensuite, votre ordinateur contacte directement cette IP.
+
+<br/>
+
+  - Pour les mails :
+  - DNS contient aussi des enregistrements MX pour dire quel serveur gère les mails de ce domaine.
+  - Exemple : example.fr → MX → mail.example.fr → A → 93.22.332.10
+
+---
+
+3️⃣ En résumé simple
+ - DNS = annuaire
+ - Nom de domaine = nom que vous tapez (ex : example.fr)
+ - A record = IP réelle du serveur (ex : 93.22.332.10)
+ - MX record = serveur de mail pour ce domaine (ex : mail.example.fr)
+
+---
+
 ## Les 3 acteurs principaux du mail
 
 - **MTA** (Mail Transfer Agent) : Le facteur qui achemine le courrier
@@ -54,16 +88,19 @@ Wietse Venema, chercheur en sécurité chez IBM, a décidé de créer une altern
 Postfix est conçu selon des principes stricts :
 
 **Sécurité avant tout**
+
 - Séparation des privilèges (chaque processus a un rôle unique)
 - Privilèges minimum (chaque processus n'a que les droits nécessaires)
 - Architecture modulaire (isolation des composants)
 
 **Performance**
+
 - Traitement asynchrone des messages
 - Files d'attente optimisées
 - Capable de gérer des millions d'emails par jour
 
 **Simplicité**
+
 - Configuration claire et lisible
 - Moins de 100 fichiers de configuration (contre des centaines pour Sendmail)
 - Compatibilité avec Sendmail pour faciliter la migration
@@ -114,11 +151,23 @@ Postfix est conçu selon des principes stricts :
 
 ## Les cas d'usage de Postfix
 
-**🏢 Entreprise** : Serveur mail interne (comptes utilisateurs, Active Directory/LDAP, conformité) - **🌐 Hébergeur web** : Service mail multi-clients (domaines virtuels, quotas, isolation) - **📱 Application web** : Emails transactionnels (notifications, confirmations, newsletters) - **🔒 Infrastructure sécurisée** : Confidentialité maximale (médical HIPAA, financier PCI-DSS, gouvernement)
+**🏢 Entreprise** : Serveur mail interne (comptes utilisateurs, Active Directory/LDAP, conformité)
+
+- **🌐 Hébergeur web** : Service mail multi-clients (domaines virtuels, quotas, isolation)
+
+- **📱 Application web** : Emails transactionnels (notifications, confirmations, newsletters)
+
+- **🔒 Infrastructure sécurisée** : Confidentialité maximale (médical HIPAA, financier PCI-DSS, gouvernement)
 
 ## L'écosystème Postfix en 2025
 
-Postfix ne fonctionne généralement pas seul : **Postfixadmin** (interface web) - **Roundcube/Rainloop** (webmail) - **Grafana+Prometheus** (monitoring) - **Rspamd** (anti-spam basique)
+Postfix ne fonctionne généralement pas seul : **Postfixadmin** (interface web)
+
+- **Roundcube/Rainloop** (webmail)
+
+- **Grafana+Prometheus** (monitoring)
+
+- **Rspamd** (anti-spam basique)
 
 ---
 
@@ -349,4 +398,3 @@ Direction le prochain module : **Installation et configuration de base**
     Module suivant <carbon:arrow-right class="inline"/>
   </span>
 </div>
-

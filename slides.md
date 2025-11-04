@@ -131,12 +131,19 @@ routeAlias: 'programme-intensif'
 **À la fin de ces 2 jours, vous saurez :**
 
 ✅ **Installer et configurer** Postfix sur Linux
-✅ **Comprendre l'architecture** modulaire de Postfix  
+
+✅ **Comprendre l'architecture** modulaire de Postfix
+
 ✅ **Configurer le main.cf** pour vos besoins
+
 ✅ **Gérer les domaines virtuels** et alias
+
 ✅ **Sécuriser** avec DKIM, SPF, DMARC et TLS
+
 ✅ **Protéger contre le spam** efficacement
+
 ✅ **Surveiller et diagnostiquer** les problèmes
+
 ✅ **Sauvegarder et restaurer** votre configuration
 
 ---
@@ -151,11 +158,6 @@ routeAlias: 'programme-intensif'
 - [MXToolbox](https://mxtoolbox.com/) - Tests DNS et blacklists
 - [Mail-tester](https://www.mail-tester.com/) - Test de qualité des emails
 - [DKIM Validator](https://dkimvalidator.com/) - Validation DKIM
-
-**Pour aller plus loin :**
-- Formation "Postfix Avancé" (3 jours)
-- Formation "Dovecot + Postfix" (2 jours)
-- Formation "Sécurité Email Avancée" (2 jours)
 
 ---
 src: './pages/01-introduction-postfix.md'

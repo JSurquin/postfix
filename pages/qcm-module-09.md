@@ -1,6 +1,5 @@
 ---
-layout: question
----
+
 
 # QCM - Module 9 : TLS et sécurité
 
@@ -9,8 +8,11 @@ layout: question
 Quelle est la différence entre SMTPS et STARTTLS ?
 
 A) SMTPS utilise TLS, STARTTLS utilise SSL  
+
 B) SMTPS chiffre dès la connexion (port 465), STARTTLS upgrade une connexion (port 25/587)  
+
 C) Il n'y a pas de différence  
+
 D) STARTTLS est plus sécurisé
 
 ---
@@ -26,8 +28,11 @@ D) STARTTLS est plus sécurisé
 Quel niveau TLS est recommandé pour le port 587 (submission) ?
 
 A) `may` (optionnel)  
+
 B) `encrypt` (obligatoire)  
+
 C) `none` (désactivé)  
+
 D) `dane` (DANE uniquement)
 
 ---
@@ -43,8 +48,11 @@ Pour le port 587 (submission), utilisez `smtpd_tls_security_level = encrypt` pou
 Où obtenir des certificats SSL gratuits et valides ?
 
 A) OpenSSL self-signed  
+
 B) Let's Encrypt  
+
 C) Acheter chez un CA commercial  
+
 D) Copier depuis un autre serveur
 
 ---

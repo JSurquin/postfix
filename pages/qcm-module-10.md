@@ -1,6 +1,5 @@
 ---
-layout: question
----
+
 
 # QCM - Module 10 : Logs et surveillance
 
@@ -9,8 +8,11 @@ layout: question
 Où se trouvent les logs Postfix sur Ubuntu/Debian ?
 
 A) `/var/log/postfix.log`  
+
 B) `/var/log/mail.log`  
+
 C) `/var/log/messages`  
+
 D) `/var/log/syslog`
 
 ---
@@ -26,8 +28,11 @@ Sur Ubuntu/Debian : `/var/log/mail.log`. Sur Rocky/RHEL : `/var/log/maillog`.
 Que signifie le code `dsn=2.0.0` dans les logs ?
 
 A) Erreur permanente  
+
 B) Erreur temporaire  
+
 C) Succès  
+
 D) Message en attente
 
 ---
@@ -43,8 +48,11 @@ D) Message en attente
 Quelle commande affiche en temps réel les rejets de spam ?
 
 A) `mailq`  
+
 B) `tail -f /var/log/mail.log | grep reject`  
+
 C) `postqueue -p`  
+
 D) `postsuper -v`
 
 ---

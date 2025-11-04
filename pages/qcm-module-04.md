@@ -1,6 +1,4 @@
 ---
-layout: question
----
 
 # QCM - Module 4 : Configuration main.cf
 
@@ -9,8 +7,11 @@ layout: question
 Quel paramètre définit les domaines pour lesquels Postfix accepte les emails localement ?
 
 A) `myorigin`  
+
 B) `mydestination`  
+
 C) `relay_domains`  
+
 D) `virtual_alias_domains`
 
 ---
@@ -25,9 +26,13 @@ D) `virtual_alias_domains`
 
 Pour éviter un open relay, il faut ABSOLUMENT avoir :
 
+
 A) `smtpd_tls_security_level = encrypt`  
+
 B) `reject_unauth_destination` dans les restrictions  
+
 C) `smtpd_helo_required = yes`  
+
 D) `disable_vrfy_command = yes`
 
 ---
@@ -43,8 +48,11 @@ D) `disable_vrfy_command = yes`
 Quelle commande affiche UNIQUEMENT les paramètres modifiés ?
 
 A) `postconf`  
+
 B) `postconf -n`  
+
 C) `postconf -d`  
+
 D) `postfix check`
 
 ---

@@ -1,6 +1,4 @@
 ---
-layout: question
----
 
 # QCM - Module 3 : Architecture de Postfix
 
@@ -9,8 +7,11 @@ layout: question
 Quel processus est le "chef d'orchestre" de Postfix ?
 
 A) smtpd  
+
 B) qmgr  
+
 C) master  
+
 D) cleanup
 
 ---
@@ -26,8 +27,11 @@ Le processus **master** est le chef d'orchestre. Il lance tous les autres proces
 Quel processus gère les files d'attente et décide quand envoyer les messages ?
 
 A) smtpd  
+
 B) qmgr (queue manager)  
+
 C) pickup  
+
 D) smtp
 
 ---
@@ -43,8 +47,11 @@ D) smtp
 Dans quelle file d'attente se trouvent les messages en cours de livraison ?
 
 A) maildrop  
+
 B) incoming  
+
 C) active  
+
 D) deferred
 
 ---
@@ -84,4 +91,3 @@ sudo postqueue -p
 ```
 
 **Bonus** : Utilisez `postcat -q QUEUE_ID` pour lire un message
-

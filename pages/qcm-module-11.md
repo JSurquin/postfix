@@ -1,6 +1,5 @@
 ---
-layout: question
----
+
 
 # QCM - Module 11 : Sauvegarde et restauration
 
@@ -9,8 +8,11 @@ layout: question
 Quels sont les 3 éléments ESSENTIELS à sauvegarder pour Postfix ?
 
 A) Logs, queue, processus  
+
 B) Configuration, certificats SSL, DKIM keys  
+
 C) Binaires, man pages, documentation  
+
 D) Cache DNS, cookies, sessions
 
 ---
@@ -26,8 +28,11 @@ Les **3 essentiels** : Configuration (`/etc/postfix/`), certificats SSL (`/etc/l
 Quelle est la règle 3-2-1 de sauvegarde ?
 
 A) 3 serveurs, 2 datacenters, 1 cloud  
+
 B) 3 copies, 2 supports différents, 1 copie hors site  
+
 C) 3 jours, 2 semaines, 1 mois  
+
 D) 3 fichiers, 2 formats, 1 compression
 
 ---
@@ -43,8 +48,11 @@ D) 3 fichiers, 2 formats, 1 compression
 Faut-il sauvegarder la queue Postfix ?
 
 A) Oui, toujours  
+
 B) Non, elle change constamment  
+
 C) Seulement la queue active  
+
 D) Seulement en production
 
 ---

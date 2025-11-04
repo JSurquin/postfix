@@ -1,6 +1,5 @@
 ---
-layout: question
----
+
 
 # QCM - Module 8 : DKIM, SPF et DMARC
 
@@ -9,8 +8,11 @@ layout: question
 À quoi sert SPF ?
 
 A) Chiffrer les emails  
+
 B) Authentifier le serveur expéditeur  
+
 C) Filtrer le spam  
+
 D) Compresser les pièces jointes
 
 ---
@@ -26,8 +28,11 @@ D) Compresser les pièces jointes
 Où se trouve la signature DKIM dans un email ?
 
 A) Dans le corps du message  
+
 B) Dans les en-têtes (DKIM-Signature)  
+
 C) Dans le fichier de configuration  
+
 D) Dans les logs
 
 ---
@@ -43,8 +48,11 @@ La signature DKIM est dans les **en-têtes** de l'email (champ `DKIM-Signature:`
 Que signifie `p=reject` dans un enregistrement DMARC ?
 
 A) Rejeter tous les emails  
+
 B) Rejeter les emails qui échouent SPF/DKIM  
+
 C) Mettre en quarantaine  
+
 D) Accepter mais signaler
 
 ---
@@ -63,7 +71,7 @@ Configurer SPF, DKIM et DMARC
 ### 📋 Tâches (30 minutes)
 
 1. **Créer un enregistrement SPF** :
-```dns
+```bash
 ; Dans votre zone DNS
 votredomaine.local. IN TXT "v=spf1 mx a ip4:VOTRE_IP ~all"
 ```
@@ -88,16 +96,15 @@ sudo cat /etc/opendkim/keys/votredomaine.local/default.txt
 ```
 
 5. **Ajouter l'enregistrement DNS** :
-```dns
+```bash
 default._domainkey.votredomaine.local. IN TXT "v=DKIM1; k=rsa; p=VOTRE_CLE_PUBLIQUE"
 ```
 
 6. **Créer l'enregistrement DMARC** :
-```dns
+```bash
 _dmarc.votredomaine.local. IN TXT "v=DMARC1; p=none; rua=mailto:dmarc@votredomaine.local"
 ```
 
 7. **Tester** : Envoyez un email et vérifiez les en-têtes DKIM
 
 **Bonus** : Testez avec https://www.mail-tester.com/
-
