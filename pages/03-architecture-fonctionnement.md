@@ -196,6 +196,12 @@ Postfix utilise plusieurs files d'attente dans `/var/spool/postfix/` :
 **Processus responsable** : `cleanup`  
 **Durée de vie** : Courte (secondes à minutes)
 
+</small>
+
+---
+
+<small>
+
 ### 📂 active
 
 **Contenu** : Messages en cours de livraison  
