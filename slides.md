@@ -65,7 +65,7 @@ caption: 'POSTFIX 2025'
 
 ---
 layout: two-cols
-routeAlias: 'sommaire-formation-intensive'
+routeAlias: 'sommaire-initiation'
 ---
 
 <a name="SOMMAIRE-FORMATION-INTENSIVE" id="sommaire-initiation"></a>
