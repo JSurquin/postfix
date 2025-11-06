@@ -70,9 +70,7 @@ routeAlias: 'sommaire-initiation'
 
 <a name="SOMMAIRE-FORMATION-INTENSIVE" id="sommaire-initiation"></a>
 
-# FORMATION POSTFIX INTENSIVE - 2 JOURS (14H) 🚀
-
-## ⚡ PROGRAMME ULTRA-CONCENTRÉ
+### FORMATION POSTFIX INTENSIVE - 2 JOURS (14H) 🚀
 
 <div class="flex flex-col gap-2">
 <Link to="introduction-postfix">📧 Introduction à Postfix (30min)</Link>
