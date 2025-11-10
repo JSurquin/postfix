@@ -77,9 +77,9 @@ routeAlias: 'sommaire-initiation'
 <Link to="installation-configuration-base">⚙️ Installation et config de base (1h30)</Link>
 <Link to="architecture-fonctionnement">🏗️ Architecture essentielle (45min)</Link>
 <Link to="configuration-main-cf">📝 Configuration main.cf (2h)</Link>
-<Link to="alias-tables-virtuelles">📋 Alias et domaines virtuels (1h)</Link>
 <Link to="dkim-spf-dmarc">🔐 DKIM, SPF, DMARC (1h30)</Link>
 <Link to="tls-securite">🔒 TLS et sécurité (1h)</Link>
+<Link to="alias-tables-virtuelles">📋 Alias et domaines virtuels (1h)</Link>
 </div>
 ::right::
 
@@ -198,6 +198,18 @@ src: './pages/qcm-module-05.md'
 ---
 
 ---
+src: './pages/08-dkim-spf-dmarc.md'
+---
+
+---
+src: './pages/qcm-module-08.md'
+---
+
+---
+src: './pages/09-tls-securite.md'
+---
+
+---
 src: './pages/06-alias-tables-virtuelles.md'
 ---
 
@@ -211,18 +223,6 @@ src: './pages/07-protection-anti-spam.md'
 
 ---
 src: './pages/qcm-module-07.md'
----
-
----
-src: './pages/08-dkim-spf-dmarc.md'
----
-
----
-src: './pages/qcm-module-08.md'
----
-
----
-src: './pages/09-tls-securite.md'
 ---
 
 ---
