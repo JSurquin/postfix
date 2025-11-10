@@ -100,20 +100,20 @@ routeAlias: 'programme-intensif'
 
 ## PROGRAMME FORMATION INTENSIVE 📅
 
-**JOUR 1 (7h) - FONDAMENTAUX**
+**JOUR 1 (7h) - FONDAMENTAUX & SÉCURITÉ**
 
 - **9h00-9h30** : Introduction Postfix (30min)
 - **9h30-11h00** : Installation & config de base (1h30)
 - **11h15-12h00** : Architecture essentielle (45min)
 - **13h00-15h00** : Configuration main.cf (2h)
-- **15h15-16h15** : Alias et domaines virtuels (1h)
-- **16h30-18h00** : DKIM, SPF, DMARC (1h30)
+- **15h15-16h45** : DKIM, SPF, DMARC (1h30)
+- **17h00-18h00** : TLS et sécurité (1h)
 
 ::right::
 
-**JOUR 2 (7h) - SÉCURITÉ & PRATIQUE**
+**JOUR 2 (7h) - PRATIQUE & PRODUCTION**
 
-- **9h00-10h00** : TLS et sécurité (1h)
+- **9h00-10h00** : Alias et domaines virtuels (1h)
 - **10h15-11h15** : Anti-spam essentiel (1h)
 - **11h30-12h15** : Logs et monitoring (45min)
 - **13h00-13h30** : Files d'attente (30min)
