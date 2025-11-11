@@ -997,6 +997,8 @@ sudo cp /etc/postfix/main.cf /etc/postfix/main.cf.backup
 sudo cp /etc/postfix/main.cf /etc/postfix/main.cf.$(date +%Y%m%d)
 ```
 
+---
+
 ### ✅ Testez toujours
 
 ```bash
@@ -1056,6 +1058,8 @@ smtpd_tls_loglevel = 2
 1. Ajoutez les restrictions recommandées
 2. Testez d'envoyer un email sans authentification
 3. Consultez les logs pour voir le rejet
+
+---
 
 ### 🎯 Exercice 3 : Taille des messages
 

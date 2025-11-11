@@ -87,6 +87,8 @@ Wietse Venema, chercheur en sécurité chez IBM, a décidé de créer une altern
 
 Postfix est conçu selon des principes stricts :
 
+<small>
+
 **Sécurité avant tout**
 
 - Séparation des privilèges (chaque processus a un rôle unique)
@@ -105,11 +107,15 @@ Postfix est conçu selon des principes stricts :
 - Moins de 100 fichiers de configuration (contre des centaines pour Sendmail)
 - Compatibilité avec Sendmail pour faciliter la migration
 
+</small>
+
 ---
 
 ## Pourquoi choisir Postfix en 2025 ?
 
 ### ✅ Les avantages
+
+<small>
 
 **Robustesse éprouvée**
 - Utilisé par des millions de serveurs dans le monde
@@ -126,6 +132,10 @@ Postfix est conçu selon des principes stricts :
 - Consommation mémoire raisonnable
 - Scalabilité horizontale possible
 
+</small>
+
+---
+
 **Flexibilité**
 - Configuration très granulaire
 - Supporte tous les standards modernes (DKIM, SPF, DMARC, TLS 1.3)
@@ -135,9 +145,14 @@ Postfix est conçu selon des principes stricts :
 
 ### ⚖️ Les inconvénients
 
-**Courbe d'apprentissage** : Configuration peut sembler complexe - Beaucoup de paramètres à comprendre - Nécessite une bonne compréhension du fonctionnement des emails
+**Courbe d'apprentissage** : Configuration peut sembler complexe
+
+- Beaucoup de paramètres à comprendre
+- Nécessite une bonne compréhension du fonctionnement des emails
 
 **Documentation dense** : Documentation officielle très complète mais parfois technique - Nécessite du temps pour maîtriser tous les aspects
+
+---
 
 ## Postfix vs les alternatives en 2025
 

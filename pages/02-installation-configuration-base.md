@@ -83,16 +83,32 @@ L’enregistrement MX n’est pas nécessaire pour les tests internes.
 
 ---
 
+Nous allons utiliser un vrai domaine pour les tests, mais vous pouvez utiliser un domaine fictif comme `example.com`.
+
+Dans notre cas nous allons utiliser le domaine `jimmylan.fr`.
+
+Et il nous faut bien sur un VPS ou un serveur dédié pour le serveur mail.
+
+---
+
+Le domaine est enregistré chez OVH.
+
+Donc nous allons configurer le DNS chez OVH directement , si vous avez un autre FAI, vous devrez configurer le DNS chez eux , si vous utilisez un système plus classique, vous devrez configurer le tout dans B.I.N.D. (Bind DNS)
+
+[https://www.it-connect.fr/dns-avec-bind-9/](Bind9 - Configuration DNS avec Bind9)
+
+---
+
 **Enregistrement A** : Pointe vers l'IP de votre serveur
 
 ```
-mail.example.com.  IN  A  203.0.113.10
+mail.jimmylan.fr.  IN  A  51.68.224.131
 ```
 
 **Enregistrement MX** : Indique le serveur mail du domaine
 
 ```
-example.com.  IN  MX  10  mail.example.com.
+jimmylan.fr.  IN  MX  10  mail.jimmylan.fr.
 ```
 
 Le chiffre (10) est la priorité : plus c'est petit, plus c'est prioritaire.
@@ -106,6 +122,20 @@ Le PTR fait le lien inverse : IP → nom de domaine. Sans PTR correct, vos email
 ```
 
 ⚠️ **Note importante** : Le PTR doit être configuré chez votre hébergeur/FAI (vous ne pouvez pas le faire vous-même).
+
+---
+
+Capture d'écran de la configuration DNS chez le FAI :
+
+<img src="/ovh2.png" alt="Configuration DNS chez le FAI"
+width='300px'
+height='auto'/>
+
+Capture d'écran de la configuration DNS chez OVH :
+
+<img src="/ovh1.png" alt="Configuration DNS chez OVH"
+width='300px'
+height='auto'/>
 
 ---
 
@@ -130,9 +160,9 @@ Avant d'installer Postfix, ouvrez les ports nécessaires :
 
 ```bash
 # Pour Ubuntu (UFW)
-sudo ufw allow 25/tcp    # SMTP
-sudo ufw allow 587/tcp   # Submission
-sudo ufw allow 465/tcp   # SMTPS (si nécessaire)
+sudo ufw allow 25/tcp    # SMTP = Postfix = Votre serveur mail
+sudo ufw allow 587/tcp   # Submission = Postfix = Pour envoyer des emails depuis votre serveur mail
+sudo ufw allow 465/tcp   # SMTPS = Postfix = Pour envoyer des emails via SSL/TLS
 
 # Pour Rocky Linux (firewalld)
 sudo firewall-cmd --permanent --add-service=smtp
@@ -157,7 +187,10 @@ sudo apt install postfix -y
 
 Pendant l'installation, un assistant graphique apparaît :
 1. **Type de configuration** : Choisissez "Internet Site"
-2. **Nom du système de messagerie** : Entrez votre domaine (example.com)
+
+> Il se peut que vous ne voyez pas cette étape, car Postfix est déjà installé sur votre système ou en fonction de la version il ne le propose pas, pas d'inquiétude.
+
+2. **Nom du système de messagerie** : Entrez votre domaine (jimmylan.fr)
 
 ### 📦 Installation sur Rocky Linux
 
@@ -190,19 +223,28 @@ sudo ss -tlnp | grep master
 
 Vous devriez voir le processus `master` écouter sur le port 25.
 
+> Si vous ne voyez pas le processus `master` écouter sur le port 25, vérifiez que le firewall est correctement configuré.
+
 ---
 
 ## Comprendre l'arborescence de Postfix
 
 ### 📁 Les fichiers importants
 
-**Configuration** : `/etc/postfix/main.cf` (config principale) - `/etc/postfix/master.cf` (processus)
+**Configuration** : `/etc/postfix/main.cf` (config principale)
 
-**Tables** : `/etc/postfix/aliases` (alias locaux) - `/etc/postfix/virtual` (domaines virtuels) - `/etc/postfix/transport` (routage)
+- `/etc/postfix/master.cf` (processus)
+
+**Tables** : `/etc/postfix/aliases` (alias locaux)
+
+- `/etc/postfix/virtual` (domaines virtuels)
+- `/etc/postfix/transport` (routage)
 
 **Files d'attente** : `/var/spool/postfix/` (incoming, active, deferred, hold, corrupt)
 
-**Logs** : `/var/log/mail.log` (Ubuntu/Debian) - `/var/log/maillog` (Rocky/Red Hat)
+**Logs** : `/var/log/mail.log` (Ubuntu/Debian)
+
+- `/var/log/maillog` (Rocky/Red Hat)
 
 ---
 
@@ -259,6 +301,8 @@ home_mailbox = mail/
 Maildir vs mbox ?
 - **Maildir** : Un fichier par email, plus sûr, plus rapide
 - **mbox** : Tous les emails dans un seul fichier, risque de corruption
+
+> En clair : vous allez voir un dossier MailDir par utilisateur. exemple : mon user john doe aura son dossier MailDir dans /home/john/Maildir.
 
 **smtpd_banner** : Bannière SMTP (ne pas révéler trop d'infos)
 
@@ -325,10 +369,10 @@ sudo systemctl reload postfix
 
 ### 📧 Envoyer un email de test
 
-Utilisons la commande `sendmail` (fournie par Postfix) :
+Utilisons la commande `mail` (fournie par Postfix) :
 
 ```bash
-echo "Test depuis Postfix" | sendmail root@localhost
+echo "Test depuis Postfix" | mail -s "Test" root@localhost
 ```
 
 ### 🔍 Vérifier que l'email est arrivé
@@ -530,12 +574,12 @@ smtp_helo_timeout = 60s
 
 ```sql
 # Rejeter les connexions trop précoces
-smtpd_client_restrictions = 
+smtpd_client_restrictions =
     permit_mynetworks,
     reject_unknown_client_hostname
 
 # Vérifier le HELO
-smtpd_helo_restrictions = 
+smtpd_helo_restrictions =
     permit_mynetworks,
     reject_invalid_helo_hostname,
     reject_non_fqdn_helo_hostname

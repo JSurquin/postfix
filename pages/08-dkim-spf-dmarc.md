@@ -68,6 +68,12 @@ v=spf1 mx a ip4:203.0.113.10 -all
 
 ---
 
+Je vous ai mis une capture d'écran de l'enregistrement SPF de mon domaine `jimmylan.fr`.
+
+<img src="/ovh1.png" alt="Enregistrement SPF de jimmylan.fr" />
+
+---
+
 **Décryptage** : `v=spf1` (Version SPF) - `mx` (Les serveurs MX du domaine peuvent envoyer) - `a` (Le serveur A du domaine peut envoyer) - `ip4:203.0.113.10` (Cette IP peut envoyer) - `-all` (Rejeter tout le reste)
 
 ---
@@ -173,7 +179,7 @@ v=spf1
 
 ### 🌐 Étape 3 : Ajouter l'enregistrement DNS
 
-**Type** : TXT - **Nom** : `example.com` (ou `@`) - **Valeur** :
+**Type** : TXT/SPF - **Nom** : `example.com` (ou `@`) - **Valeur** :
 
 ```
 v=spf1 a mx ip4:203.0.113.10 -all
@@ -261,7 +267,7 @@ sudo dnf install opendkim
 
 ### 📝 Fichier /etc/opendkim.conf
 
-```
+```bash
 # Mode
 Mode                    sv
 
@@ -280,20 +286,39 @@ Socket                  inet:8891@localhost
 
 ---
 
-```
+### Le fichier en entier :
+
+```bash
+
+# Mode
+Mode                    sv # Mode de fonctionnement
+
+# Socket pour Postfix
+Socket                  inet:8891@localhost
+
+# UMask                   007 # Permet de limiter les permissions des fichiers
+UMask                   007
+
 # Logging
-Syslog                  yes
-SyslogSuccess           yes
-LogWhy                  yes
+Syslog                  yes # Log dans le fichier de log de Postfix
+SyslogSuccess           yes # Log les succès
+LogWhy                  yes # Log les raisons des rejets
+
+KeyTable                /etc/opendkim/KeyTable # Table des clés
+SigningTable            /etc/opendkim/SigningTable # Table des signatures
+ExternalIgnoreList      /etc/opendkim/TrustedHosts # Liste des serveurs autorisés
+InternalHosts           /etc/opendkim/TrustedHosts # Liste des serveurs autorisés
 
 # Canonicalisation
-Canonicalization        relaxed/simple
+Canonicalization        relaxed/simple # Canonicalisation des emails
+
+PidFile /run/opendkim/opendkim.pid # PID file
 
 # Autres
-AutoRestart             yes
-AutoRestartRate         10/1h
-Background              yes
-DNSTimeout              5
+AutoRestart             yes # Redémarrer le service si il crash
+AutoRestartRate         10/1h # Redémarrer le service si il crash 10 fois en 1 heure
+Background              yes # Lancer le service en arrière-plan
+DNSTimeout              5 # Timeout pour la résolution DNS
 ```
 
 ---
@@ -302,10 +327,10 @@ DNSTimeout              5
 
 ```bash
 # Créer le répertoire
-sudo mkdir -p /etc/opendkim/keys/example.com
+sudo mkdir -p /etc/opendkim/keys/jimmylan.fr
 
 # Générer la paire de clés
-sudo opendkim-genkey -b 2048 -d example.com -D /etc/opendkim/keys/example.com -s mail -v
+sudo opendkim-genkey -b 2048 -d jimmylan.fr -D /etc/opendkim/keys/jimmylan.fr -s mail -v
 ```
 
 ---
@@ -313,7 +338,7 @@ sudo opendkim-genkey -b 2048 -d example.com -D /etc/opendkim/keys/example.com -s
 **Paramètres** :
 
 - `-b 2048` : Taille de la clé (2048 bits recommandé en 2025)
-- `-d example.com` : Domaine
+- `-d jimmylan.fr` : Domaine
 - `-D /path` : Répertoire de sortie
 - `-s mail` : Sélecteur
 - `-v` : Verbose
@@ -336,10 +361,38 @@ sudo chmod 600 /etc/opendkim/keys/example.com/mail.private
 
 ---
 
+### Maintenant nous allons créer les fichiers de configuration pour OpenDKIM.
+
+Nous avons :
+
+- /etc/opendkim/KeyTable
+- /etc/opendkim/SigningTable
+- /etc/opendkim/TrustedHosts
+
+**Pourquoi ces fichiers ?**
+
+- KeyTable : Table des clés = correspondance entre le domaine et la clé
+- SigningTable : Table des signatures = correspondance entre le domaine et la signature
+- TrustedHosts : Liste des serveurs autorisés = liste des serveurs autorisés à envoyer des emails via DKIM (IP, domaine, etc.)
+
+---
+
+**Cas spécifique :**
+
+On a un utilisateur qui s'appelle john doe
+
+Donc on veut forcement johndoe@jimmylan.fr
+
+Mais on a fais un enregistrement MX et A sur mail.jimmylan.fr
+
+Donc il faut quand même préciser que on veux generer des clef pour le nom de domaine en entier et pas uniquement le sous domaine.
+
+---
+
 ### 📋 Fichier /etc/opendkim/KeyTable
 
-```
-mail._domainkey.example.com example.com:mail:/etc/opendkim/keys/example.com/mail.private
+```bash
+mail._domainkey.jimmylan.fr jimmylan.fr:mail:/etc/opendkim/keys/jimmylan.fr/mail.private
 ```
 
 Format : `selector._domainkey.domain  domain:selector:keyfile`
@@ -348,8 +401,9 @@ Format : `selector._domainkey.domain  domain:selector:keyfile`
 
 ### 📋 Fichier /etc/opendkim/SigningTable
 
-```
-*@example.com mail._domainkey.example.com
+```bash
+*@jimmylan.fr mail._domainkey.jimmylan.fr
+johndoe@jimmylan.fr mail._domainkey.jimmylan.fr
 ```
 
 Format : `pattern  key`
@@ -358,11 +412,11 @@ Format : `pattern  key`
 
 ### 📋 Fichier /etc/opendkim/TrustedHosts
 
-```
+```bash
 127.0.0.1
 localhost
-203.0.113.10
-*.example.com
+testmail.jimmylan.fr
+51.68.224.131
 ```
 
 ---
@@ -387,6 +441,13 @@ smtpd_milters = inet:localhost:8891
 non_smtpd_milters = inet:localhost:8891
 milter_default_action = accept
 milter_protocol = 6
+```
+
+> On pourrais effectivement utiliser un socket UNIX ou un socket local pour plus de sécurité.
+
+```bash
+smtpd_milters = unix:/var/run/opendkim/opendkim.sock
+non_smtpd_milters = unix:/var/run/opendkim/opendkim.sock
 ```
 
 ---
@@ -419,7 +480,7 @@ mail._domainkey IN TXT ( "v=DKIM1; h=sha256; k=rsa; "
 
 ### 🌐 Ajouter l'enregistrement DNS
 
-**Type** : TXT
+**Type** : TXT/DKIM
 
 **Nom** : `mail._domainkey.example.com`
 
@@ -433,12 +494,14 @@ v=DKIM1; h=sha256; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...
 
 ⚠️ **Important** : Supprimez les guillemets et concaténez les lignes !
 
+Il faut que la clef sois en une seule ligne et sans guillemets.
+
 ---
 
 ### ✅ Vérifier l'enregistrement DNS
 
 ```bash
-dig mail._domainkey.example.com TXT +short
+dig mail._domainkey.jimmylan.fr TXT +short
 ```
 
 ---
@@ -454,14 +517,14 @@ dig mail._domainkey.example.com TXT +short
 ### 📧 Envoyer un email de test
 
 ```bash
-echo "Test DKIM" | mail -s "Test DKIM" test@gmail.com
+echo "Test DKIM" | mail -s "Test DKIM" check-auth@verifier.port25.com
 ```
 
 ---
 
 ### 🔍 Vérifier la signature
 
-Dans Gmail, ouvrez l'email → "Afficher l'original" → Cherchez :
+Dans votre boite mail, ouvrez l'email → "Afficher l'original" → Cherchez :
 
 ```
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
@@ -476,7 +539,7 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
 Et vérifiez :
 
 ```
-dkim=pass header.d=example.com
+dkim=pass header.d=jimmylan.fr
 ```
 
 ✅ DKIM fonctionne !
@@ -520,8 +583,8 @@ DMARC combine SPF et DKIM et définit une **politique** : que faire si SPF ou DK
 
 ## Format d'un enregistrement DMARC
 
-```
-v=DMARC1; p=reject; rua=mailto:dmarc@example.com; ruf=mailto:dmarc@example.com; pct=100
+```bash
+v=DMARC1; p=reject; rua=mailto:dmarc@jimmylan.fr; ruf=mailto:dmarc@jimmylan.fr; pct=100
 ```
 
 ---
@@ -619,7 +682,7 @@ Les serveurs qui reçoivent vos emails envoient des rapports XML à `dmarc-repor
 
 Après 1-2 semaines de monitoring sans problème :
 
-```
+```bash
 v=DMARC1; p=quarantine; rua=mailto:dmarc-reports@example.com; pct=100
 ```
 
@@ -627,7 +690,7 @@ v=DMARC1; p=quarantine; rua=mailto:dmarc-reports@example.com; pct=100
 
 Après 1 mois :
 
-```
+```bash
 v=DMARC1; p=reject; rua=mailto:dmarc-reports@example.com; pct=100
 ```
 
@@ -706,7 +769,7 @@ Vous recevrez un rapport complet sur SPF, DKIM, DMARC !
 **Cause 1** : Enregistrement SPF incorrect
 
 ```bash
-dig example.com TXT +short | grep spf
+dig jimmylan.fr TXT +short | grep spf
 ```
 
 Vérifiez la syntaxe !
@@ -724,7 +787,7 @@ Vérifiez la syntaxe !
 **Cause 1** : Clé publique pas en DNS ou incorrecte
 
 ```bash
-dig mail._domainkey.example.com TXT +short
+dig mail._domainkey.jimmylan.fr TXT +short
 ```
 
 ---
@@ -734,6 +797,10 @@ dig mail._domainkey.example.com TXT +short
 ```bash
 sudo systemctl status opendkim
 sudo tail -f /var/log/mail.log | grep dkim
+#ou
+sudo tail -f /var/log/opendkim/opendkim.log | grep dkim
+# ou
+sudo journalctl -u opendkim -f
 ```
 
 ---
@@ -741,8 +808,8 @@ sudo tail -f /var/log/mail.log | grep dkim
 **Cause 3** : Permissions sur la clé privée
 
 ```bash
-sudo chmod 600 /etc/opendkim/keys/example.com/mail.private
-sudo chown opendkim:opendkim /etc/opendkim/keys/example.com/mail.private
+sudo chmod 600 /etc/opendkim/keys/jimmylan.fr/mail.private
+sudo chown opendkim:opendkim /etc/opendkim/keys/jimmylan.fr/mail.private
 ```
 
 ---
@@ -870,4 +937,3 @@ SPF, DKIM et DMARC sont configurés ! Passons maintenant au **chiffrement TLS** 
     Module suivant : TLS et sécurité <carbon:arrow-right class="inline"/>
   </span>
 </div>
-

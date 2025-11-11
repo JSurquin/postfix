@@ -155,6 +155,7 @@ routeAlias: 'programme-intensif'
 **Outils utiles :**
 - [MXToolbox](https://mxtoolbox.com/) - Tests DNS et blacklists
 - [Mail-tester](https://www.mail-tester.com/) - Test de qualité des emails
+- [Email-tester](https://email-tester.com/) - Test de qualité des emails via une adresse simple : `check-auth@verifier.port25.com`
 - [DKIM Validator](https://dkimvalidator.com/) - Validation DKIM
 
 ---
