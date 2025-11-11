@@ -62,6 +62,46 @@ D) `example.com admin@example.com`
 
 ---
 
+## Question 4
+
+Quel type de table est le plus couramment utilisé pour `virtual_alias_maps` sur une installation Postfix standard ?
+
+A) `btree:/...`  
+
+B) `hash:/...`  
+
+C) `texthash:/...`  
+
+D) `ldap:/...`
+
+---
+
+### ✅ Réponse : B
+
+Le backend **hash** (fichiers `.db` générés par `postmap`) est disponible partout et performant pour quelques centaines d'entrées.
+
+---
+
+## Question 5
+
+Quelle commande permet de tester la résolution d'un alias virtuel spécifique ?
+
+A) `postconf virtual_alias_maps`  
+
+B) `postalias -q`  
+
+C) `postmap -q user@example.com /etc/postfix/virtual`  
+
+D) `postqueue -q user@example.com`
+
+---
+
+### ✅ Réponse : C
+
+`postmap -q adresse table` interroge la table exactement comme Postfix le ferait, pratique pour valider une entrée sans envoyer d'email.
+
+---
+
 ## Exercice pratique - Module 6
 
 ### 🎯 Objectif

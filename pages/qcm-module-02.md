@@ -62,6 +62,46 @@ L'enregistrement **MX** indique le serveur mail responsable du domaine. Sans lui
 
 ---
 
+## Question 4
+
+Quel paramètre Postfix contrôle les interfaces réseau sur lesquelles le service SMTP écoute ?
+
+A) `relayhost`  
+
+B) `inet_interfaces`  
+
+C) `smtpd_banner`  
+
+D) `alias_database`
+
+---
+
+### ✅ Réponse : B
+
+`inet_interfaces` définit si Postfix écoute sur `all`, `loopback-only` ou une IP précise. Pratique pour limiter l'écoute à `localhost` sur un serveur relai.
+
+---
+
+## Question 5
+
+Quelle commande vérifie la configuration Postfix pour détecter les erreurs avant un rechargement ?
+
+A) `postfix check`  
+
+B) `postconf -n`  
+
+C) `systemctl status postfix`  
+
+D) `postqueue -p`
+
+---
+
+### ✅ Réponse : A
+
+`postfix check` réalise une série de vérifications (permissions, syntaxe, ownership) et affiche les problèmes potentiels avant redémarrage.
+
+---
+
 ## Exercice pratique - Module 2
 
 ### 🎯 Objectif

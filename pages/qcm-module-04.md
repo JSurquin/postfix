@@ -63,6 +63,46 @@ D) `postfix check`
 
 ---
 
+## Question 4
+
+Quel paramètre permet de limiter la taille maximale d'un message accepté par Postfix ?
+
+A) `queue_minfree`  
+
+B) `message_size_limit`  
+
+C) `bounce_queue_lifetime`  
+
+D) `smtp_tls_loglevel`
+
+---
+
+### ✅ Réponse : B
+
+`message_size_limit` exprime la taille en octets d'un message accepté. Augmentez-le pour permettre les pièces jointes volumineuses ou réduisez-le pour limiter.
+
+---
+
+## Question 5
+
+Comment supprimer proprement une surcharge `main.cf` pour revenir à la valeur par défaut ?
+
+A) Supprimer la ligne à la main  
+
+B) `postconf -# paramètre`  
+
+C) `postconf -X paramètre`  
+
+D) `postconf -d paramètre`
+
+---
+
+### ✅ Réponse : C
+
+`postconf -X paramètre` enlève l'override dans `main.cf`. Postfix rebasculera alors sur la valeur par défaut (visible via `postconf -d`).
+
+---
+
 ## Exercice pratique - Module 4
 
 ### 🎯 Objectif

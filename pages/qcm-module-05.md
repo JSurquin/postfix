@@ -62,6 +62,46 @@ D) `postfix delete QUEUE_ID`
 
 ---
 
+## Question 4
+
+Quelle commande force Postfix à reprogrammer immédiatement la livraison de tous les messages en attente ?
+
+A) `postqueue -s`  
+
+B) `postqueue -f`  
+
+C) `postsuper -r ALL`  
+
+D) `postfix reload`
+
+---
+
+### ✅ Réponse : B
+
+`postqueue -f` (flush) redéclenche les tentatives de livraison pour tous les messages, y compris ceux en deferred.
+
+---
+
+## Question 5
+
+Dans quelle file se trouvent les messages fraîchement acceptés mais pas encore traités par `qmgr` ?
+
+A) `maildrop`  
+
+B) `incoming`  
+
+C) `hold`  
+
+D) `bounce`
+
+---
+
+### ✅ Réponse : B
+
+La file **incoming** stocke les messages validés par `cleanup` avant qu'ils ne passent en **active**. C'est la zone tampon entre l'entrée et la livraison.
+
+---
+
 ## Exercice pratique - Module 5
 
 ### 🎯 Objectif

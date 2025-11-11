@@ -63,6 +63,46 @@ D) Copier depuis un autre serveur
 
 ---
 
+## Question 4
+
+Quelle commande permet de tester manuellement STARTTLS sur le port 25 d'un serveur distant ?
+
+A) `telnet serveur 25`  
+
+B) `openssl s_client -connect serveur:25 -starttls smtp`  
+
+C) `openssl s_client -connect serveur:587`  
+
+D) `curl https://serveur:25`
+
+---
+
+### ✅ Réponse : B
+
+`openssl s_client -connect serveur:25 -starttls smtp` négocie une session STARTTLS, affiche le certificat et les suites supportées.
+
+---
+
+## Question 5
+
+Quel paramètre Postfix impose un niveau de chiffrement minimal pour les connexions sortantes vers d'autres serveurs ?
+
+A) `smtpd_tls_security_level`  
+
+B) `smtp_tls_security_level`  
+
+C) `tlsproxy_tls_security_level`  
+
+D) `smtp_tls_policy_maps`
+
+---
+
+### ✅ Réponse : B
+
+`smtp_tls_security_level` s'applique au client SMTP sortant de Postfix. Avec `encrypt`, vous forcez Postfix à n'envoyer que via TLS (sinon bounce).
+
+---
+
 ## Exercice pratique - Module 9
 
 ### 🎯 Objectif

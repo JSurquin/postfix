@@ -62,6 +62,46 @@ Postfix utilise la **séparation des privilèges** : chaque processus a un rôle
 
 ---
 
+## Question 4
+
+Quel composant remet les emails dans la boîte de réception du destinataire ?
+
+A) MTA  
+
+B) MDA  
+
+C) MUA  
+
+D) LDA
+
+---
+
+### ✅ Réponse : B
+
+Le **Mail Delivery Agent (MDA)** dépose le message dans la boîte du destinataire (via un MDA local ou `dovecot-lda`). Le MTA transporte, le MUA lit.
+
+---
+
+## Question 5
+
+Quel port TCP standard Postfix utilise-t-il pour accepter les connexions SMTP non chiffrées ?
+
+A) 25  
+
+B) 110  
+
+C) 143  
+
+D) 587
+
+---
+
+### ✅ Réponse : A
+
+Le **port 25/TCP** est le port SMTP historique utilisé entre MTAs. Le port 587 est dédié aux clients authentifiés (submission).
+
+---
+
 ## Exercice pratique - Module 1
 
 ### 🎯 Objectif
