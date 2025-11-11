@@ -63,6 +63,46 @@ La queue change **constamment** et se vide naturellement. Sauvegarder la config 
 
 ---
 
+## Question 4
+
+Quelle commande permet de sauvegarder la configuration active de Postfix dans un fichier texte versionné ?
+
+A) `postfix status > postfix.conf`  
+
+B) `postconf -n > postfix.conf`  
+
+C) `postqueue -p > postfix.conf`  
+
+D) `systemctl show postfix > postfix.conf`
+
+---
+
+### ✅ Réponse : B
+
+`postconf -n` liste uniquement les paramètres personnalisés. Redirigez la sortie vers un fichier pour tracer vos changements dans Git ou une sauvegarde.
+
+---
+
+## Question 5
+
+Quel service du système planifie l'exécution de votre script de sauvegarde chaque nuit à 02h00 ?
+
+A) `systemd-networkd`  
+
+B) `cron`  
+
+C) `logrotate`  
+
+D) `cupsd`
+
+---
+
+### ✅ Réponse : B
+
+`cron` (ou `cronie`) reste la méthode la plus simple pour lancer un script récurrent. Vous pouvez aussi créer un timer systemd si vous préférez.
+
+---
+
 ## Exercice pratique - Module 11
 
 ### 🎯 Objectif

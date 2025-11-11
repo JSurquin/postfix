@@ -62,6 +62,46 @@ La file **active** contient les messages prêts à être envoyés et en cours de
 
 ---
 
+## Question 4
+
+Quel processus Postfix accepte les connexions SMTP entrantes depuis les clients ou d'autres MTAs ?
+
+A) `pickup`  
+
+B) `smtpd`  
+
+C) `smtp`  
+
+D) `cleanup`
+
+---
+
+### ✅ Réponse : B
+
+`smtpd` est le démon serveur SMTP. Il gère l'authentification, applique les restrictions et remet les messages au processus `cleanup`.
+
+---
+
+## Question 5
+
+Quel est le rôle du processus `pickup` dans l'architecture Postfix ?
+
+A) Envoyer les messages sortants vers Internet  
+
+B) Nettoyer les en-têtes et appliquer les règles MIME  
+
+C) Reprendre les messages déposés dans `maildrop` par les agents locaux  
+
+D) Vérifier les signatures DKIM
+
+---
+
+### ✅ Réponse : C
+
+`pickup` surveille la file **maildrop** (messages injectés localement par `sendmail`/`postdrop`) et les transfère vers `cleanup` pour traitement.
+
+---
+
 ## Exercice pratique - Module 3
 
 ### 🎯 Objectif

@@ -63,6 +63,46 @@ D) `postsuper -v`
 
 ---
 
+## Question 4
+
+Quelle commande basée sur `journalctl` affiche en direct les logs Postfix sur une distribution systemd ?
+
+A) `journalctl postfix -f`  
+
+B) `journalctl -u postfix -f`  
+
+C) `journalctl --follow mail.log`  
+
+D) `journalctl -t postfix/smtpd`
+
+---
+
+### ✅ Réponse : B
+
+`journalctl -u postfix -f` suit en temps réel les journaux du service systemd `postfix`, pratique quand `/var/log/mail.log` est géré par `rsyslog` ou `systemd-journald`.
+
+---
+
+## Question 5
+
+Quel est le nom de l'identifiant unique qui permet de suivre un email dans les logs et les files d'attente ?
+
+A) PID  
+
+B) Queue ID  
+
+C) UID  
+
+D) RID
+
+---
+
+### ✅ Réponse : B
+
+Le **Queue ID** (ex : `3F2A641234`) est attribué par Postfix dès la réception et reste visible dans les logs, `mailq`, `postcat`, etc.
+
+---
+
 ## Exercice pratique - Module 10
 
 ### 🎯 Objectif

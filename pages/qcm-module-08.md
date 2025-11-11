@@ -63,6 +63,46 @@ D) Accepter mais signaler
 
 ---
 
+## Question 4
+
+Quel tag d'un enregistrement DMARC indique l'adresse de réception des rapports agrégés ?
+
+A) `p`  
+
+B) `rua`  
+
+C) `adkim`  
+
+D) `sp`
+
+---
+
+### ✅ Réponse : B
+
+`rua=mailto:...` définit la boîte qui recevra les rapports quotidiens agrégés. Vous pouvez ajouter plusieurs adresses séparées par des virgules.
+
+---
+
+## Question 5
+
+Dans un enregistrement SPF, que signifie le mécanisme `~all` placé en fin de règle ?
+
+A) Refuser toute adresse non listée (fail dur)  
+
+B) Autoriser tout le monde (pass)  
+
+C) Acceptation conditionnelle avec alerte (softfail)  
+
+D) Ignorer la règle SPF
+
+---
+
+### ✅ Réponse : C
+
+`~all` applique un **softfail** : les serveurs destinataires sont encouragés à marquer l'email comme suspect mais pas à le rejeter systématiquement (`-all` serait un fail dur).
+
+---
+
 ## Exercice pratique - Module 8
 
 ### 🎯 Objectif

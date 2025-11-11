@@ -63,6 +63,46 @@ D) `reject_unknown_sender_domain`
 
 ---
 
+## Question 4
+
+Quel service Postfix filtre les connexions SMTP entrantes avant de passer la main à `smtpd` pour bloquer les clients suspects ?
+
+A) `anvil`  
+
+B) `postscreen`  
+
+C) `cleanup`  
+
+D) `tlsproxy`
+
+---
+
+### ✅ Réponse : B
+
+`postscreen` réalise des tests de réputation et de protocole sur les nouvelles connexions TCP avant d'autoriser l'accès complet à `smtpd`.
+
+---
+
+## Question 5
+
+Quel mot-clé place immédiatement votre réseau local en liste blanche dans `smtpd_recipient_restrictions` ?
+
+A) `permit_sasl_authenticated`  
+
+B) `permit_mynetworks`  
+
+C) `check_policy_service`  
+
+D) `reject_unknown_client_hostname`
+
+---
+
+### ✅ Réponse : B
+
+`permit_mynetworks` autorise sans délai les clients définis dans `mynetworks`. À placer en premier pour vos administrateurs ou relais internes.
+
+---
+
 ## Exercice pratique - Module 7
 
 <small>
