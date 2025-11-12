@@ -31,6 +31,16 @@ Postfix fait exactement pareil !
 
 Postfix utilise plusieurs files d'attente dans `/var/spool/postfix/` :
 
+<small>
+
+Le répertoire `/var/spool/postfix/` est donc :
+
+L’endroit où Postfix met en file d’attente les emails avant qu’ils ne soient effectivement traités ou envoyés.
+
+C’est littéralement un “spool directory”, une file d’attente persistante sur disque pour le courrier sortant et entrant.
+
+</small>
+
 ### 📂 maildrop
 
 **Rôle** : Point d'entrée pour les emails locaux - **Processus** : `pickup` surveille ce répertoire - **Durée** : Quelques secondes maximum
@@ -56,7 +66,11 @@ echo "Test" | sendmail user@example.com
 
 ### 📂 active
 
-**Rôle** : Messages en cours de livraison **immédiate** - **Processus** : `qmgr` (Queue Manager) gère cette queue - **Taille limitée** : Par défaut 20 000 messages max
+**Rôle** : Messages en cours de livraison **immédiate** par Postfix.
+
+**Processus** : `qmgr` (Queue Manager) gère cette queue 
+
+**Taille limitée** : Par défaut 20 000 messages max
 
 **Pourquoi limiter la taille ?** Si `active` était illimitée, Postfix pourrait charger des millions de messages en mémoire et crasher ! La limitation force Postfix à ne traiter que ce qu'il peut gérer.
 
@@ -64,9 +78,19 @@ echo "Test" | sendmail user@example.com
 
 ### 📂 deferred
 
-**Rôle** : Messages en échec temporaire - **Processus** : `qmgr` planifie les retentatives - **Durée** : Jusqu'à `maximal_queue_lifetime` (5 jours par défaut)
+**Rôle** : Messages en échec temporaire par Postfix. 
 
-**Raisons courantes de defer** : Serveur destinataire injoignable - Timeout de connexion - Erreur temporaire (4xx SMTP) - Trop de connexions simultanées
+**Processus** : `qmgr` planifie les retentatives.
+
+**Durée** : Jusqu'à `maximal_queue_lifetime` (5 jours par défaut)
+
+**Raisons courantes de defer** : Serveur destinataire injoignable 
+
+- Timeout de connexion 
+
+- Erreur temporaire (4xx SMTP) 
+
+- Trop de connexions simultanées
 
 **Algorithme de retry** :
 

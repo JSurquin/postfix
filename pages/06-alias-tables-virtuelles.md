@@ -14,10 +14,11 @@ routeAlias: 'alias-tables-virtuelles'
 # Introduction
 
 Les alias et les domaines virtuels permettent de :
-- Rediriger des emails d'une adresse vers une autre
-- Gérer plusieurs domaines sur un seul serveur
-- Créer des adresses "catch-all"
-- Automatiser le traitement des emails
+
+- **Rediriger des emails d'une adresse vers une autre**
+- **Gérer plusieurs domaines sur un seul serveur**
+- **Créer des adresses "catch-all"**
+- **Automatiser le traitement des emails**
 
 ---
 

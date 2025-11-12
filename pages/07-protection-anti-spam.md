@@ -17,8 +17,6 @@ Le spam représente **plus de 50%** du trafic email mondial en 2025 !
 
 Sans protection, votre serveur sera rapidement submergé.
 
----
-
 ## Les types de spam
 
 **Spam publicitaire**
@@ -33,14 +31,11 @@ Sans protection, votre serveur sera rapidement submergé.
 - Vol de données bancaires
 - Fausses factures
 
----
-
 **Malware**
 - Pièces jointes infectées
 - Liens malveillants
 - Ransomware
 
----
 
 **Backscatter**
 - Bounces de spam
@@ -65,8 +60,6 @@ Pensez à un château fort :
 ## DNS Blacklists (RBL)
 
 Les RBL sont des listes d'IPs connues pour envoyer du spam.
-
----
 
 ### 🔍 Comment ça marche ?
 
@@ -202,8 +195,6 @@ sudo systemctl restart postgrey
 sudo systemctl reload postfix
 ```
 
----
-
 ### ⚠️ Inconvénient
 
 Le greylisting retarde **tous** les premiers emails (même légitimes) de 5-10 minutes.
@@ -220,8 +211,6 @@ gmail.com
 microsoft.com
 paypal.com
 ```
-
----
 
 # Couche 2 : Restrictions SMTP
 
@@ -267,8 +256,6 @@ smtpd_helo_restrictions =
     check_helo_access hash:/etc/postfix/helo_access
 ```
 
----
-
 Fichier `/etc/postfix/helo_access` :
 
 ```bash
@@ -285,13 +272,9 @@ sudo postmap /etc/postfix/helo_access
 sudo systemctl reload postfix
 ```
 
----
-
 ## Vérifications Sender
 
 Vérifier que l'expéditeur est valide.
-
----
 
 ### 🚫 Restrictions sender
 
@@ -344,13 +327,9 @@ sudo postmap /etc/postfix/sender_access
 sudo systemctl reload postfix
 ```
 
----
-
 ## Vérifications Recipient
 
 S'assurer que le destinataire est légitime.
-
----
 
 ### 🚫 Restrictions recipient
 
@@ -368,13 +347,9 @@ smtpd_recipient_restrictions =
 
 **CRUCIAL** : `reject_unauth_destination` empêche votre serveur d'être un open relay !
 
----
-
 ## Vérifications Client
 
 Restrictions basées sur l'IP/hostname du client.
-
----
 
 ### 🚫 Restrictions client
 
@@ -406,8 +381,6 @@ trusted.partner.com         OK
 sudo postmap /etc/postfix/client_access
 sudo systemctl reload postfix
 ```
-
----
 
 # Couche 3 : Filtrage basique
 
@@ -455,15 +428,9 @@ spamassassin unix -     n       n       -       -       pipe
 
 **Méthode 2** : Via Amavis (avancé, recommandé pour production)
 
-Nous verrons ça dans le module "Content filters et milters".
-
----
-
 ### 🎯 Entraîner SpamAssassin
 
 SpamAssassin utilise le **Bayesian learning** pour s'améliorer.
-
----
 
 **Entraîner avec du spam** :
 
@@ -471,15 +438,11 @@ SpamAssassin utilise le **Bayesian learning** pour s'améliorer.
 sa-learn --spam /path/to/spam/folder
 ```
 
----
-
 **Entraîner avec du ham (emails légitimes)** :
 
 ```bash
 sa-learn --ham /path/to/ham/folder
 ```
-
----
 
 **Voir les statistiques** :
 
@@ -505,8 +468,6 @@ spamc < email.txt | grep X-Spam-Status
 
 Rspamd est plus rapide et plus moderne que SpamAssassin.
 
----
-
 ### 📦 Installation
 
 ```bash
@@ -516,8 +477,6 @@ sudo apt install rspamd
 # Rocky Linux
 sudo dnf install rspamd
 ```
-
----
 
 ### ⚙️ Configuration basique
 
@@ -536,8 +495,6 @@ Générer le hash :
 rspamadm pw
 ```
 
----
-
 ### 🌐 Interface web
 
 Rspamd fournit une interface web sur `http://serveur:11334`
@@ -547,8 +504,6 @@ Rspamd fournit une interface web sur `http://serveur:11334`
 ### 🔗 Intégration avec Postfix
 
 Via milter (nous verrons ça dans le module dédié).
-
----
 
 # Combinaison des protections
 
@@ -651,8 +606,6 @@ sudo grep 'reject:' /var/log/mail.log | \
   156 Sender
 ```
 
----
-
 ### 📈 Top des IPs rejetées
 
 ```bash
@@ -668,8 +621,6 @@ sudo grep 'reject:' /var/log/mail.log | \
 ```bash
 sudo grep 'reject:' /var/log/mail.log | tail -20
 ```
-
----
 
 ## Affiner les règles
 
@@ -770,13 +721,9 @@ sudo grep 'reject:' /var/log/mail.log | tail -50
 2. Whitelister les domaines/IPs légitimes
 3. Ajuster les paramètres
 
----
-
 ### ❌ Problème : RBL trop lente
 
 **Symptôme** : Postfix timeout lors de connexions
-
----
 
 **Solution** : Réduire le nombre de RBL
 
@@ -884,11 +831,11 @@ spamassassin -t < email.txt
 
 ## Prochaine étape
 
-La protection anti-spam de base est en place ! Maintenant, renforçons l'**authenticité** de vos emails avec **DKIM, SPF et DMARC** ! 🔐
+La protection anti-spam de base est en place ! Maintenant, attaquons les logs !
 
 <div class="pt-12">
   <span @click="next" class="px-2 p-3 rounded cursor-pointer hover:bg-white hover:bg-opacity-10 neon-border">
-    Module suivant : DKIM, SPF et DMARC <carbon:arrow-right class="inline"/>
+    Module suivant : Logs et monitoring <carbon:arrow-right class="inline"/>
   </span>
 </div>
 

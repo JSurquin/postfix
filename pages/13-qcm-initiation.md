@@ -13,7 +13,13 @@ routeAlias: 'qcm-initiation'
 
 # Instructions
 
-**Format** : QCM avec une seule bonne réponse par question - **Durée** : 30 minutes - **Score minimum** : 70% (21/30) - **Consignes** : Lisez attentivement chaque question avant de répondre
+**Format** : QCM avec une seule bonne réponse par question 
+
+- **Durée** : 30 minutes 
+
+- **Score minimum** : 70% (21/30) 
+
+- **Consignes** : Lisez attentivement chaque question avant de répondre
 
 ---
 
@@ -23,7 +29,13 @@ routeAlias: 'qcm-initiation'
 
 Postfix est un :
 
-A) MUA (Mail User Agent) - B) MTA (Mail Transfer Agent) - C) MDA (Mail Delivery Agent) - D) POP3 server
+A) MUA (Mail User Agent) 
+
+B) MTA (Mail Transfer Agent) 
+
+C) MDA (Mail Delivery Agent) 
+
+D) POP3 server
 
 ### ✅ Réponse correcte
 
@@ -676,14 +688,4 @@ Pour chaque erreur, relisez le module correspondant.
 ## Prochaines étapes
 
 Si vous avez validé (≥ 21/30), félicitations ! 🎉
-
-Vous pouvez passer à la formation **Perfectionnement** !
-
----
-
-<div class="pt-12">
-  <span @click="next" class="px-2 p-3 rounded cursor-pointer hover:bg-white hover:bg-opacity-10 neon-border">
-    Formation Perfectionnement <carbon:arrow-right class="inline"/>
-  </span>
-</div>
 

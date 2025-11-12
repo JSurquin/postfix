@@ -1096,11 +1096,11 @@ telnet mail.example.com 25
 
 ## Prochaine étape
 
-Maintenant que vous maîtrisez le `main.cf`, nous allons apprendre à **gérer les files d'attente** !
+Maintenant que vous maîtrisez le `main.cf`, nous allons apprendre à **DKIM, SPF et DMARC** !
 
 <div class="pt-12">
   <span @click="next" class="px-2 p-3 rounded cursor-pointer hover:bg-white hover:bg-opacity-10 neon-border">
-    Module suivant : Gestion des files d'attente <carbon:arrow-right class="inline"/>
+    Module suivant : DKIM, SPF et DMARC <carbon:arrow-right class="inline"/>
   </span>
 </div>
 

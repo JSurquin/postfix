@@ -15,7 +15,7 @@ routeAlias: 'dkim-spf-dmarc'
 
 Sans SPF, DKIM et DMARC, vos emails risquent de :
 - Être marqués comme spam
-- Être rejetés par Gmail, Outlook, etc.
+- Être rejetés par **Gmail, Outlook, etc.**
 - Permettre l'usurpation de votre domaine (spoofing)
 
 En 2025, ces trois standards sont **obligatoires** pour toute infrastructure mail professionnelle.
@@ -54,7 +54,7 @@ SPF est un enregistrement DNS qui liste les serveurs autorisés à envoyer des e
 
 ## Format d'un enregistrement SPF
 
-```
+```bash
 v=spf1 <mécanismes> <qualifiers> <all>
 ```
 
@@ -62,7 +62,7 @@ v=spf1 <mécanismes> <qualifiers> <all>
 
 ### 📋 Exemple simple
 
-```
+```bash
 v=spf1 mx a ip4:203.0.113.10 -all
 ```
 
@@ -82,13 +82,13 @@ Je vous ai mis une capture d'écran de l'enregistrement SPF de mon domaine `jimm
 
 **a** : Autorise l'enregistrement A du domaine
 
-```
+```bash
 v=spf1 a -all
 ```
 
 **mx** : Autorise les serveurs MX du domaine
 
-```
+```bash
 v=spf1 mx -all
 ```
 
@@ -96,19 +96,19 @@ v=spf1 mx -all
 
 **ip4:IP** : Autorise une IP ou plage IPv4
 
-```
+```bash
 v=spf1 ip4:203.0.113.10 ip4:203.0.113.0/24 -all
 ```
 
 **ip6:IP** : Autorise une IP IPv6
 
-```
+```bash
 v=spf1 ip6:2001:db8::1 -all
 ```
 
 **include:domaine** : Inclut le SPF d'un autre domaine
 
-```
+```bash
 v=spf1 include:_spf.google.com -all
 ```
 
@@ -122,7 +122,7 @@ v=spf1 include:_spf.google.com -all
 
 **+** : PASS (autorisé) - défaut
 
-```
+```bash
 v=spf1 +mx -all
 # Équivalent à
 v=spf1 mx -all
@@ -130,19 +130,19 @@ v=spf1 mx -all
 
 **-** : FAIL (rejeté)
 
-```
+```bash
 v=spf1 mx -all
 ```
 
 **~** : SOFTFAIL (suspect mais pas rejeté)
 
-```
+```bash
 v=spf1 mx ~all
 ```
 
 **?** : NEUTRAL (neutre, pas de recommandation)
 
-```
+```bash
 v=spf1 mx ?all
 ```
 
@@ -166,7 +166,7 @@ En 2025, utilisez **-all** si possible !
 
 ### 📋 Étape 2 : Construire l'enregistrement
 
-```
+```bash 
 v=spf1 
   a:mail.example.com 
   ip4:203.0.113.10 
@@ -181,7 +181,7 @@ v=spf1
 
 **Type** : TXT/SPF - **Nom** : `example.com` (ou `@`) - **Valeur** :
 
-```
+```bash
 v=spf1 a mx ip4:203.0.113.10 -all
 ```
 
@@ -213,7 +213,7 @@ Chaque `include:` compte comme un lookup.
 
 **Exemple qui dépasse** :
 
-```
+```bash
 v=spf1 
   include:spf1.example.com 
   include:spf2.example.com 
@@ -470,7 +470,7 @@ sudo cat /etc/opendkim/keys/example.com/mail.txt
 
 **Contenu** :
 
-```
+```bash
 mail._domainkey IN TXT ( "v=DKIM1; h=sha256; k=rsa; "
 "p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA..."
 "..." ) ;  ----- DKIM key mail for example.com
@@ -486,7 +486,7 @@ mail._domainkey IN TXT ( "v=DKIM1; h=sha256; k=rsa; "
 
 **Valeur** :
 
-```
+```bash
 v=DKIM1; h=sha256; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...
 ```
 
@@ -828,7 +828,7 @@ sudo chown opendkim:opendkim /etc/opendkim/keys/jimmylan.fr/mail.private
 
 **OpenDKIM** :
 
-```
+```bash
 # KeyTable
 mail._domainkey.example.com example.com:mail:/etc/opendkim/keys/example.com/mail.private
 mail._domainkey.example.org example.org:mail:/etc/opendkim/keys/example.org/mail.private
@@ -844,7 +844,7 @@ mail._domainkey.example.org example.org:mail:/etc/opendkim/keys/example.org/mail
 
 **DMARC avec politique pour sous-domaines** :
 
-```
+```bash
 v=DMARC1; p=reject; sp=quarantine; rua=mailto:dmarc@example.com
 ```
 
