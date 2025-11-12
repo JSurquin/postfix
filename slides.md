@@ -14,6 +14,11 @@ title: Formation Postfix 2025
 #   timeout: 300000000
 #   pdfOptions:
 #     format: A4
+drawings:
+  enabled: true
+  persist: true
+  presenterOnly: false
+  syncAll: true
 download: "https://postfix.andromed.fr/slides.pdf"
 themeConfig:
   logoHeader: "/avatar.png"
