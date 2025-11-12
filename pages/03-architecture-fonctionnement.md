@@ -224,13 +224,16 @@ Les messages en `deferred` sont retentés selon un algorithme exponentiel : 1èr
 **Processus responsable** : Admin (vous !)  
 **Durée de vie** : Jusqu'à libération manuelle
 
+</small>
+
+---
+
 ### 📂 corrupt
 
 **Contenu** : Messages corrompus  
 **Processus responsable** : Aucun (pour investigation)  
 **Durée de vie** : Jusqu'à suppression manuelle
 
-</small>
 
 ---
 
@@ -385,7 +388,9 @@ ls -la /var/spool/postfix/public/
 # showq
 ```
 
-### 📬 Files système
+#### 📬 Files système
+
+<small>
 
 Messages = fichiers dans les répertoires de queue
 
@@ -396,6 +401,10 @@ Format optimisé pour :
 - Intégrité (pas de corruption en cas de crash)
 
 - Atomicité des opérations
+
+</small>
+
+---
 
 ### 🔒 Locking
 

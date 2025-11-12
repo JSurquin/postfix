@@ -1016,6 +1016,8 @@ sudo systemctl reload postfix
 echo "Test" | mail -s "Test" root
 ```
 
+---
+
 ### 🔐 Sécurité avant performance
 
 Préférez toujours une configuration sécurisée à une configuration ultra-performante mais risquée.

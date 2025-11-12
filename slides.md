@@ -199,14 +199,6 @@ src: './pages/qcm-module-04.md'
 ---
 
 ---
-src: './pages/05-gestion-files-attente.md'
----
-
----
-src: './pages/qcm-module-05.md'
----
-
----
 src: './pages/08-dkim-spf-dmarc.md'
 ---
 
@@ -216,6 +208,14 @@ src: './pages/qcm-module-08.md'
 
 ---
 src: './pages/09-tls-securite.md'
+---
+
+---
+src: './pages/05-gestion-files-attente.md'
+---
+
+---
+src: './pages/qcm-module-05.md'
 ---
 
 ---

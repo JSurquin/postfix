@@ -70,7 +70,7 @@ v=spf1 mx a ip4:203.0.113.10 -all
 
 Je vous ai mis une capture d'écran de l'enregistrement SPF de mon domaine `jimmylan.fr`.
 
-<img src="/ovh1.png" alt="Enregistrement SPF de jimmylan.fr" />
+<img src="/ovh2.png" alt="Enregistrement SPF de jimmylan.fr" />
 
 ---
 
