@@ -91,6 +91,7 @@ routeAlias: 'sommaire-initiation'
 <Link to="exercices-debutant">🎯 TP pratiques (2h)</Link>
 <Link to="troubleshooting-essentiel">🔧 Troubleshooting (1h)</Link>
 <Link to="qcm-validation">✅ QCM final (30min)</Link>
+<Link to="dovecot">🔧 Bonus Dovecot (30min)</Link>
 </div>
 
 ---
@@ -121,6 +122,8 @@ routeAlias: 'programme-intensif'
 - **14h15-16h15** : TP pratiques (2h)
 - **16h30-17h30** : Troubleshooting (1h)
 - **17h30-18h00** : QCM final (30min)
+
+- **18h00-18h30** : Bonus Dovecot (30min)
 
 ---
 
@@ -252,4 +255,12 @@ src: './pages/12-exercices-debutant.md'
 
 ---
 src: './pages/13-qcm-initiation.md'
+---
+
+---
+src: './pages/14-dovecot.md'
+---
+
+---
+src: './pages/qcm-dovecot.md'
 ---

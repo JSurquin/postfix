@@ -599,12 +599,14 @@ sudo grep 'reject:' /var/log/mail.log | \
 
 **Exemple de sortie** :
 
-```
+```bash
  1523 RCPT
   842 HELO
   312 Client
   156 Sender
 ```
+
+---
 
 ### 📈 Top des IPs rejetées
 
