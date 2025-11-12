@@ -71,7 +71,7 @@ Le **master** est le chef d'orchestre. C'est lui qui lance tous les autres proce
 
 Le fichier `/etc/postfix/master.cf` définit tous les services :
 
-```sql
+```bash
 # service type  private unpriv  chroot  wakeup  maxproc command
 smtp      inet  n       -       y       -       -       smtpd
 pickup    unix  n       -       y       60      1       pickup
@@ -83,7 +83,7 @@ qmgr      unix  n       -       n       300     1       qmgr
 
 Décryptons une ligne :
 
-```sql
+```bash
 smtp      inet  n       -       y       -       -       smtpd
 ```
 
@@ -176,6 +176,8 @@ smtp      inet  n       -       y       -       -       smtpd
 
 **Responsabilités** : Résout les adresses (lookup DNS) - Applique les règles de réécriture - Détermine le transport approprié
 
+**Analogie** : C'est le service qui réécrit les adresses, par exemple si vous avez un alias sur votre domaine, Postfix va réécrire l'adresse pour que l'email arrive à la bonne personne.
+
 ---
 
 ## Les files d'attente
@@ -245,9 +247,9 @@ Suivons un email de bout en bout !
    → Process smtpd démarre
 
 2. Dialogue SMTP
-   EHLO client.example.com
-   MAIL FROM:<sender@example.com>
-   RCPT TO:<user@votredomaine.com>
+   EHLO client.jimmylan.fr
+   MAIL FROM:<sender@jimmylan.fr>
+   RCPT TO:<user@jimmylan.fr>
    DATA
    [contenu email]
    .
@@ -387,7 +389,13 @@ ls -la /var/spool/postfix/public/
 
 Messages = fichiers dans les répertoires de queue
 
-Format optimisé pour : Rapidité d'accès - Intégrité (pas de corruption en cas de crash) - Atomicité des opérations
+Format optimisé pour : 
+
+- Rapidité d'accès 
+
+- Intégrité (pas de corruption en cas de crash)
+
+- Atomicité des opérations
 
 ### 🔒 Locking
 
@@ -399,7 +407,7 @@ Postfix utilise des verrous (locks) pour éviter : Les accès concurrents au mê
 
 ### 🎛️ Limites par défaut
 
-```sql
+```bash
 # Nombre max de processus smtpd simultanés
 default_process_limit = 100
 
@@ -414,9 +422,9 @@ qmgr_message_recipient_limit = 20000
 
 ### ⚡ Optimisation des performances
 
-**Connection caching** : Réutilisation des connexions SMTP
+**Connection caching** : Réutilisation des connexions SMTP , permet de gagner du temps de connexion.
 
-```sql
+```bash
 smtp_connection_cache_on_demand = yes
 smtp_connection_cache_destinations = example.com
 ```
@@ -425,7 +433,11 @@ smtp_connection_cache_destinations = example.com
 
 **Lazy binding** : Connexions LDAP/DB à la demande
 
-```sql
+LDAP : Lightweight Directory Access Protocol = protocole de gestion des annuaires LDAP (annuaire des utilisateurs, des groupes, des permissions, etc.)
+
+DB : Database = base de données (base de données des utilisateurs, des groupes, des permissions, etc.)
+
+```bash
 # Pas de connexion permanente
 ldap_cache_size = 0
 ```
@@ -438,17 +450,17 @@ ldap_cache_size = 0
 
 Postfix configuré uniquement pour **envoyer**, pas recevoir :
 
-```sql
+```bash
 inet_interfaces = loopback-only
 mydestination =
-relayhost = [smtp.example.com]
+relayhost = [smtp.jimmylan.fr]
 ```
 
 ---
 
 **Cas d'usage** :
 - Serveur web qui envoie des notifications
-- Application qui ne reçoit jamais d'emails
+- **Application qui ne reçoit jamais d'emails** => le fameux **"Ne répondez pas à cet email"**
 - Machine dans un LAN sans exposition Internet
 
 ---
@@ -457,7 +469,7 @@ relayhost = [smtp.example.com]
 
 Configuration classique, reçoit et envoie :
 
-```sql
+```bash
 inet_interfaces = all
 mydestination = $myhostname, $mydomain, localhost
 mynetworks = 127.0.0.0/8
@@ -469,7 +481,7 @@ mynetworks = 127.0.0.0/8
 
 Relais entre réseaux :
 
-```sql
+```bash
 inet_interfaces = all
 relay_domains = $mydestination, domain1.com, domain2.com
 relayhost = [mail.backend.com]

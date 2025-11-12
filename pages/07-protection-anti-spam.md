@@ -92,7 +92,7 @@ Quand un serveur se connecte à vous :
 
 ### ⚙️ Configuration dans main.cf
 
-```sql
+```bash
 # Vérification RBL
 smtpd_recipient_restrictions = 
     permit_mynetworks,
@@ -127,7 +127,7 @@ Limiter le nombre de connexions par IP pour empêcher le flood.
 
 ### ⚙️ Configuration avec Anvil
 
-```sql
+```bash
 # Limite de connexions simultanées par IP
 smtpd_client_connection_count_limit = 10
 
@@ -142,7 +142,7 @@ anvil_rate_time_unit = 60s
 
 ### 📊 Messages par connexion
 
-```sql
+```bash
 # Limite de messages par connexion
 smtpd_client_message_rate_limit = 100
 ```
@@ -173,7 +173,7 @@ sudo dnf install postgrey
 
 Dans `/etc/postfix/main.cf` :
 
-```sql
+```bash
 smtpd_recipient_restrictions = 
     permit_mynetworks,
     permit_sasl_authenticated,
@@ -235,7 +235,7 @@ Beaucoup de spammeurs ont un HELO invalide ou suspect.
 
 ### 🚫 Rejeter HELO invalides
 
-```sql
+```bash
 smtpd_helo_required = yes
 
 smtpd_helo_restrictions = 
@@ -258,7 +258,7 @@ smtpd_helo_restrictions =
 
 ### 🎭 Rejeter HELO se faisant passer pour vous
 
-```sql
+```bash
 smtpd_helo_restrictions = 
     permit_mynetworks,
     permit_sasl_authenticated,
@@ -271,7 +271,7 @@ smtpd_helo_restrictions =
 
 Fichier `/etc/postfix/helo_access` :
 
-```sql
+```bash
 # Rejeter les serveurs qui prétendent être nous
 mail.example.com    REJECT  You are not me!
 example.com         REJECT  You are not me!
@@ -295,7 +295,7 @@ Vérifier que l'expéditeur est valide.
 
 ### 🚫 Restrictions sender
 
-```sql
+```bash
 smtpd_sender_restrictions = 
     permit_mynetworks,
     permit_sasl_authenticated,
@@ -316,7 +316,7 @@ smtpd_sender_restrictions =
 
 Fichier `/etc/postfix/sender_access` :
 
-```sql
+```bash
 # Blacklist
 spammer@spam.com        REJECT
 @spam-domain.com        REJECT
@@ -328,7 +328,7 @@ trusted@partner.com     OK
 
 ---
 
-```sql
+```bash
 smtpd_sender_restrictions = 
     check_sender_access hash:/etc/postfix/sender_access,
     permit_mynetworks,
@@ -354,7 +354,7 @@ S'assurer que le destinataire est légitime.
 
 ### 🚫 Restrictions recipient
 
-```sql
+```bash
 smtpd_recipient_restrictions = 
     permit_mynetworks,
     permit_sasl_authenticated,
@@ -378,7 +378,7 @@ Restrictions basées sur l'IP/hostname du client.
 
 ### 🚫 Restrictions client
 
-```sql
+```bash
 smtpd_client_restrictions = 
     permit_mynetworks,
     permit_sasl_authenticated,
@@ -390,7 +390,7 @@ smtpd_client_restrictions =
 
 Fichier `/etc/postfix/client_access` :
 
-```sql
+```bash
 # Blacklist IP
 1.2.3.4                     REJECT  Spammer IP
 10.0.0.0/8                  REJECT  Private network
@@ -436,7 +436,7 @@ Les content filters avancés (SpamAssassin, Rspamd) nécessitent une formation d
 
 Dans `/etc/postfix/master.cf`, modifier la ligne `smtp` :
 
-```sql
+```bash
 smtp      inet  n       -       y       -       -       smtpd
   -o content_filter=spamassassin
 ```
@@ -445,7 +445,7 @@ smtp      inet  n       -       y       -       -       smtpd
 
 Ajouter à la fin de `master.cf` :
 
-```sql
+```bash
 spamassassin unix -     n       n       -       -       pipe
   user=spamd argv=/usr/bin/spamc -f -e  
   /usr/sbin/sendmail -oi -f ${sender} ${recipient}
@@ -554,7 +554,7 @@ Via milter (nous verrons ça dans le module dédié).
 
 ## Configuration complète recommandée
 
-```sql
+```bash
 # === RESTRICTIONS CLIENT ===
 smtpd_client_restrictions = 
     permit_mynetworks,
@@ -565,7 +565,7 @@ smtpd_client_restrictions =
 
 ---
 
-```sql
+```bash
 # === RESTRICTIONS HELO ===
 smtpd_helo_required = yes
 smtpd_helo_restrictions = 
@@ -578,7 +578,7 @@ smtpd_helo_restrictions =
 
 ---
 
-```sql
+```bash
 # === RESTRICTIONS SENDER ===
 smtpd_sender_restrictions = 
     permit_mynetworks,
@@ -590,7 +590,7 @@ smtpd_sender_restrictions =
 
 ---
 
-```sql
+```bash
 # === RESTRICTIONS RECIPIENT ===
 smtpd_recipient_restrictions = 
     permit_mynetworks,
@@ -605,7 +605,7 @@ smtpd_recipient_restrictions =
 
 ---
 
-```sql
+```bash
 # === RATE LIMITING ===
 smtpd_client_connection_count_limit = 10
 smtpd_client_connection_rate_limit = 30
@@ -685,7 +685,7 @@ Si des emails légitimes sont rejetés :
 
 **Exemple de whitelist** :
 
-```sql
+```bash
 # /etc/postfix/sender_access
 partenaire-important.com    OK
 
@@ -780,7 +780,7 @@ sudo grep 'reject:' /var/log/mail.log | tail -50
 
 **Solution** : Réduire le nombre de RBL
 
-```sql
+```bash
 # Garder seulement les plus fiables
 smtpd_recipient_restrictions = 
     ...

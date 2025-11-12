@@ -198,7 +198,7 @@ sudo chown root:root /etc/postfix/ssl/*
 
 ## TLS pour les connexions entrantes (SMTPD)
 
-```sql
+```bash
 # Certificats
 smtpd_tls_cert_file = /etc/letsencrypt/live/mail.example.com/fullchain.pem
 smtpd_tls_key_file = /etc/letsencrypt/live/mail.example.com/privkey.pem
@@ -224,7 +224,7 @@ smtpd_tls_security_level = may
 
 ### 🔐 Configuration recommandée pour port 25
 
-```sql
+```bash
 smtpd_tls_security_level = may
 smtpd_tls_auth_only = yes
 smtpd_tls_loglevel = 1
@@ -234,7 +234,7 @@ smtpd_tls_loglevel = 1
 
 ### 🔒 Configuration recommandée pour port 587
 
-```sql
+```bash
 # Port 587 = submission = TLS obligatoire
 smtpd_tls_security_level = encrypt
 smtpd_tls_auth_only = yes
@@ -244,7 +244,7 @@ smtpd_tls_auth_only = yes
 
 ## TLS pour les connexions sortantes (SMTP)
 
-```sql
+```bash
 # Niveau de sécurité
 smtp_tls_security_level = may
 
@@ -259,7 +259,7 @@ smtp_tls_loglevel = 1
 
 ## Versions TLS acceptées
 
-```sql
+```bash
 # TLS 1.2 et 1.3 uniquement (recommandé 2025)
 smtpd_tls_protocols = >=TLSv1.2
 smtp_tls_protocols = >=TLSv1.2
@@ -273,7 +273,7 @@ smtp_tls_protocols = >=TLSv1.3
 
 ## Ciphers (Algorithmes de chiffrement)
 
-```sql
+```bash
 # Ciphers forts uniquement
 smtpd_tls_mandatory_ciphers = high
 
@@ -290,7 +290,7 @@ smtpd_tls_exclude_ciphers =
 
 Pour améliorer les performances, Postfix peut mettre en cache les sessions TLS.
 
-```sql
+```bash
 # Cache côté serveur
 smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
 smtpd_tls_session_cache_timeout = 3600s
@@ -306,7 +306,7 @@ smtp_tls_session_cache_timeout = 3600s
 
 ### 📝 Dans main.cf
 
-```sql
+```bash
 # === TLS GÉNÉRAL ===
 tls_random_source = dev:/dev/urandom
 
@@ -318,7 +318,7 @@ smtpd_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
 
 ---
 
-```sql
+```bash
 smtpd_tls_security_level = may
 smtpd_tls_auth_only = yes
 smtpd_tls_protocols = >=TLSv1.2
@@ -329,7 +329,7 @@ smtpd_tls_exclude_ciphers = aNULL, eNULL, EXPORT, DES, RC4, MD5, PSK, aECDH, EDH
 
 ---
 
-```sql
+```bash
 smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
 smtpd_tls_session_cache_timeout = 3600s
 smtpd_tls_loglevel = 1
@@ -342,7 +342,7 @@ smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
 
 ---
 
-```sql
+```bash
 smtp_tls_protocols = >=TLSv1.2
 smtp_tls_mandatory_protocols = >=TLSv1.2
 smtp_tls_mandatory_ciphers = high
@@ -357,7 +357,7 @@ smtp_tls_loglevel = 1
 
 ### 📝 Dans master.cf
 
-```sql
+```bash
 submission inet n       -       y       -       -       smtpd
   -o syslog_name=postfix/submission
   -o smtpd_tls_security_level=encrypt
@@ -443,7 +443,7 @@ Si vous échangez des emails sensibles avec un partenaire, forcez TLS.
 
 ### 📋 Fichier /etc/postfix/tls_policy
 
-```sql
+```bash
 # Format: domaine niveau
 
 # Forcer TLS pour ce domaine
@@ -460,7 +460,7 @@ old-system.com         none
 
 ### ⚙️ Configuration
 
-```sql
+```bash
 smtp_tls_policy_maps = hash:/etc/postfix/tls_policy
 ```
 
@@ -520,7 +520,7 @@ SASL (Simple Authentication and Security Layer) permet aux clients de s'authenti
 
 ### 🔗 Avec Dovecot (recommandé)
 
-```sql
+```bash
 # Dans main.cf
 smtpd_sasl_type = dovecot
 smtpd_sasl_path = private/auth
@@ -557,7 +557,7 @@ sudo systemctl reload postfix
 
 ## Restrictions d'authentification
 
-```sql
+```bash
 smtpd_recipient_restrictions = 
     permit_mynetworks,
     permit_sasl_authenticated,
@@ -578,7 +578,7 @@ Par défaut, Postfix tourne en chroot pour limiter les dégâts en cas de compro
 
 **Dans** `/etc/postfix/master.cf` :
 
-```sql
+```bash
 # service type  private unpriv  chroot  wakeup  maxproc command
 smtp      inet  n       -       y       -       -       smtpd
 ```
@@ -589,7 +589,7 @@ Le `y` dans la colonne `chroot` active le chroot.
 
 ## Limitations de connexions
 
-```sql
+```bash
 # Limite de connexions simultanées par IP
 smtpd_client_connection_count_limit = 10
 
@@ -605,7 +605,7 @@ smtpd_client_message_rate_limit = 100
 
 ## Désactiver les commandes dangereuses
 
-```sql
+```bash
 # Désactiver VRFY (vérifier si adresse existe)
 disable_vrfy_command = yes
 
@@ -617,7 +617,7 @@ smtpd_etrn_restrictions = reject
 
 ## Masquer les informations système
 
-```sql
+```bash
 # Ne pas révéler la version
 smtpd_banner = $myhostname ESMTP
 

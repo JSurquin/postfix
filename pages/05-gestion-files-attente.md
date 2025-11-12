@@ -419,7 +419,7 @@ done
 
 **Taille de la queue active** :
 
-```sql
+```bash
 # Par défaut 20000
 qmgr_message_active_limit = 20000
 
@@ -431,7 +431,7 @@ qmgr_message_active_limit = 50000
 
 **Nombre de destinataires actifs** :
 
-```sql
+```bash
 # Par défaut 20000
 qmgr_message_recipient_limit = 20000
 ```
@@ -440,7 +440,7 @@ qmgr_message_recipient_limit = 20000
 
 **Fréquence de scan de la queue** :
 
-```sql
+```bash
 # Par défaut toutes les 5 minutes
 queue_run_delay = 300s
 
@@ -452,7 +452,7 @@ queue_run_delay = 60s
 
 **Backoff times (délais de retry)** :
 
-```sql
+```bash
 # Minimum 5 minutes
 minimal_backoff_time = 300s
 
@@ -464,7 +464,7 @@ maximal_backoff_time = 4000s
 
 **Durée de vie maximum** :
 
-```sql
+```bash
 # Messages normaux : 5 jours
 maximal_queue_lifetime = 5d
 
@@ -476,7 +476,7 @@ bounce_queue_lifetime = 5d
 
 **Avertissement de délai** :
 
-```sql
+```bash
 # Prévenir l'expéditeur après 4h
 delay_warning_time = 4h
 
@@ -688,7 +688,7 @@ qshape deferred | head -n 11
 
 Si vous envoyez des milliers d'emails par heure :
 
-```sql
+```bash
 # Augmenter la queue active
 qmgr_message_active_limit = 50000
 
@@ -701,7 +701,7 @@ smtp_destination_concurrency_limit = 50
 
 ---
 
-```sql
+```bash
 # Traiter la queue plus souvent
 queue_run_delay = 60s
 
@@ -715,7 +715,7 @@ default_process_limit = 500
 
 Si vous avez peu de ressources :
 
-```sql
+```bash
 # Queue active réduite
 qmgr_message_active_limit = 5000
 
@@ -774,7 +774,7 @@ sudo postsuper -h QUEUE_ID
 
 **Solution** :
 
-```sql
+```bash
 # Réduire queue_run_delay
 queue_run_delay = 60s
 ```

@@ -186,7 +186,7 @@ sudo nano /etc/aliases
 
 ---
 
-```sql
+```bash
 # Contenu de /etc/aliases
 
 # Alias simple
@@ -250,7 +250,7 @@ sudo nano /etc/postfix/virtual
 
 ---
 
-```sql
+```bash
 # Contenu de /etc/postfix/virtual
 
 # Règles spécifiques
@@ -314,7 +314,7 @@ Mettre en place des protections anti-spam de base.
 
 ## 💡 Solution
 
-```sql
+```bash
 # Dans /etc/postfix/main.cf
 
 # Restrictions HELO
@@ -327,7 +327,7 @@ smtpd_helo_restrictions =
 
 ---
 
-```sql
+```bash
 # Restrictions sender
 smtpd_sender_restrictions = 
     permit_mynetworks,

@@ -42,7 +42,7 @@ Les logs sont votre **meilleur ami** pour :
 
 Postfix peut logger directement dans son propre fichier :
 
-```sql
+```bash
 # Dans main.cf
 maillog_file = /var/log/postfix.log
 ```
@@ -494,7 +494,7 @@ sudo logrotate -f /etc/logrotate.d/postfix
 
 ## Activer le mode verbose
 
-```sql
+```bash
 # Dans main.cf
 debug_peer_list = example.com, 1.2.3.4
 debug_peer_level = 2

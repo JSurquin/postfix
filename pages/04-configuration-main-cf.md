@@ -23,7 +23,7 @@ Le fichier `/etc/postfix/main.cf` est le **cerveau** de Postfix. C'est là que t
 
 Très simple :
 
-```sql
+```bash
 # Commentaire
 paramètre = valeur
 
@@ -39,7 +39,7 @@ paramètre = valeur1,
 
 **Commentaires** : `# texte` - **Continuation** : indentation ou backslash - **Variables** : `$mydomain` - **Listes** : virgules ou espaces
 
-```sql
+```bash
 # Commentaire
 myhostname = mail.example.com  # Commentaire fin de ligne
 
@@ -79,7 +79,7 @@ sudo systemctl reload postfix
 
 Le nom complet de votre serveur (FQDN - Fully Qualified Domain Name)
 
-```sql
+```bash
 myhostname = mail.example.com
 ```
 
@@ -91,7 +91,7 @@ myhostname = mail.example.com
 
 Le nom de votre domaine
 
-```sql
+```bash
 mydomain = example.com
 ```
 
@@ -108,7 +108,7 @@ myhostname = mail.example.com
 
 Le domaine qui apparaît dans le champ `From:` des emails locaux
 
-```sql
+```bash
 myorigin = $mydomain
 ```
 
@@ -122,7 +122,7 @@ myorigin = $mydomain
 
 Interfaces réseau sur lesquelles Postfix écoute
 
-```sql
+```bash
 # Écouter partout (défaut pour serveur mail)
 inet_interfaces = all
 
@@ -141,7 +141,7 @@ inet_interfaces = 192.168.1.10, 127.0.0.1
 
 Protocoles IP supportés
 
-```sql
+```bash
 # IPv4 et IPv6 (défaut)
 inet_protocols = all
 
@@ -160,7 +160,7 @@ En 2025, `all` est recommandé, mais si vous n'avez pas d'IPv6 configuré, mette
 
 Adresses IP externes (si derrière un NAT/proxy)
 
-```sql
+```bash
 # Si votre serveur est en 192.168.1.10 mais exposé en 203.0.113.10
 proxy_interfaces = 203.0.113.10
 ```
@@ -175,13 +175,13 @@ Postfix considère ces adresses comme "locales" même si elles ne sont pas direc
 
 Domaines pour lesquels Postfix accepte les emails comme destination finale
 
-```sql
+```bash
 mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain
 ```
 
 **Exemples** :
 
-```sql
+```bash
 # Serveur mail classique
 mydestination = mail.example.com, example.com, localhost
 
@@ -202,7 +202,7 @@ mydestination = example.com, example.org, localhost
 
 Domaines pour lesquels Postfix accepte de relayer les emails
 
-```sql
+```bash
 # Pas de relais (défaut)
 relay_domains =
 
@@ -212,7 +212,7 @@ relay_domains = subsidiary.example.com, partner.com
 
 **Important** : Attention aux open relays !
 
-```sql
+```bash
 # ❌ NE JAMAIS FAIRE ÇA
 relay_domains = *
 ```
@@ -225,7 +225,7 @@ Votre serveur deviendrait un relais ouvert, utilisable par tous les spammeurs du
 
 Réseaux autorisés à envoyer des emails sans authentification
 
-```sql
+```bash
 # Seulement localhost (recommandé)
 mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
 
@@ -238,7 +238,7 @@ mynetworks_style = subnet
 
 **Méthode de détection** :
 
-```sql
+```bash
 # host : Seulement la machine locale
 mynetworks_style = host
 
@@ -257,7 +257,7 @@ mynetworks_style = class
 
 Serveur SMTP à utiliser pour envoyer tous les emails sortants
 
-```sql
+```bash
 # Pas de relais (envoi direct)
 relayhost =
 
@@ -284,7 +284,7 @@ Avec crochets : `relayhost = [smtp.example.com]` → Postfix se connecte directe
 
 Format de stockage des emails locaux
 
-```sql
+```bash
 # Format Maildir (un fichier par email)
 home_mailbox = Maildir/
 
@@ -298,7 +298,7 @@ home_mailbox = mail/
 
 Répertoire des mailbox système (format mbox)
 
-```sql
+```bash
 mail_spool_directory = /var/mail
 ```
 
@@ -310,7 +310,7 @@ Si vous utilisez Maildir, ce paramètre est ignoré.
 
 Taille maximum d'un message (headers + body)
 
-```sql
+```bash
 # 50 MB (défaut : 10 MB)
 message_size_limit = 52428800
 
@@ -324,7 +324,7 @@ message_size_limit = 0
 
 Taille maximum d'une mailbox (format mbox uniquement)
 
-```sql
+```bash
 # Illimité (pour Maildir)
 mailbox_size_limit = 0
 
@@ -342,7 +342,7 @@ Avec Maildir, ce paramètre n'a pas de sens (chaque email est un fichier sépar�
 
 Message affiché lors de la connexion SMTP
 
-```sql
+```bash
 # Par défaut (révèle la version)
 smtpd_banner = $myhostname ESMTP $mail_name (Ubuntu)
 
@@ -366,7 +366,7 @@ smtpd_banner = $myhostname ESMTP - No spam please
 
 Délai avant d'envoyer un avertissement à l'expéditeur si l'email n'est pas encore délivré
 
-```sql
+```bash
 # Avertissement après 4 heures (défaut)
 delay_warning_time = 4h
 
@@ -378,7 +378,7 @@ delay_warning_time = 0h
 
 Durée maximum qu'un message peut rester en file d'attente
 
-```sql
+```bash
 # 5 jours (défaut)
 maximal_queue_lifetime = 5d
 
@@ -394,7 +394,7 @@ Après ce délai, un email de bounce est envoyé à l'expéditeur et le message 
 
 Durée maximum pour les messages de bounce
 
-```sql
+```bash
 # 5 jours (défaut)
 bounce_queue_lifetime = 5d
 
@@ -410,7 +410,7 @@ bounce_queue_lifetime = 1d
 
 Restrictions sur les destinataires (qui peut recevoir des emails)
 
-```sql
+```bash
 smtpd_recipient_restrictions = 
     permit_mynetworks,
     permit_sasl_authenticated,
@@ -444,7 +444,7 @@ Sans cette règle, votre serveur devient un open relay.
 
 Restrictions sur les expéditeurs
 
-```sql
+```bash
 smtpd_sender_restrictions = 
     permit_mynetworks,
     permit_sasl_authenticated,
@@ -458,7 +458,7 @@ smtpd_sender_restrictions =
 
 Restrictions sur la commande HELO/EHLO
 
-```sql
+```bash
 smtpd_helo_restrictions = 
     permit_mynetworks,
     reject_invalid_helo_hostname,
@@ -486,7 +486,7 @@ Ces règles les bloquent !
 
 Restrictions sur les clients qui se connectent
 
-```sql
+```bash
 smtpd_client_restrictions = 
     permit_mynetworks,
     reject_unknown_client_hostname,
@@ -501,7 +501,7 @@ smtpd_client_restrictions =
 
 Activer l'authentification SASL pour l'envoi d'emails
 
-```sql
+```bash
 smtpd_sasl_auth_enable = yes
 ```
 
@@ -515,7 +515,7 @@ Permet aux clients d'envoyer des emails après authentification (username + pass
 
 Type de mécanisme SASL
 
-```sql
+```bash
 # SASL basique (pour cette formation)
 # smtpd_sasl_type = cyrus
 # smtpd_sasl_path = smtpd
@@ -530,7 +530,7 @@ smtpd_sasl_type = cyrus
 
 Options de sécurité SASL
 
-```sql
+```bash
 # Désactiver les méthodes anonymes
 smtpd_sasl_security_options = noanonymous
 
@@ -544,7 +544,7 @@ smtpd_sasl_tls_security_options = noanonymous
 
 Domaine SASL local
 
-```sql
+```bash
 smtpd_sasl_local_domain = $mydomain
 ```
 
@@ -554,7 +554,7 @@ smtpd_sasl_local_domain = $mydomain
 
 Chemin vers le certificat SSL
 
-```sql
+```bash
 smtpd_tls_cert_file = /etc/letsencrypt/live/mail.example.com/fullchain.pem
 ```
 
@@ -564,7 +564,7 @@ smtpd_tls_cert_file = /etc/letsencrypt/live/mail.example.com/fullchain.pem
 
 Chemin vers la clé privée SSL
 
-```sql
+```bash
 smtpd_tls_key_file = /etc/letsencrypt/live/mail.example.com/privkey.pem
 ```
 
@@ -572,7 +572,7 @@ smtpd_tls_key_file = /etc/letsencrypt/live/mail.example.com/privkey.pem
 
 Niveau de sécurité TLS pour les connexions entrantes
 
-```sql
+```bash
 # Pas de TLS (déconseillé)
 smtpd_tls_security_level = none
 
@@ -594,7 +594,7 @@ En 2025, utilisez au minimum `may`, idéalement `encrypt` pour le port 587.
 
 Niveau de sécurité TLS pour les connexions sortantes
 
-```sql
+```bash
 # TLS si le serveur distant le supporte
 smtp_tls_security_level = may
 
@@ -608,7 +608,7 @@ smtp_tls_security_level = encrypt
 
 Versions de TLS acceptées
 
-```sql
+```bash
 # TLS 1.2 et 1.3 uniquement (recommandé en 2025)
 smtpd_tls_protocols = >=TLSv1.2
 
@@ -624,7 +624,7 @@ smtpd_tls_protocols = >=TLSv1.3
 
 Niveau de logging TLS
 
-```sql
+```bash
 # Minimal (défaut)
 smtpd_tls_loglevel = 0
 
@@ -643,7 +643,7 @@ smtpd_tls_loglevel = 2
 
 Fréquence de traitement de la file d'attente
 
-```sql
+```bash
 # Toutes les 5 minutes (défaut)
 queue_run_delay = 300s
 
@@ -657,7 +657,7 @@ queue_run_delay = 60s
 
 Délai minimum avant de retenter l'envoi
 
-```sql
+```bash
 # 5 minutes (défaut)
 minimal_backoff_time = 300s
 
@@ -671,7 +671,7 @@ minimal_backoff_time = 60s
 
 Délai maximum entre deux tentatives
 
-```sql
+```bash
 # 4000 secondes (défaut)
 maximal_backoff_time = 4000s
 
@@ -703,7 +703,7 @@ Jusqu'à maximal_backoff_time
 
 Nombre maximum de processus Postfix simultanés
 
-```sql
+```bash
 # 100 (défaut)
 default_process_limit = 100
 
@@ -717,7 +717,7 @@ default_process_limit = 500
 
 Nombre maximum de messages actifs dans la queue
 
-```sql
+```bash
 # 20000 (défaut)
 qmgr_message_active_limit = 20000
 
@@ -731,7 +731,7 @@ qmgr_message_active_limit = 50000
 
 Nombre de connexions simultanées vers une même destination
 
-```sql
+```bash
 # 20 (défaut)
 smtp_destination_concurrency_limit = 20
 
@@ -745,7 +745,7 @@ smtp_destination_concurrency_limit = 50
 
 Délai entre deux emails vers la même destination
 
-```sql
+```bash
 # Pas de délai (défaut)
 smtp_destination_rate_delay = 0s
 
@@ -763,7 +763,7 @@ smtp_destination_rate_delay = 1s
 
 Fichier de log personnalisé (Postfix 3.4+)
 
-```sql
+```bash
 # Utiliser syslog (défaut)
 maillog_file = 
 
@@ -777,7 +777,7 @@ maillog_file = /var/log/postfix.log
 
 Liste d'hôtes pour lesquels activer le debug
 
-```sql
+```bash
 # Activer debug pour example.com
 debug_peer_list = example.com, 203.0.113.10
 ```
@@ -786,7 +786,7 @@ debug_peer_list = example.com, 203.0.113.10
 
 Niveau de debug
 
-```sql
+```bash
 debug_peer_level = 2
 ```
 
@@ -796,7 +796,7 @@ debug_peer_level = 2
 
 Postfix fournit des variables que vous pouvez utiliser :
 
-```sql
+```bash
 $myhostname       # Nom du serveur
 $mydomain         # Domaine
 $myorigin         # Domaine d'origine
@@ -808,7 +808,7 @@ $mail_version     # 3.8.4
 
 **Exemple d'utilisation** :
 
-```sql
+```bash
 smtpd_banner = $myhostname ESMTP $mail_name
 # Devient : mail.example.com ESMTP Postfix
 ```
@@ -819,7 +819,7 @@ smtpd_banner = $myhostname ESMTP $mail_name
 
 Voici un exemple de configuration complète et sécurisée pour 2025 :
 
-```sql
+```bash
 # === IDENTITÉ ===
 myhostname = mail.example.com
 mydomain = example.com
@@ -832,7 +832,7 @@ inet_protocols = ipv4
 
 ---
 
-```sql
+```bash
 # === DESTINATIONS ===
 mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain
 mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
@@ -846,7 +846,7 @@ mailbox_size_limit = 0
 
 ---
 
-```sql
+```bash
 # === SÉCURITÉ ===
 smtpd_banner = $myhostname ESMTP
 disable_vrfy_command = yes
@@ -864,7 +864,7 @@ smtpd_recipient_restrictions =
 
 ---
 
-```sql
+```bash
 smtpd_helo_restrictions = 
     permit_mynetworks,
     reject_invalid_helo_hostname,
@@ -879,7 +879,7 @@ smtpd_sender_restrictions =
 
 ---
 
-```sql
+```bash
 # === TLS ===
 smtpd_tls_cert_file = /etc/letsencrypt/live/mail.example.com/fullchain.pem
 smtpd_tls_key_file = /etc/letsencrypt/live/mail.example.com/privkey.pem
@@ -891,7 +891,7 @@ smtp_tls_protocols = >=TLSv1.2
 
 ---
 
-```sql
+```bash
 # === SASL ===
 smtpd_sasl_auth_enable = yes
 smtpd_sasl_type = cyrus
@@ -901,7 +901,7 @@ smtpd_sasl_security_options = noanonymous
 
 ---
 
-```sql
+```bash
 # === PERFORMANCE ===
 default_process_limit = 100
 qmgr_message_active_limit = 20000
@@ -978,7 +978,7 @@ man 5 postconf
 
 ### 💡 Commentez votre configuration
 
-```sql
+```bash
 # === CONFIGURATION RÉSEAU ===
 # Écoute sur toutes les interfaces pour accepter les emails de l'extérieur
 inet_interfaces = all
@@ -1020,7 +1020,7 @@ echo "Test" | mail -s "Test" root
 
 Préférez toujours une configuration sécurisée à une configuration ultra-performante mais risquée.
 
-```sql
+```bash
 # ❌ Rapide mais dangereux
 mynetworks = 0.0.0.0/0
 
@@ -1031,7 +1031,7 @@ smtpd_sasl_auth_enable = yes
 
 ### 📊 Loggez suffisamment
 
-```sql
+```bash
 # Trop peu de logs = impossible de débugger
 smtpd_tls_loglevel = 0
 

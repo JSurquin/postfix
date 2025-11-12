@@ -435,7 +435,7 @@ sudo systemctl status opendkim
 
 ### ⚙️ Configuration dans main.cf
 
-```sql
+```bash
 # DKIM signing via OpenDKIM
 smtpd_milters = inet:localhost:8891
 non_smtpd_milters = inet:localhost:8891

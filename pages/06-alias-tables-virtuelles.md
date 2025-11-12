@@ -43,7 +43,7 @@ Le fichier `/etc/aliases` gère les redirections des comptes système.
 
 ### 📝 Format du fichier
 
-```sql
+```bash
 # Commentaire
 alias: destination
 
@@ -55,7 +55,7 @@ root: admin@example.com
 
 ### 🔍 Structure
 
-```sql
+```bash
 # Alias simple (vers un utilisateur local)
 admin: john
 
@@ -68,7 +68,7 @@ support: john, jane, admin@example.com
 
 ---
 
-```sql
+```bash
 # Alias vers un fichier
 logs: /var/log/mail-archive.txt
 
@@ -118,7 +118,7 @@ echo "Test alias" | mail -s "Test" postmaster
 
 ### 📧 Rediriger les comptes système
 
-```sql
+```bash
 # Tous les emails système vers l'admin
 postmaster: admin@example.com
 webmaster: admin@example.com
@@ -132,7 +132,7 @@ root: admin@example.com
 
 ### 👥 Liste de diffusion simple
 
-```sql
+```bash
 # Créer un fichier /etc/postfix/team-dev.txt
 # Contenu :
 #   john@example.com
@@ -145,7 +145,7 @@ dev-team: :include:/etc/postfix/team-dev.txt
 
 ### 📬 Alias avec plusieurs destinations
 
-```sql
+```bash
 # Envoyer à plusieurs personnes
 support: john@example.com, jane@example.com, support-archive
 
@@ -155,7 +155,7 @@ support-archive: /var/mail/support-archive.txt
 
 ### 🔧 Alias vers un programme
 
-```sql
+```bash
 # Traiter automatiquement les emails
 tickets: "|/usr/local/bin/ticket-system.sh"
 ```
@@ -186,7 +186,7 @@ sudo chmod +x /usr/local/bin/ticket-system.sh
 
 ## Configuration dans main.cf
 
-```sql
+```bash
 # Chemin vers le fichier aliases
 alias_maps = hash:/etc/aliases
 
@@ -222,7 +222,7 @@ Boîtes mail virtuelles stockées sur le serveur
 
 ### 📝 Fichier /etc/postfix/virtual
 
-```sql
+```bash
 # Format :
 # adresse@virtuelle  destination
 
@@ -235,7 +235,7 @@ info@domain2.com           support@example.com
 
 ### 🌐 Catch-all
 
-```sql
+```bash
 # Tout email vers domain1.com va vers john@example.com
 @domain1.com               john@example.com
 
@@ -262,7 +262,7 @@ Cela crée `/etc/postfix/virtual.db`
 
 ### ⚙️ Configuration dans main.cf
 
-```sql
+```bash
 # Déclarer les domaines virtuels
 virtual_alias_domains = domain1.com, domain2.com
 
@@ -274,7 +274,7 @@ virtual_alias_maps = hash:/etc/postfix/virtual
 
 **Ou lire les domaines depuis le fichier virtual** :
 
-```sql
+```bash
 # Postfix déduit automatiquement les domaines
 virtual_alias_maps = hash:/etc/postfix/virtual
 ```
@@ -295,7 +295,7 @@ Pour stocker réellement les emails des domaines virtuels.
 
 ### 📝 Fichier /etc/postfix/vmailbox
 
-```sql
+```bash
 # Format :
 # adresse@virtuelle  chemin/vers/mailbox
 
@@ -336,7 +336,7 @@ sudo chown -R vmail:vmail /var/mail/vhosts
 
 ### ⚙️ Configuration dans main.cf
 
-```sql
+```bash
 # Domaines virtuels avec mailbox
 virtual_mailbox_domains = domain1.com, domain2.com
 
@@ -349,7 +349,7 @@ virtual_mailbox_base = /var/mail/vhosts
 
 ---
 
-```sql
+```bash
 # Utilisateur et groupe
 virtual_uid_maps = static:5000
 virtual_gid_maps = static:5000
@@ -393,7 +393,7 @@ Réécrire les adresses avant traitement.
 
 ### 📝 Fichier /etc/postfix/canonical
 
-```sql
+```bash
 # Format :
 # pattern  résultat
 
@@ -410,19 +410,19 @@ john@localhost            john@example.com
 
 **sender_canonical_maps** : Réécrire l'expéditeur
 
-```sql
+```bash
 sender_canonical_maps = hash:/etc/postfix/sender_canonical
 ```
 
 **recipient_canonical_maps** : Réécrire le destinataire
 
-```sql
+```bash
 recipient_canonical_maps = hash:/etc/postfix/recipient_canonical
 ```
 
 **canonical_maps** : Réécrire les deux
 
-```sql
+```bash
 canonical_maps = hash:/etc/postfix/canonical
 ```
 
@@ -443,7 +443,7 @@ Informer que l'adresse a changé.
 
 ### 📝 Fichier /etc/postfix/relocated
 
-```sql
+```bash
 # Format :
 # ancienne@adresse  nouvelle@adresse
 
@@ -455,7 +455,7 @@ sales@oldcompany.com    contact@newcompany.com
 
 ### ⚙️ Configuration
 
-```sql
+```bash
 relocated_maps = hash:/etc/postfix/relocated
 ```
 
@@ -479,7 +479,7 @@ Définir comment et où livrer les emails.
 
 ### 📝 Fichier /etc/postfix/transport
 
-```sql
+```bash
 # Format :
 # domaine  transport:nexthop
 
@@ -497,7 +497,7 @@ domain3.com       relay:[relay.domain3.com]:587
 
 ### ⚙️ Configuration
 
-```sql
+```bash
 transport_maps = hash:/etc/postfix/transport
 ```
 
@@ -516,7 +516,7 @@ sudo systemctl reload postfix
 
 **Exemple** :
 
-```sql
+```bash
 # /etc/aliases
 postmaster: root
 
@@ -537,7 +537,7 @@ Email à `postmaster@example.com` :
 
 ### 🏢 Entreprise multi-domaines
 
-```sql
+```bash
 # /etc/postfix/virtual
 
 # Domaine principal : example.com
@@ -553,7 +553,7 @@ info@example.com          reception
 
 ### 📧 Adresses temporaires
 
-```sql
+```bash
 # Créer des adresses jetables
 promo2025@example.com     marketing@example.com
 event-dec@example.com     events@example.com
@@ -565,7 +565,7 @@ event-dec@example.com     events@example.com
 
 ### 🎭 Alias personnels
 
-```sql
+```bash
 # Noms sympathiques
 jimmy@example.com         j.surquin@example.com
 bob@example.com           robert.martin@example.com
@@ -575,7 +575,7 @@ bob@example.com           robert.martin@example.com
 
 ### 📮 Départements
 
-```sql
+```bash
 # Un alias vers toute une équipe
 dev@example.com           :include:/etc/postfix/lists/dev-team.txt
 marketing@example.com     :include:/etc/postfix/lists/marketing-team.txt
@@ -596,7 +596,7 @@ alice@example.com
 
 ### 🔄 Migration de domaine
 
-```sql
+```bash
 # Ancien domaine redirige vers nouveau
 @oldcompany.com           $1@newcompany.com
 
@@ -752,7 +752,7 @@ sudo chown root:root /etc/postfix/virtual
 
 ### ❌ Problème : Boucle infinie
 
-```sql
+```bash
 # ❌ NE PAS FAIRE
 john@example.com    jane@example.com
 jane@example.com    john@example.com
@@ -772,14 +772,14 @@ mail for john@example.com loops back to myself
 
 ### ❌ Problème : Catch-all trop permissif
 
-```sql
+```bash
 # ❌ Attrape TOUS les emails !
 @   catchall@example.com
 ```
 
 Solution : Soyez spécifique
 
-```sql
+```bash
 @domain1.com    catchall@example.com
 ```
 
@@ -801,7 +801,7 @@ Solution : Soyez spécifique
 
 **Dans main.cf** :
 
-```sql
+```bash
 virtual_alias_maps = 
     hash:/etc/postfix/virtual-aliases,
     hash:/etc/postfix/virtual-users
@@ -813,7 +813,7 @@ virtual_alias_maps =
 
 **Commentez vos fichiers** :
 
-```sql
+```bash
 # === Domaine principal ===
 contact@example.com       support@example.com
 
@@ -830,7 +830,7 @@ info@abccorp.com          abccorp-support@example.com
 
 Les catch-all attirent le spam !
 
-```sql
+```bash
 # ✅ Bon : spécifique
 contact@domain.com    support@example.com
 
@@ -924,7 +924,7 @@ sudo systemctl reload postfix
 
 ### 💡 Configuration main.cf
 
-```sql
+```bash
 # Alias locaux
 alias_maps = hash:/etc/aliases
 

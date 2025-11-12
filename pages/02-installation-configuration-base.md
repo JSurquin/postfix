@@ -125,16 +125,15 @@ Le PTR fait le lien inverse : IP → nom de domaine. Sans PTR correct, vos email
 
 ---
 
-Capture d'écran de la configuration DNS chez le FAI :
-
 <img src="/ovh2.png" alt="Configuration DNS chez le FAI"
-width='300px'
-height='auto'/>
+class="mx-auto -mt-12"
+height='auto'
+/>
 
-Capture d'écran de la configuration DNS chez OVH :
+---
 
 <img src="/ovh1.png" alt="Configuration DNS chez OVH"
-width='300px'
+class="mx-auto -mt-12"
 height='auto'/>
 
 ---
@@ -143,10 +142,10 @@ height='auto'/>
 
 ```bash
 # Vérifier l'enregistrement MX
-dig example.com MX +short
+dig jimmylan.fr MX +short
 
 # Vérifier l'enregistrement A
-dig mail.example.com A +short
+dig mail.jimmylan.fr A +short
 
 # Vérifier le PTR (reverse DNS)
 dig -x 203.0.113.10 +short
@@ -191,6 +190,8 @@ Pendant l'installation, un assistant graphique apparaît :
 > Il se peut que vous ne voyez pas cette étape, car Postfix est déjà installé sur votre système ou en fonction de la version il ne le propose pas, pas d'inquiétude.
 
 2. **Nom du système de messagerie** : Entrez votre domaine (jimmylan.fr)
+
+---
 
 ### 📦 Installation sur Rocky Linux
 
@@ -258,7 +259,7 @@ sudo nano /etc/postfix/main.cf
 
 ### 🔧 Paramètres essentiels
 
-```sql
+```bash
 # Identité du serveur
 myhostname = mail.example.com
 mydomain = example.com
@@ -274,9 +275,19 @@ mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain
 mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
 ```
 
+---
+
+### 🔍 Qu'est ce qu'un relayhost ?
+
+**Un relayhost est un serveur SMTP qui permet de relayer les emails vers un autre serveur SMTP.**
+
+En gros, c'est un serveur SMTP qui permet de relayer les emails vers un autre serveur SMTP, par exemple si vous avez un serveur mail chez votre FAI et que vous voulez envoyer des emails vers un autre serveur mail, vous pouvez configurer le relayhost pour que Postfix relaye les emails vers le serveur mail de votre FAI.
+
+On ne va pas trop s'attarder dessus dans cette formation, mais il faut savoir que c'est une bonne option dans certains cas. 
+
 **relayhost** : Serveur SMTP relais (optionnel)
 
-```sql
+```bash
 # Pas de relais (envoi direct)
 relayhost =
 
@@ -290,7 +301,7 @@ relayhost = [smtp.example.com]:587
 
 **home_mailbox** : Format de stockage des emails
 
-```sql
+```bash
 # Format Maildir (recommandé)
 home_mailbox = Maildir/
 
@@ -302,11 +313,11 @@ Maildir vs mbox ?
 - **Maildir** : Un fichier par email, plus sûr, plus rapide
 - **mbox** : Tous les emails dans un seul fichier, risque de corruption
 
-> En clair : vous allez voir un dossier MailDir par utilisateur. exemple : mon user john doe aura son dossier MailDir dans /home/john/Maildir.
+> Concrètement, chaque utilisateur disposera d'un répertoire Maildir dédié, par exemple : `/home/john/Maildir` pour l'utilisateur 'john'.
 
 **smtpd_banner** : Bannière SMTP (ne pas révéler trop d'infos)
 
-```sql
+```bash
 # Par défaut (affiche la version)
 smtpd_banner = $myhostname ESMTP $mail_name (Ubuntu)
 
@@ -318,10 +329,10 @@ smtpd_banner = $myhostname ESMTP
 
 ### 📋 Exemple de configuration minimale
 
-```sql
+```bash
 # Nom du serveur
-myhostname = mail.example.com
-mydomain = example.com
+myhostname = mail.jimmylan.fr
+mydomain = jimmylan.fr
 myorigin = $mydomain
 
 # Interfaces réseau
@@ -464,7 +475,7 @@ sudo nano /etc/aliases
 
 Contenu typique :
 
-```sql
+```bash
 # Redirection des comptes systèmes
 postmaster: root
 webmaster: root
@@ -513,7 +524,7 @@ sudo tail -f /var/log/maillog
 
 ```bash
 # Rechercher tous les logs d'un email spécifique
-sudo grep "user@example.com" /var/log/mail.log
+sudo grep "test@jimmylan.fr" /var/log/mail.log
 
 # Voir les erreurs uniquement
 sudo grep "error\|warning" /var/log/mail.log
@@ -541,7 +552,7 @@ Même pour une configuration de base, quelques mesures de sécurité s'imposent.
 
 ### 🚫 Désactiver les commandes dangereuses
 
-```sql
+```bash
 # Dans main.cf
 disable_vrfy_command = yes
 ```
@@ -550,7 +561,7 @@ La commande VRFY permet de vérifier si une adresse email existe. Les spammeurs 
 
 ### 📏 Limiter la taille des messages
 
-```sql
+```bash
 # Limite à 50 MB
 message_size_limit = 52428800
 
@@ -560,7 +571,7 @@ mailbox_size_limit = 0
 
 ### ⏱️ Limites de temps
 
-```sql
+```bash
 # Timeout de connexion SMTP
 smtpd_timeout = 300s
 
@@ -572,7 +583,7 @@ smtp_helo_timeout = 60s
 
 ### 🔒 Restrictions de base
 
-```sql
+```bash
 # Rejeter les connexions trop précoces
 smtpd_client_restrictions =
     permit_mynetworks,
@@ -604,8 +615,8 @@ RUN apt-get update && \
     && apt-get clean
 
 # Configuration minimale
-RUN postconf -e "myhostname=mail.example.com" && \
-    postconf -e "mydomain=example.com" && \
+RUN postconf -e "myhostname=mail.jimmylan.fr" && \
+    postconf -e "mydomain=jimmylan.fr" && \
     postconf -e "myorigin=\$mydomain" && \
     postconf -e "inet_interfaces=all" && \
     postconf -e "mydestination=\$myhostname, localhost.\$mydomain, localhost, \$mydomain"
@@ -646,20 +657,20 @@ services:
   postfix:
     image: ubuntu:24.04
     container_name: postfix
-    hostname: mail.example.com
+    hostname: mail.jimmylan.fr
     ports:
       - "2525:25"
     volumes:
       - ./postfix-data:/var/spool/postfix
       - ./postfix-config:/etc/postfix
     environment:
-      - POSTFIX_HOSTNAME=mail.example.com
+      - POSTFIX_HOSTNAME=mail.jimmylan.fr
       - POSTFIX_DOMAIN=example.com
     command: >
       bash -c "
       apt-get update &&
       DEBIAN_FRONTEND=noninteractive apt-get install -y postfix mailutils &&
-      postconf -e 'myhostname=mail.example.com' &&
+      postconf -e 'myhostname=mail.jimmylan.fr' &&
       postconf -e 'mydomain=example.com' &&
       postfix start-fg
       "
@@ -736,7 +747,7 @@ sudo systemctl disable sendmail
 **Vérifier le PTR** :
 
 ```bash
-dig -x VOTRE_IP +short
+dig -x 51.68.224.131 +short
 ```
 
 Si le PTR est incorrect ou manquant, contactez votre hébergeur. En attendant, vous pouvez utiliser un relais SMTP avec PTR correct.
