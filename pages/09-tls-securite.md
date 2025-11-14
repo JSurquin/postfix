@@ -33,7 +33,15 @@ TLS (Transport Layer Security) chiffre les communications entre serveurs SMTP.
 
 SSL (Secure Sockets Layer) est l'ancien nom. TLS (Transport Layer Security) est la version moderne.
 
-**Versions** : SSL 2.0 (Obsolète et vulnérable) - SSL 3.0 (Obsolète et vulnérable) - TLS 1.0 (Déprécié) - TLS 1.1 (Déprécié) - TLS 1.2 (OK mais ancien) - **TLS 1.3** (Recommandé en 2025 ✅)
+**Versions** :
+
+- SSL 2.0 (Obsolète et vulnérable)
+- SSL 3.0 (Obsolète et vulnérable)
+- TLS 1.0 (Déprécié)
+- TLS 1.1 (Déprécié)
+- TLS 1.2 (OK mais ancien)
+
+- **TLS 1.3** (Recommandé en 2025 ✅)
 
 ---
 
