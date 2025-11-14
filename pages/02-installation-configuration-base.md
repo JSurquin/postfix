@@ -598,56 +598,6 @@ smtpd_helo_restrictions =
 
 ---
 
-## Installation avec Docker (pour les tests)
-
-Pour tester rapidement sans toucher à votre système, utilisez Docker !
-
-### 🐳 Dockerfile simple
-
-```dockerfile
-FROM ubuntu:24.04
-
-# Installation de Postfix en mode non-interactif
-RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    postfix \
-    mailutils \
-    && apt-get clean
-
-# Configuration minimale
-RUN postconf -e "myhostname=mail.jimmylan.fr" && \
-    postconf -e "mydomain=jimmylan.fr" && \
-    postconf -e "myorigin=\$mydomain" && \
-    postconf -e "inet_interfaces=all" && \
-    postconf -e "mydestination=\$myhostname, localhost.\$mydomain, localhost, \$mydomain"
-
-EXPOSE 25 587
-
-CMD ["postfix", "start-fg"]
-```
-
----
-
-### 🚀 Construire et lancer
-
-```bash
-# Construire l'image
-docker build -t postfix-test .
-
-# Lancer le conteneur
-docker run -d --name postfix -p 2525:25 postfix-test
-
-# Tester l'envoi d'un email
-docker exec postfix sendmail root@localhost <<EOF
-Subject: Test Docker
-From: test@example.com
-
-Ceci est un test depuis Docker
-EOF
-```
-
----
-
 ## Troubleshooting courant
 
 ### ❌ Problème : Postfix ne démarre pas
@@ -775,6 +725,8 @@ Avant de passer au module suivant, vérifiez que :
 
 ### 💡 Ce qu'il faut retenir
 
+<small>
+
 **Configuration minimale** : `myhostname`, `mydomain`, `myorigin` sont essentiels 
 
 - `inet_interfaces` définit les interfaces d'écoute - `mynetworks` contrôle qui peut envoyer des emails
@@ -792,6 +744,8 @@ Avant de passer au module suivant, vérifiez que :
 - `postfix check` (vérifier la syntaxe)
 
 **Logs** : `/var/log/mail.log` ou `/var/log/maillog` - Toujours consulter les logs en cas de problème - `tail -f` est votre ami
+
+</small>
 
 ---
 

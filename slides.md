@@ -91,7 +91,6 @@ routeAlias: 'sommaire-initiation'
 <div class="flex flex-col gap-2">
 <Link to="protection-anti-spam">🛡️ Anti-spam essentiel (1h)</Link>
 <Link to="logs-surveillance">📊 Logs et monitoring (45min)</Link>
-<Link to="gestion-files-attente">📬 Files d'attente (30min)</Link>
 <Link to="sauvegarde-restauration">💾 Sauvegarde (30min)</Link>
 <Link to="exercices-debutant">🎯 TP pratiques (2h)</Link>
 <Link to="troubleshooting-essentiel">🔧 Troubleshooting (1h)</Link>
@@ -122,7 +121,6 @@ routeAlias: 'programme-intensif'
 - **9h00-10h00** : Alias et domaines virtuels (1h)
 - **10h15-11h15** : Anti-spam essentiel (1h)
 - **11h30-12h15** : Logs et monitoring (45min)
-- **13h00-13h30** : Files d'attente (30min)
 - **13h30-14h00** : Sauvegarde (30min)
 - **14h15-16h15** : TP pratiques (2h)
 - **16h30-17h30** : Troubleshooting (1h)
@@ -208,14 +206,6 @@ src: './pages/qcm-module-08.md'
 
 ---
 src: './pages/09-tls-securite.md'
----
-
----
-src: './pages/05-gestion-files-attente.md'
----
-
----
-src: './pages/qcm-module-05.md'
 ---
 
 ---
