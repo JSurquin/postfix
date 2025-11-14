@@ -7,7 +7,9 @@ routeAlias: 'introduction-postfix'
 
 # Introduction à Postfix
 
+<div class="mt-2">
 📧 Découverte du serveur de messagerie le plus utilisé au monde
+</div>
 
 ---
 

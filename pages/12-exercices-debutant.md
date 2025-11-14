@@ -7,7 +7,9 @@ routeAlias: 'exercices-debutant'
 
 # Exercices Pratiques Débutant
 
-🎯 Mettre en pratique les connaissances acquises
+<div class="mt-2">
+  🎯 Mettre en pratique les connaissances acquises
+</div>
 
 ---
 

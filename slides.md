@@ -57,16 +57,14 @@ Fondateur <a  href="https://www.andromed.fr/"><logos-storyblok-icon  mr-1/>Andro
 - Blog & Portfolio <a href="https://jimmylan.fr"> jimmylan.fr </a>
 
 ---
-layout: text-image
-media: 'https://www.postfix.org/mysza.gif'
-caption: 'POSTFIX 2025'
----
 
 # DISCLAIMER 📧
 
 ### Dans cette formation nous allons voir les concepts fondamentaux et avancés de Postfix en 2025.
 
 ### Postfix est un serveur de messagerie (MTA - Mail Transfer Agent) robuste, sécurisé et performant, créé par Wietse Venema.
+
+<img src="https://www.postfix.org/mysza.gif" alt="Postfix" class="mx-auto mt-12" height='80%' />
 
 ---
 layout: two-cols
@@ -82,9 +80,9 @@ routeAlias: 'sommaire-initiation'
 <Link to="installation-configuration-base">⚙️ Installation et config de base (1h30)</Link>
 <Link to="architecture-fonctionnement">🏗️ Architecture essentielle (45min)</Link>
 <Link to="configuration-main-cf">📝 Configuration main.cf (2h)</Link>
-<Link to="dkim-spf-dmarc">🔐 DKIM, SPF, DMARC (1h30)</Link>
-<Link to="tls-securite">🔒 TLS et sécurité (1h)</Link>
 <Link to="alias-tables-virtuelles">📋 Alias et domaines virtuels (1h)</Link>
+<Link to="tls-securite">🔒 TLS et sécurité (1h)</Link>
+<Link to="dkim-spf-dmarc">🔐 DKIM, SPF, DMARC (1h30)</Link>
 </div>
 ::right::
 
@@ -111,22 +109,22 @@ routeAlias: 'programme-intensif'
 - **9h30-11h00** : Installation & config de base (1h30)
 - **11h15-12h00** : Architecture essentielle (45min)
 - **13h00-15h00** : Configuration main.cf (2h)
-- **15h15-16h45** : DKIM, SPF, DMARC (1h30)
-- **17h00-18h00** : TLS et sécurité (1h)
+- **15h15-16h15** : Alias et domaines virtuels (1h)
+- **16h30-17h30** : TLS et sécurité (1h)
+- **17h45-19h15** : DKIM, SPF, DMARC (1h30)
 
 ::right::
 
 **JOUR 2 (7h) - PRATIQUE & PRODUCTION**
 
-- **9h00-10h00** : Alias et domaines virtuels (1h)
-- **10h15-11h15** : Anti-spam essentiel (1h)
-- **11h30-12h15** : Logs et monitoring (45min)
-- **13h30-14h00** : Sauvegarde (30min)
-- **14h15-16h15** : TP pratiques (2h)
-- **16h30-17h30** : Troubleshooting (1h)
-- **17h30-18h00** : QCM final (30min)
+- **9h00-10h00** : Anti-spam essentiel (1h)
+- **10h15-11h00** : Logs et monitoring (45min)
+- **11h15-11h45** : Sauvegarde (30min)
+- **13h00-15h00** : TP pratiques (2h)
+- **15h15-16h15** : Troubleshooting (1h)
+- **16h30-17h00** : QCM final (30min)
 
-- **18h00-18h30** : Bonus Dovecot (30min)
+- **17h15-17h45** : Bonus Dovecot (30min)
 
 ---
 
@@ -197,18 +195,6 @@ src: './pages/qcm-module-04.md'
 ---
 
 ---
-src: './pages/08-dkim-spf-dmarc.md'
----
-
----
-src: './pages/qcm-module-08.md'
----
-
----
-src: './pages/09-tls-securite.md'
----
-
----
 src: './pages/06-alias-tables-virtuelles.md'
 ---
 
@@ -217,15 +203,27 @@ src: './pages/qcm-module-06.md'
 ---
 
 ---
+src: './pages/09-tls-securite.md'
+---
+
+---
+src: './pages/qcm-module-09.md'
+---
+
+---
+src: './pages/08-dkim-spf-dmarc.md'
+---
+
+---
+src: './pages/qcm-module-08.md'
+---
+
+---
 src: './pages/07-protection-anti-spam.md'
 ---
 
 ---
 src: './pages/qcm-module-07.md'
----
-
----
-src: './pages/qcm-module-09.md'
 ---
 
 ---

@@ -7,7 +7,9 @@ routeAlias: 'dkim-spf-dmarc'
 
 # DKIM, SPF et DMARC
 
-🔐 Authentifier vos emails et améliorer votre délivrabilité
+<div class="mt-2">
+  🔐 Authentifier vos emails et améliorer votre délivrabilité
+</div>
 
 ---
 
@@ -32,7 +34,11 @@ En 2025, ces trois standards sont **obligatoires** pour toute infrastructure mai
 
 ## Analogie
 
-**SPF** = Liste des facteurs autorisés - **DKIM** = Cachet officiel de la poste - **DMARC** = Politique de traitement des lettres suspectes
+**SPF** = Liste des facteurs autorisés
+
+- **DKIM** = Cachet officiel de la poste
+
+- **DMARC** = Politique de traitement des lettres suspectes
 
 ---
 
@@ -58,8 +64,6 @@ SPF est un enregistrement DNS qui liste les serveurs autorisés à envoyer des e
 v=spf1 <mécanismes> <qualifiers> <all>
 ```
 
----
-
 ### 📋 Exemple simple
 
 ```bash
@@ -67,14 +71,23 @@ v=spf1 mx a ip4:203.0.113.10 -all
 ```
 
 ---
-
-Je vous ai mis une capture d'écran de l'enregistrement SPF de mon domaine `jimmylan.fr`.
+layout: text-image
+caption: Je vous ai mis une capture d'écran de l'enregistrement SPF de mon domaine `jimmylan.fr`.
+---
 
 <img src="/ovh2.png" alt="Enregistrement SPF de jimmylan.fr" />
 
 ---
 
-**Décryptage** : `v=spf1` (Version SPF) - `mx` (Les serveurs MX du domaine peuvent envoyer) - `a` (Le serveur A du domaine peut envoyer) - `ip4:203.0.113.10` (Cette IP peut envoyer) - `-all` (Rejeter tout le reste)
+**Décryptage** : `v=spf1` (Version SPF)
+
+- `mx` (Les serveurs MX du domaine peuvent envoyer)
+- `a` (Le serveur A du domaine peut envoyer) : testmail.jimmylan.fr
+- `ip4:203.0.113.10` (Cette IP peut envoyer) - `-all` (Rejeter tout le reste)
+
+<br/>
+
+> J'ai quand même mis le `~all` pour que vous voyez que c'est possible.
 
 ---
 
@@ -150,7 +163,11 @@ v=spf1 mx ?all
 
 ### 💡 Quelle fin choisir ?
 
-**-all** : Strict (recommandé si vous contrôlez tous vos serveurs) - **~all** : Permissif (si vous avez peur de bloquer des emails légitimes) - **?all** : Très permissif (déconseillé)
+**-all** : Strict (recommandé si vous contrôlez tous vos serveurs)
+
+- **~all** : Permissif (si vous avez peur de bloquer des emails légitimes)
+
+- **?all** : Très permissif (déconseillé)
 
 En 2025, utilisez **-all** si possible !
 
@@ -166,12 +183,12 @@ En 2025, utilisez **-all** si possible !
 
 ### 📋 Étape 2 : Construire l'enregistrement
 
-```bash 
-v=spf1 
-  a:mail.example.com 
-  ip4:203.0.113.10 
-  include:_spf.google.com 
-  include:servers.mcsv.net 
+```bash
+v=spf1
+  a:mail.example.com
+  ip4:203.0.113.10
+  include:_spf.google.com
+  include:servers.mcsv.net
   -all
 ```
 
@@ -202,11 +219,11 @@ nslookup -type=TXT example.com
 **Outils en ligne** : https://mxtoolbox.com/spf.aspx - https://www.kitterman.com/spf/validate.html
 
 ---
-
+layout: text-image
+caption: 🎥 Un petit gif pour illustrer l'enregistrement SPF
+---
 
 <!-- gif a placer ici -->
-
-### 🎥 Un petit gif pour illustrer l'enregistrement SPF 
 
 <img src="/ovh1.png" alt="Un petit gif pour illustrer l'enregistrement SPF" />
 
@@ -217,21 +234,6 @@ nslookup -type=TXT example.com
 ⚠️ **Maximum 10 lookups DNS** dans un enregistrement SPF !
 
 Chaque `include:` compte comme un lookup.
-
----
-
-**Exemple qui dépasse** :
-
-```bash
-v=spf1 
-  include:spf1.example.com 
-  include:spf2.example.com 
-  include:spf3.example.com 
-  ... (10 includes)
-  -all
-```
-
-→ SPF invalide !
 
 ---
 
@@ -356,6 +358,8 @@ Cela crée deux fichiers :
 
 ### 🔒 Permissions
 
+Vous pouvez aussi utiliser la commande suivante pour changer les permissions des fichiers :
+
 ```bash
 sudo chown opendkim:opendkim /etc/opendkim/keys/example.com/mail.private
 sudo chmod 600 /etc/opendkim/keys/example.com/mail.private
@@ -367,9 +371,11 @@ sudo chmod 600 /etc/opendkim/keys/example.com/mail.private
 
 Nous avons :
 
+```bash
 - /etc/opendkim/KeyTable
 - /etc/opendkim/SigningTable
 - /etc/opendkim/TrustedHosts
+```
 
 **Pourquoi ces fichiers ?**
 
@@ -486,12 +492,12 @@ mail._domainkey IN TXT ( "v=DKIM1; h=sha256; k=rsa; "
 
 **Type** : TXT/DKIM
 
-**Nom** : `mail._domainkey.example.com`
+**Nom** : `mail._domainkey.jimmylan.fr`
 
 **Valeur** :
 
 ```bash
-v=DKIM1; h=sha256; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...
+v=DKIM1; h=sha256; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...
 ```
 
 ---
@@ -509,10 +515,11 @@ dig mail._domainkey.jimmylan.fr TXT +short
 ```
 
 ---
+layout: text-image
+caption: Un petit gif pour illustrer la verification de l'enregistrement DNS
+---
 
-<!-- placer un gif ici pour illustrer la verification de l'enregistrement DNS -->
-
-<img src="/ovh2.png" alt="Un petit gif pour illustrer la verification de l'enregistrement DNS" />
+<img src="/ovh1.png" alt="Un petit gif pour illustrer la verification de l'enregistrement DNS" />
 
 ---
 
@@ -529,6 +536,49 @@ dig mail._domainkey.jimmylan.fr TXT +short
 ```bash
 echo "Test DKIM" | mail -s "Test DKIM" -r "johndoe@jimmylan.fr" check-auth@verifier.port25.com
 ```
+
+<img src="/check.png" alt="Un petit gif pour illustrer le test de DKIM avec mail-tester.com"
+width="400"
+height="600"
+ />
+
+---
+
+# Vous pouvez aussi utiliser mail-tester.com pour tester DKIM.
+
+### 🔍 Vous devriez avoir ces résultats :
+
+<br/> 
+
+> Je vous fournis des images ci dessous
+
+---
+layout: text-image
+caption : La note de 10/10
+---
+
+<img src="/10-10.png" alt="Un petit gif pour illustrer le test de DKIM avec mail-tester.com" />
+
+---
+layout: text-image
+caption: Le recap de la note de 10/10
+---
+
+<img src="/recap.png" alt="Un petit gif pour illustrer le test de DKIM avec mail-tester.com" />
+
+---
+layout: text-image
+caption: Le test de DKIM avec mail-tester.com
+---
+
+<img src="/dmarc-dkim-test.png" alt="Un petit gif pour illustrer le test de DKIM avec mail-tester.com" />
+
+---
+layout: text-image
+caption: Le test de spam avec mail-tester.com
+---
+
+<img src="/spam.png" alt="Un petit gif pour illustrer le test de DKIM" />
 
 ---
 
@@ -675,7 +725,7 @@ v=DMARC1; p=none; rua=mailto:dmarc-reports@example.com; pct=100
 
 <!-- placer un gif ici pour illustrer le format d'un enregistrement DMARC -->
 
-<img src="/ovh2.png" alt="Un petit gif pour illustrer le format d'un enregistrement DMARC" />
+<img src="/dmarc.png" alt="Un petit gif pour illustrer le format d'un enregistrement DMARC" />
 
 ---
 

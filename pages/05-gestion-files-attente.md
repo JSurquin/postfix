@@ -7,7 +7,9 @@ routeAlias: 'gestion-files-attente'
 
 # Gestion des Files d'Attente
 
-📬 Maîtriser le système de queues de Postfix
+<div class="mt-2">
+  📬 Maîtriser le système de queues de Postfix
+</div>
 
 ---
 

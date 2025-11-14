@@ -7,7 +7,9 @@ routeAlias: 'sauvegarde-restauration'
 
 # Sauvegarde et Restauration
 
-💾 Protéger vos données et préparer le disaster recovery
+<div class="mt-2">
+  💾 Protéger vos données et préparer le disaster recovery
+</div>
 
 ---
 

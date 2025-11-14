@@ -7,7 +7,9 @@ routeAlias: 'tls-securite'
 
 # TLS et Sécurité
 
-🔒 Chiffrer les communications et protéger les données
+<div class="mt-2">
+  🔒 Chiffrer les communications et protéger les données
+</div>
 
 ---
 

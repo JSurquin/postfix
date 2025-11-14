@@ -7,7 +7,9 @@ routeAlias: 'configuration-main-cf'
 
 # Configuration du main.cf
 
-📝 Maîtriser le fichier de configuration principal de Postfix
+<div class="mt-2">
+  📝 Maîtriser le fichier de configuration principal de Postfix
+</div>
 
 ---
 
@@ -37,14 +39,20 @@ paramètre = valeur1,
 
 ### 🔍 Règles de syntaxe
 
-**Commentaires** : `# texte` - **Continuation** : indentation ou backslash - **Variables** : `$mydomain` - **Listes** : virgules ou espaces
+**Commentaires** : `# texte`
+
+- **Continuation** : indentation ou backslash
+
+- **Variables** : `$mydomain`
+
+- **Listes** : virgules ou espaces
 
 ```bash
 # Commentaire
 myhostname = mail.example.com  # Commentaire fin de ligne
 
 # Continuation avec indentation
-smtpd_recipient_restrictions = 
+smtpd_recipient_restrictions =
     permit_mynetworks,
     reject_unauth_destination
 
@@ -133,7 +141,19 @@ inet_interfaces = localhost
 inet_interfaces = 192.168.1.10, 127.0.0.1
 ```
 
+<small>
+
+**Pourquoi choisir 192 par exemple ?**
+
+192.168.1.10 est l'adresse IP de votre serveur.
+
+Donc on dit que le serveur écoute sur l'interface 192.168.1.10 et sur l'interface 127.0.0.1.
+
+Cela limite l'exposition du service et améliore la sécurité si le serveur possède plusieurs interfaces ou adresses IP.
+
 **Attention** : Si vous changez vers `all`, assurez-vous que votre firewall est configuré !
+
+</small>
 
 ---
 
@@ -166,6 +186,8 @@ proxy_interfaces = 203.0.113.10
 ```
 
 Postfix considère ces adresses comme "locales" même si elles ne sont pas directement sur ses interfaces.
+
+> Nous n'allons pas utiliser cette option dans ce cours.
 
 ---
 
@@ -217,7 +239,18 @@ relay_domains = subsidiary.example.com, partner.com
 relay_domains = *
 ```
 
+<small>
+
 Votre serveur deviendrait un relais ouvert, utilisable par tous les spammeurs du monde !
+
+Donc dans notre cas nous allons simplement laisser la valeur par défaut.
+
+</small>
+
+```bash
+mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain
+relay_domains = $mydestination
+```
 
 ---
 
@@ -1086,13 +1119,34 @@ telnet mail.example.com 25
 
 ### 💡 Configuration
 
-**Fichier** : `/etc/postfix/main.cf` - **Format** : `paramètre = valeur` - **Vérification** : `postfix check` - **Rechargement** : `systemctl reload postfix`
+<small>
 
-**Paramètres essentiels** : `myhostname`, `mydomain`, `myorigin` (Identité) - `inet_interfaces`, `mynetworks` (Réseau) - `mydestination`, `relay_domains` (Destinations) - Restrictions (Sécurité)
+**Fichier** : `/etc/postfix/main.cf`
 
-**Commandes utiles** : `postconf` (Voir la config) - `postconf -n` (Voir les modifs uniquement) - `postconf -e` (Modifier un paramètre)
+- **Format** : `paramètre = valeur`
+
+- **Vérification** : `postfix check`
+
+- **Rechargement** : `systemctl reload postfix`
+
+**Paramètres essentiels** : `myhostname`, `mydomain`, `myorigin` (Identité)
+
+- `inet_interfaces`, `mynetworks` (Réseau)
+
+- `mydestination`, `relay_domains` (Destinations) - Restrictions (Sécurité)
+
+**Commandes utiles** : `postconf` (Voir la config)
+
+- `postconf -n` (Voir les modifs uniquement)
+- `postconf -e` (Modifier un paramètre)
+
+<div class="text-xs">
 
 **Sécurité** : Toujours inclure `reject_unauth_destination` - Ne jamais faire un open relay - Limiter `mynetworks` au strict nécessaire - Masquer les informations dans la bannière
+
+</div>
+
+</small>
 
 ---
 

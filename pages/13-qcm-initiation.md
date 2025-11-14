@@ -7,7 +7,9 @@ routeAlias: 'qcm-initiation'
 
 # QCM de Validation - Initiation
 
-✅ Testez vos connaissances Postfix !
+<div class="mt-2">
+  ✅ Testez vos connaissances Postfix !
+</div>
 
 ---
 

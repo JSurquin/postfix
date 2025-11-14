@@ -9,7 +9,9 @@ routeAlias: 'dovecot'
 
 ## Intégration avec Postfix
 
-Configuration complète d'un serveur de messagerie
+<div class="mt-2">
+  📬 Configuration complète d'un serveur de messagerie
+</div>
 
 ---
 
@@ -1227,7 +1229,9 @@ layout: new-section
 
 # 🎯 Exercices pratiques
 
-## Configuration Dovecot
+<div class="mt-2">
+  Configuration Dovecot
+</div>
 
 ---
 

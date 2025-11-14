@@ -7,7 +7,9 @@ routeAlias: 'alias-tables-virtuelles'
 
 # Alias et Tables Virtuelles
 
-📋 Gérer des adresses email SANS créer d'utilisateurs système
+<div class="mt-2">
+  📋 Gérer des adresses email SANS créer d'utilisateurs système
+</div>
 
 ---
 
@@ -210,8 +212,6 @@ ubuntu:x:1000:1000:Ubuntu:/home/ubuntu:/bin/bash
 awk -F: '$3 >= 1000 {print $1, "UID:", $3}' /etc/passwd
 ```
 
----
-
 Résultat typique :
 
 ```
@@ -252,8 +252,6 @@ sudo useradd -g vmail -u 5000 vmail \
   -c "Virtual Mail User"
 ```
 
----
-
 **Paramètres expliqués** :
 
 - `-g vmail` : Groupe principal
@@ -270,8 +268,6 @@ sudo useradd -g vmail -u 5000 vmail \
 id vmail
 ```
 
----
-
 Résultat attendu :
 
 ```
@@ -285,15 +281,11 @@ uid=5000(vmail) gid=5000(vmail) groups=5000(vmail)
 su - vmail
 ```
 
----
-
 Résultat attendu :
 
 ```
 This account is currently not available.
 ```
-
----
 
 **Parfait !** `vmail` existe mais personne ne peut s'y connecter. ✅
 
@@ -306,21 +298,15 @@ This account is currently not available.
 sudo mkdir -p /var/mail/vhosts
 ```
 
----
-
 ```bash
 # Créer le sous-répertoire pour notre domaine
 sudo mkdir -p /var/mail/vhosts/andromed.cloud
 ```
 
----
-
 ```bash
 # Donner la propriété à vmail
 sudo chown -R vmail:vmail /var/mail/vhosts
 ```
-
----
 
 ```bash
 # Permissions restrictives
@@ -335,8 +321,6 @@ sudo chmod -R 770 /var/mail/vhosts
 ls -ld /var/mail/vhosts
 ls -ld /var/mail/vhosts/andromed.cloud
 ```
-
----
 
 Résultat attendu :
 
@@ -357,8 +341,6 @@ On va créer un fichier qui liste nos domaines gérés.
 sudo nano /etc/postfix/virtual_domains
 ```
 
----
-
 **Dans : /etc/postfix/virtual_domains**
 
 Contenu :
@@ -378,8 +360,6 @@ C'est ici qu'on déclare les adresses email et leur emplacement.
 sudo nano /etc/postfix/vmailbox
 ```
 
----
-
 **Dans : /etc/postfix/vmailbox**
 
 Contenu :
@@ -394,8 +374,6 @@ contact@andromed.cloud       andromed.cloud/contact/
 support@andromed.cloud       andromed.cloud/support/
 admin@andromed.cloud         andromed.cloud/admin/
 ```
-
----
 
 **Important** : Le chemin est **relatif** à `/var/mail/vhosts/`
 
@@ -412,8 +390,6 @@ sudo postmap /etc/postfix/vmailbox
 
 > postmap est un outil de postfix qui compile les fichiers de configuration.
 
----
-
 Vérifier :
 
 ```bash
@@ -427,8 +403,6 @@ ls -l /etc/postfix/vmailbox.db
 ```bash
 sudo nano /etc/postfix/main.cf
 ```
-
----
 
 Ajouter à la fin :
 
@@ -483,19 +457,13 @@ virtual_minimum_uid = 5000
 postfix check
 ```
 
----
-
 Si pas d'erreur, c'est bon ! ✅
-
----
 
 ## Recharger Postfix
 
 ```bash
 sudo systemctl reload postfix
 ```
-
----
 
 ```bash
 sudo systemctl status postfix
@@ -512,8 +480,6 @@ echo "Ceci est un test pour johndoe" | \
   mail -s "Test Virtual Mailbox" johndoe@andromed.cloud
 ```
 
----
-
 ## Suivre les logs
 
 ```bash
@@ -526,8 +492,8 @@ Vous devriez voir :
 
 ```
 postfix/virtual[1234]: delivered to mailbox
-to=<johndoe@andromed.cloud>, 
-relay=virtual, 
+to=<johndoe@andromed.cloud>,
+relay=virtual,
 status=sent (delivered to maildir)
 ```
 
@@ -1127,7 +1093,6 @@ sudo systemctl status dovecot
 doveadm auth test johndoe@andromed.cloud MotDePasse123!
 ```
 
----
 
 Résultat attendu :
 
@@ -1207,8 +1172,6 @@ sudo cat /var/mail/vhosts/andromed.cloud/johndoe/new/1234567890.V1I2M3.mail
 postmap -q johndoe@andromed.cloud /etc/postfix/vmailbox
 ```
 
----
-
 Résultat :
 
 ```
@@ -1223,8 +1186,6 @@ andromed.cloud/johndoe/
 # Vérifier une redirection
 postmap -q info@andromed.cloud /etc/postfix/virtual_alias
 ```
-
----
 
 Résultat :
 
@@ -1430,8 +1391,6 @@ sudo chmod +x /usr/local/bin/list-virtual-mailboxes.sh
 ```bash
 sudo /usr/local/bin/list-virtual-mailboxes.sh
 ```
-
----
 
 Résultat :
 

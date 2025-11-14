@@ -7,7 +7,9 @@ routeAlias: 'logs-surveillance'
 
 # Logs et Surveillance
 
-📊 Analyser, surveiller et comprendre votre serveur mail
+<div class="mt-2">
+  📊 Analyser, surveiller et comprendre votre serveur mail
+</div>
 
 ---
 

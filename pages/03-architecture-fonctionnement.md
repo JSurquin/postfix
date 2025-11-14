@@ -7,7 +7,9 @@ routeAlias: 'architecture-fonctionnement'
 
 # Architecture et Fonctionnement
 
-🏗️ Comprendre les entrailles de Postfix
+<div class="mt-2">
+  🏗️ Comprendre les entrailles de Postfix
+</div>
 
 ---
 
@@ -359,6 +361,10 @@ relayhost = [mail.backend.com]
 
 La plupart des processus tournent dans un chroot :
 
+> Le **chroot** est un mécanisme de sécurité qui enferme un processus dans un "enclos" dédié, empêchant tout accès au reste du système hôte. On peut l’imaginer comme une cage vitrée dans un laboratoire : même si le processus essaie de s’échapper, il ne pourra toucher qu’à ce qui se trouve dans son espace limité, protégeant ainsi le véritable environnement du serveur.
+
+<div class="mt-6">
+
 ```bash
 /var/spool/postfix/  # Racine du chroot
 ├── etc/            # Fichiers de config nécessaires
@@ -367,8 +373,7 @@ La plupart des processus tournent dans un chroot :
 │   └── lib/
 └── [process directories]
 ```
-
----
+</div>
 
 Le processus ne peut pas accéder à `/etc/passwd`, `/root`, etc.
 

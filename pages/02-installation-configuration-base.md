@@ -7,7 +7,9 @@ routeAlias: 'installation-configuration-base'
 
 # Installation et Configuration de Base
 
-⚙️ Mettre en place votre premier serveur Postfix
+<div class="mt-2">
+  ⚙️ Mettre en place votre premier serveur Postfix
+</div>
 
 ---
 
@@ -124,16 +126,20 @@ Le PTR fait le lien inverse : IP → nom de domaine. Sans PTR correct, vos email
 ⚠️ **Note importante** : Le PTR doit être configuré chez votre hébergeur/FAI (vous ne pouvez pas le faire vous-même).
 
 ---
+layout: text-image
+---
 
 <img src="/ovh2.png" alt="Configuration DNS chez le FAI"
-class="mx-auto -mt-12"
+class="mx-auto"
 height='auto'
 />
 
 ---
+layout: text-image
+---
 
 <img src="/ovh1.png" alt="Configuration DNS chez OVH"
-class="mx-auto -mt-12"
+class="mx-auto"
 height='auto'/>
 
 ---

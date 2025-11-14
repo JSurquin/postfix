@@ -7,7 +7,9 @@ routeAlias: 'protection-anti-spam'
 
 # Protection Anti-Spam
 
-🛡️ Défendre votre serveur contre les indésirables
+<div class="mt-2">
+  🛡️ Défendre votre serveur contre les indésirables
+</div>
 
 ---
 
