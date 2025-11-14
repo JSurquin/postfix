@@ -203,6 +203,15 @@ nslookup -type=TXT example.com
 
 ---
 
+
+<!-- gif a placer ici -->
+
+### 🎥 Un petit gif pour illustrer l'enregistrement SPF 
+
+<img src="/ovh1.png" alt="Un petit gif pour illustrer l'enregistrement SPF" />
+
+---
+
 ## Limites de SPF
 
 ⚠️ **Maximum 10 lookups DNS** dans un enregistrement SPF !
@@ -271,17 +280,13 @@ sudo dnf install opendkim
 # Mode
 Mode                    sv
 
-# Domaines à signer
-Domain                  example.com
-
-# Sélecteur
-Selector                mail
-
-# Clés
-KeyFile                 /etc/opendkim/keys/example.com/mail.private
-
 # Socket pour Postfix
 Socket                  inet:8891@localhost
+
+KeyTable                /etc/opendkim/KeyTable # Table des clés
+SigningTable            /etc/opendkim/SigningTable # Table des signatures
+ExternalIgnoreList      /etc/opendkim/TrustedHosts # Liste des serveurs autorisés
+InternalHosts           /etc/opendkim/TrustedHosts # Liste des serveurs autorisés
 ```
 
 ---
@@ -289,7 +294,6 @@ Socket                  inet:8891@localhost
 ### Le fichier en entier :
 
 ```bash
-
 # Mode
 Mode                    sv # Mode de fonctionnement
 
@@ -317,8 +321,6 @@ PidFile /run/opendkim/opendkim.pid # PID file
 # Autres
 AutoRestart             yes # Redémarrer le service si il crash
 AutoRestartRate         10/1h # Redémarrer le service si il crash 10 fois en 1 heure
-Background              yes # Lancer le service en arrière-plan
-DNSTimeout              5 # Timeout pour la résolution DNS
 ```
 
 ---
@@ -392,7 +394,7 @@ Donc il faut quand même préciser que on veux generer des clef pour le nom de d
 ### 📋 Fichier /etc/opendkim/KeyTable
 
 ```bash
-mail._domainkey.jimmylan.fr jimmylan.fr:mail:/etc/opendkim/keys/jimmylan.fr/mail.private
+mail._domainkey.jimmylan.fr jimmylan.fr:mail:/etc/opendkim/keys/jimmylan.fr/mail.private # la clé mail._domainkey.jimmylan.fr est stockée dans le fichier /etc/opendkim/keys/jimmylan.fr/mail.private
 ```
 
 Format : `selector._domainkey.domain  domain:selector:keyfile`
@@ -402,8 +404,8 @@ Format : `selector._domainkey.domain  domain:selector:keyfile`
 ### 📋 Fichier /etc/opendkim/SigningTable
 
 ```bash
-*@jimmylan.fr mail._domainkey.jimmylan.fr
-johndoe@jimmylan.fr mail._domainkey.jimmylan.fr
+*@jimmylan.fr mail._domainkey.jimmylan.fr # tous les emails de jimmylan.fr seront signés par la clé mail._domainkey.jimmylan.fr
+johndoe@jimmylan.fr mail._domainkey.jimmylan.fr # tous les emails de johndoe@jimmylan.fr seront signés par la clé mail._domainkey.jimmylan.fr
 ```
 
 Format : `pattern  key`
@@ -413,10 +415,10 @@ Format : `pattern  key`
 ### 📋 Fichier /etc/opendkim/TrustedHosts
 
 ```bash
-127.0.0.1
-localhost
-testmail.jimmylan.fr
-51.68.224.131
+127.0.0.1 # localhost
+localhost # le mapping de localhost vers 127.0.0.1
+testmail.jimmylan.fr # votre serveur mail
+51.68.224.131 # votre IP publique
 ```
 
 ---
@@ -444,6 +446,8 @@ milter_protocol = 6
 ```
 
 > On pourrais effectivement utiliser un socket UNIX ou un socket local pour plus de sécurité.
+
+Dans le cadre de cette formation, on va rester sur le socket inet.
 
 ```bash
 smtpd_milters = unix:/var/run/opendkim/opendkim.sock
@@ -506,6 +510,12 @@ dig mail._domainkey.jimmylan.fr TXT +short
 
 ---
 
+<!-- placer un gif ici pour illustrer la verification de l'enregistrement DNS -->
+
+<img src="/ovh2.png" alt="Un petit gif pour illustrer la verification de l'enregistrement DNS" />
+
+---
+
 **Outils en ligne** :
 
 - https://mxtoolbox.com/dkim.aspx
@@ -517,7 +527,7 @@ dig mail._domainkey.jimmylan.fr TXT +short
 ### 📧 Envoyer un email de test
 
 ```bash
-echo "Test DKIM" | mail -s "Test DKIM" check-auth@verifier.port25.com
+echo "Test DKIM" | mail -s "Test DKIM" -r "johndoe@jimmylan.fr" check-auth@verifier.port25.com
 ```
 
 ---
@@ -663,6 +673,12 @@ v=DMARC1; p=none; rua=mailto:dmarc-reports@example.com; pct=100
 
 ---
 
+<!-- placer un gif ici pour illustrer le format d'un enregistrement DMARC -->
+
+<img src="/ovh2.png" alt="Un petit gif pour illustrer le format d'un enregistrement DMARC" />
+
+---
+
 ### 📊 Étape 3 : Surveiller les rapports
 
 Les serveurs qui reçoivent vos emails envoient des rapports XML à `dmarc-reports@example.com`.
@@ -757,7 +773,7 @@ Vous recevrez un rapport complet sur SPF, DKIM, DMARC !
 
 ### ✅ Test via outils
 
-- https://www.mail-tester.com/ (note sur 10)
+- https://www.mail-tester.com/ (note sur 10) > Vous devez avoir un score de 10/10
 - https://mxtoolbox.com/emailhealth/
 
 ---

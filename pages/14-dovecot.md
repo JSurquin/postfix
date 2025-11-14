@@ -233,14 +233,8 @@ chmod -R 700 /var/mail/vhosts
 ```bash
 # Désactiver l'authentification en clair sauf sur SSL
 disable_plaintext_auth = yes
-```
-
-```bash
 # Mécanismes d'authentification
 auth_mechanisms = plain login
-```
-
-```bash
 # Inclure les fichiers d'authentification
 !include auth-system.conf.ext
 # !include auth-sql.conf.ext
@@ -1400,6 +1394,8 @@ apt install -y dovecot-core dovecot-imapd dovecot-pop3d dovecot-lmtpd
 ```
 
 ---
+
+Le compte vmail est utilisé pour gérer les boîtes aux lettres des utilisateurs virtuels. Il permet à Dovecot de stocker tous les emails sous un seul utilisateur système dédié, simplifiant la gestion des permissions et améliorant la sécurité, sans que chaque adresse email ait un compte système correspondant.
 
 ```bash
 # Utilisateur vmail

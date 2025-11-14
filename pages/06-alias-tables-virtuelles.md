@@ -7,947 +7,2048 @@ routeAlias: 'alias-tables-virtuelles'
 
 # Alias et Tables Virtuelles
 
-📋 Rediriger et gérer les adresses email avec flexibilité
+📋 Gérer des adresses email SANS créer d'utilisateurs système
 
 ---
 
 # Introduction
 
-Les alias et les domaines virtuels permettent de :
+**Situation réelle** : Vous avez un serveur avec juste `root` et `ubuntu`.
 
-- **Rediriger des emails d'une adresse vers une autre**
-- **Gérer plusieurs domaines sur un seul serveur**
-- **Créer des adresses "catch-all"**
-- **Automatiser le traitement des emails**
-
----
-
-## Différence entre Alias et Virtual
-
-**Alias** : Pour les comptes **locaux** (utilisateurs système)
-
-**Virtual** : Pour les domaines **virtuels** (pas de compte système)
-
-**Analogie** :
-
-**Alias** = Boîte aux lettres partagée dans votre immeuble (root → admin@example.com)
-
-**Virtual** = Redirection postale vers une autre adresse (contact@domain1.com → support@domain2.com)
+Vous voulez gérer des centaines d'adresses email :
+- `johndoe@andromed.cloud`
+- `janedoe@andromed.cloud`
+- `contact@andromed.cloud`
+- etc.
 
 ---
 
-# Les Alias locaux
+**Question** : Faut-il créer 100 utilisateurs système ? 🤔
 
-## Le fichier /etc/aliases
-
-Le fichier `/etc/aliases` gère les redirections des comptes système.
-
-### 📝 Format du fichier
-
-```bash
-# Commentaire
-alias: destination
-
-# Exemples
-postmaster: root
-webmaster: root
-root: admin@example.com
-```
-
-### 🔍 Structure
-
-```bash
-# Alias simple (vers un utilisateur local)
-admin: john
-
-# Alias vers une adresse externe
-root: admin@example.com
-
-# Alias vers plusieurs destinations
-support: john, jane, admin@example.com
-```
+**Réponse** : **NON !** On utilise les **domaines virtuels** ! 🎯
 
 ---
 
-```bash
-# Alias vers un fichier
-logs: /var/log/mail-archive.txt
+## Notre cas concret
 
-# Alias vers un programme
-spam: "|/usr/local/bin/spam-filter.sh"
-
-# Alias vers :include: (fichier avec liste d'adresses)
-all-staff: :include:/etc/postfix/staff-list.txt
-```
+**Serveur OVH** : Debian/Ubuntu avec :
+- Utilisateur `root`
+- Utilisateur `ubuntu` (créé par OVH)
+- **C'est tout !**
 
 ---
 
-### 🛠️ Créer et modifier des alias
+**Domaine** : `andromed.cloud`
+
+**Emails à gérer** :
+- `johndoe@andromed.cloud`
+- `janedoe@andromed.cloud`
+- `contact@andromed.cloud`
+- `support@andromed.cloud`
+
+---
+
+**Tous ces emails SANS créer johndoe, janedoe comme utilisateurs système !**
+
+---
+
+## Les 2 approches
+
+### 1️⃣ Virtual Alias (Redirection)
 
 ```bash
-# Éditer le fichier
-sudo nano /etc/aliases
-
-# Ajouter un alias
-echo "contact: john@example.com" | sudo tee -a /etc/aliases
+# Redirige vers une vraie boîte externe
+contact@andromed.cloud → admin@gmail.com
 ```
 
-### 🔄 Compiler les alias
+**Usage** : Redirection simple, pas de stockage
 
-**Important** : Après modification, il faut recompiler !
+---
+
+### 2️⃣ Virtual Mailbox (Stockage réel)
 
 ```bash
-sudo newaliases
-# ou
-sudo postalias /etc/aliases
+# Stocke dans /var/mail/vhosts/andromed.cloud/johndoe/
+johndoe@andromed.cloud → mailbox virtuelle
 ```
 
-Cela crée une base de données binaire `/etc/aliases.db` que Postfix utilise.
+**Usage** : Vraies boîtes mail sur le serveur
 
-### ✅ Tester un alias
+---
+
+## Ce qu'on va faire
+
+1. Vérifier les utilisateurs existants
+2. Créer l'utilisateur technique `vmail`
+3. Configurer les domaines virtuels
+4. Créer des boîtes mail virtuelles
+5. Tester avec Postfix + Dovecot
+
+---
+
+# PARTIE 1 : État des lieux du serveur
+
+## Lister les utilisateurs actuels
 
 ```bash
-# Envoyer un email à l'alias
-echo "Test alias" | mail -s "Test" postmaster
-
-# Vérifier qu'il arrive à la bonne destination
+# Voir tous les utilisateurs
+cat /etc/passwd
 ```
 
 ---
 
-## Exemples d'alias courants
+Sur un serveur OVH, vous verrez :
 
-### 📧 Rediriger les comptes système
-
-```bash
-# Tous les emails système vers l'admin
-postmaster: admin@example.com
-webmaster: admin@example.com
-hostmaster: admin@example.com
-abuse: admin@example.com
-security: admin@example.com
-root: admin@example.com
+```
+root:x:0:0:root:/root:/bin/bash
+ubuntu:x:1000:1000:Ubuntu:/home/ubuntu:/bin/bash
+...
+(utilisateurs système : daemon, bin, sys, etc.)
 ```
 
 ---
 
-### 👥 Liste de diffusion simple
+## Utilisateurs humains
 
 ```bash
-# Créer un fichier /etc/postfix/team-dev.txt
-# Contenu :
-#   john@example.com
-#   jane@example.com
-#   bob@example.com
-
-# Dans /etc/aliases
-dev-team: :include:/etc/postfix/team-dev.txt
-```
-
-### 📬 Alias avec plusieurs destinations
-
-```bash
-# Envoyer à plusieurs personnes
-support: john@example.com, jane@example.com, support-archive
-
-# support-archive peut être un autre alias
-support-archive: /var/mail/support-archive.txt
-```
-
-### 🔧 Alias vers un programme
-
-```bash
-# Traiter automatiquement les emails
-tickets: "|/usr/local/bin/ticket-system.sh"
+# Lister uniquement les vrais utilisateurs (UID >= 1000)
+awk -F: '$3 >= 1000 {print $1, "UID:", $3}' /etc/passwd
 ```
 
 ---
 
-**Exemple de script** `/usr/local/bin/ticket-system.sh` :
+Résultat typique :
 
-```bash
-#!/bin/bash
-# Lire l'email depuis stdin
-cat > /tmp/email-$$.txt
-
-# Traiter l'email (créer un ticket, etc.)
-# ...
-
-# Nettoyer
-rm /tmp/email-$$.txt
+```
+ubuntu UID: 1000
 ```
 
 ---
 
-**Important** : Le script doit être exécutable
-
-```bash
-sudo chmod +x /usr/local/bin/ticket-system.sh
-```
-
-## Configuration dans main.cf
-
-```bash
-# Chemin vers le fichier aliases
-alias_maps = hash:/etc/aliases
-
-# Base de données d'alias
-alias_database = hash:/etc/aliases
-```
+**C'est parfait !** On ne veut PAS polluer le système avec des dizaines d'utilisateurs.
 
 ---
 
-# Les domaines virtuels
+# PARTIE 2 : Créer l'utilisateur technique vmail
 
-Les domaines virtuels permettent de gérer plusieurs domaines sans créer de comptes système.
+## Pourquoi vmail ?
 
-## Types de domaines virtuels
-
-### 1️⃣ Virtual Alias Domains
-
-Redirection simple vers d'autres adresses
-
-**Cas d'usage** : Vous gérez domain1.com et domain2.com, tous les emails vont vers example.com
+`vmail` est un utilisateur technique qui va :
+- Posséder TOUTES les boîtes mail virtuelles
+- Permettre à Postfix et Dovecot d'y accéder
+- Sécuriser les permissions
 
 ---
 
-### 2️⃣ Virtual Mailbox Domains
-
-Boîtes mail virtuelles stockées sur le serveur
-
-**Cas d'usage** : Vous hébergez plusieurs domaines avec de vraies boîtes mail
-
----
-
-## Virtual Alias Domains
-
-### 📝 Fichier /etc/postfix/virtual
+## Création de vmail
 
 ```bash
-# Format :
-# adresse@virtuelle  destination
-
-contact@domain1.com        john@example.com
-admin@domain1.com          admin@example.com
-info@domain2.com           support@example.com
-```
-
----
-
-### 🌐 Catch-all
-
-```bash
-# Tout email vers domain1.com va vers john@example.com
-@domain1.com               john@example.com
-
-# Combinaison : règles spécifiques + catch-all
-contact@domain1.com        support@example.com
-admin@domain1.com          admin@example.com
-@domain1.com               catchall@example.com
-```
-
-⚠️ **Attention** : Les règles spécifiques doivent être **avant** le catch-all !
-
----
-
-### 🔄 Compiler le fichier virtual
-
-```bash
-# Après modification
-sudo postmap /etc/postfix/virtual
-```
-
-Cela crée `/etc/postfix/virtual.db`
-
----
-
-### ⚙️ Configuration dans main.cf
-
-```bash
-# Déclarer les domaines virtuels
-virtual_alias_domains = domain1.com, domain2.com
-
-# Fichier de mapping
-virtual_alias_maps = hash:/etc/postfix/virtual
-```
-
----
-
-**Ou lire les domaines depuis le fichier virtual** :
-
-```bash
-# Postfix déduit automatiquement les domaines
-virtual_alias_maps = hash:/etc/postfix/virtual
-```
-
----
-
-### ✅ Recharger Postfix
-
-```bash
-sudo systemctl reload postfix
-```
-
-## Virtual Mailbox Domains
-
-Pour stocker réellement les emails des domaines virtuels.
-
----
-
-### 📝 Fichier /etc/postfix/vmailbox
-
-```bash
-# Format :
-# adresse@virtuelle  chemin/vers/mailbox
-
-user1@domain1.com    domain1.com/user1/
-user2@domain1.com    domain1.com/user2/
-admin@domain2.com    domain2.com/admin/
-```
-
----
-
-### 📂 Créer les répertoires
-
-```bash
-# Créer le répertoire de base
-sudo mkdir -p /var/mail/vhosts
-
-# Créer les sous-répertoires pour chaque domaine
-sudo mkdir -p /var/mail/vhosts/domain1.com/user1
-sudo mkdir -p /var/mail/vhosts/domain1.com/user2
-```
-
----
-
-### 👤 Utilisateur virtuel
-
-Il faut un utilisateur système dédié :
-
-```bash
-# Créer l'utilisateur vmail
+# Créer le groupe vmail avec GID 5000
 sudo groupadd -g 5000 vmail
-sudo useradd -g vmail -u 5000 vmail -d /var/mail/vhosts -s /sbin/nologin
+```
 
-# Permissions
+---
+
+```bash
+# Créer l'utilisateur vmail avec UID 5000
+sudo useradd -g vmail -u 5000 vmail \
+  -d /var/mail/vhosts \
+  -s /sbin/nologin \
+  -c "Virtual Mail User"
+```
+
+---
+
+**Paramètres expliqués** :
+
+- `-g vmail` : Groupe principal
+- `-u 5000` : UID fixe (important pour Dovecot)
+- `-d /var/mail/vhosts` : Répertoire home
+- `-s /sbin/nologin` : **PAS de login possible** (sécurité)
+- `-c` : Commentaire
+
+---
+
+### ✅ Vérifier la création
+
+```bash
+id vmail
+```
+
+---
+
+Résultat attendu :
+
+```
+uid=5000(vmail) gid=5000(vmail) groups=5000(vmail)
+```
+
+---
+
+```bash
+# Vérifier qu'on ne peut pas se connecter
+su - vmail
+```
+
+---
+
+Résultat attendu :
+
+```
+This account is currently not available.
+```
+
+---
+
+**Parfait !** `vmail` existe mais personne ne peut s'y connecter. ✅
+
+---
+
+## Créer la structure de répertoires
+
+```bash
+# Créer le répertoire principal
+sudo mkdir -p /var/mail/vhosts
+```
+
+---
+
+```bash
+# Créer le sous-répertoire pour notre domaine
+sudo mkdir -p /var/mail/vhosts/andromed.cloud
+```
+
+---
+
+```bash
+# Donner la propriété à vmail
 sudo chown -R vmail:vmail /var/mail/vhosts
 ```
 
 ---
 
-### ⚙️ Configuration dans main.cf
+```bash
+# Permissions restrictives
+sudo chmod -R 770 /var/mail/vhosts
+```
+
+---
+
+### ✅ Vérifier
 
 ```bash
-# Domaines virtuels avec mailbox
-virtual_mailbox_domains = domain1.com, domain2.com
+ls -ld /var/mail/vhosts
+ls -ld /var/mail/vhosts/andromed.cloud
+```
 
-# Mapping adresse → mailbox
+---
+
+Résultat attendu :
+
+```
+drwxrwx--- 3 vmail vmail 4096 Jan 15 14:00 /var/mail/vhosts
+drwxrwx--- 2 vmail vmail 4096 Jan 15 14:00 /var/mail/vhosts/andromed.cloud
+```
+
+---
+
+# PARTIE 3 : Configuration Postfix
+
+## Fichier des domaines virtuels
+
+On va créer un fichier qui liste nos domaines gérés.
+
+```bash
+sudo nano /etc/postfix/virtual_domains
+```
+
+---
+
+Contenu :
+
+```bash
+# Domaines virtuels gérés par ce serveur
+andromed.cloud
+```
+
+---
+
+## Fichier des boîtes virtuelles
+
+C'est ici qu'on déclare les adresses email et leur emplacement.
+
+```bash
+sudo nano /etc/postfix/vmailbox
+```
+
+---
+
+Contenu :
+
+```bash
+# Format : adresse@domaine    chemin/relatif/
+#
+# Domaine : andromed.cloud
+johndoe@andromed.cloud       andromed.cloud/johndoe/
+janedoe@andromed.cloud       andromed.cloud/janedoe/
+contact@andromed.cloud       andromed.cloud/contact/
+support@andromed.cloud       andromed.cloud/support/
+admin@andromed.cloud         andromed.cloud/admin/
+```
+
+---
+
+**Important** : Le chemin est **relatif** à `/var/mail/vhosts/`
+
+Donc `andromed.cloud/johndoe/` → `/var/mail/vhosts/andromed.cloud/johndoe/`
+
+---
+
+## Compiler les fichiers
+
+```bash
+# Compiler vmailbox
+sudo postmap /etc/postfix/vmailbox
+```
+
+---
+
+Vérifier :
+
+```bash
+ls -l /etc/postfix/vmailbox.db
+```
+
+---
+
+## Configuration dans main.cf
+
+```bash
+sudo nano /etc/postfix/main.cf
+```
+
+---
+
+Ajouter à la fin :
+
+```bash
+# ============================================
+# DOMAINES VIRTUELS (Virtual Mailbox)
+# ============================================
+
+# Domaines virtuels avec vraies boîtes mail
+virtual_mailbox_domains = andromed.cloud
+
+# Mapping adresse → chemin mailbox
 virtual_mailbox_maps = hash:/etc/postfix/vmailbox
-
-# Répertoire de base
-virtual_mailbox_base = /var/mail/vhosts
 ```
 
 ---
 
 ```bash
-# Utilisateur et groupe
+# Répertoire de base pour les mailbox
+virtual_mailbox_base = /var/mail/vhosts
+
+# UID et GID de vmail
 virtual_uid_maps = static:5000
 virtual_gid_maps = static:5000
-
-# Taille minimum libre du disque
-virtual_mailbox_limit = 52428800
-virtual_minimum_uid = 1000
 ```
 
 ---
 
-### 🔄 Compiler vmailbox
+```bash
+# Taille maximum d'une boîte mail (100 Mo)
+virtual_mailbox_limit = 104857600
+
+# UID minimum (sécurité)
+virtual_minimum_uid = 5000
+```
+
+---
+
+**Explication** :
+
+- `virtual_mailbox_domains` : Domaines avec boîtes réelles
+- `virtual_mailbox_maps` : Fichier de mapping
+- `virtual_mailbox_base` : Racine des boîtes
+- `virtual_uid_maps` / `virtual_gid_maps` : Propriétaire (vmail)
+- `virtual_mailbox_limit` : Quota par boîte
+
+---
+
+## Vérifier la configuration
+
+```bash
+postfix check
+```
+
+---
+
+Si pas d'erreur, c'est bon ! ✅
+
+---
+
+## Recharger Postfix
+
+```bash
+sudo systemctl reload postfix
+```
+
+---
+
+```bash
+sudo systemctl status postfix
+```
+
+---
+
+# PARTIE 4 : Tests avec Postfix seul
+
+## Envoyer un email de test
+
+```bash
+echo "Ceci est un test pour johndoe" | \
+  mail -s "Test Virtual Mailbox" johndoe@andromed.cloud
+```
+
+---
+
+## Suivre les logs
+
+```bash
+sudo tail -f /var/log/mail.log
+```
+
+---
+
+Vous devriez voir :
+
+```
+postfix/virtual[1234]: delivered to mailbox
+to=<johndoe@andromed.cloud>, 
+relay=virtual, 
+status=sent (delivered to maildir)
+```
+
+---
+
+## Vérifier que le fichier existe
+
+```bash
+sudo ls -la /var/mail/vhosts/andromed.cloud/johndoe/
+```
+
+---
+
+Vous devriez voir :
+
+```
+drwx------ 5 vmail vmail 4096 Jan 15 14:30 .
+drwxrwx--- 3 vmail vmail 4096 Jan 15 14:00 ..
+drwx------ 2 vmail vmail 4096 Jan 15 14:30 cur
+drwx------ 2 vmail vmail 4096 Jan 15 14:30 new
+drwx------ 2 vmail vmail 4096 Jan 15 14:30 tmp
+```
+
+---
+
+**Format Maildir** : 3 dossiers
+- `new/` : Nouveaux emails
+- `cur/` : Emails lus
+- `tmp/` : Temporaire
+
+---
+
+## Voir l'email reçu
+
+```bash
+sudo ls /var/mail/vhosts/andromed.cloud/johndoe/new/
+```
+
+---
+
+```bash
+sudo cat /var/mail/vhosts/andromed.cloud/johndoe/new/*
+```
+
+---
+
+Vous verrez le contenu brut de l'email ! 📧
+
+---
+
+# PARTIE 5 : Alias et redirections
+
+## Rediriger plusieurs adresses vers une boîte
+
+**Besoin** : `contact@` et `info@` vont vers la même boîte
+
+---
+
+### Fichier virtual_alias
+
+```bash
+sudo nano /etc/postfix/virtual_alias
+```
+
+---
+
+Contenu :
+
+```bash
+# Redirections d'alias vers boîtes virtuelles
+#
+# Domaine : andromed.cloud
+info@andromed.cloud          johndoe@andromed.cloud
+webmaster@andromed.cloud     admin@andromed.cloud
+```
+
+---
+
+### Compiler
+
+```bash
+sudo postmap /etc/postfix/virtual_alias
+```
+
+---
+
+### Configuration main.cf
+
+```bash
+sudo nano /etc/postfix/main.cf
+```
+
+---
+
+Ajouter :
+
+```bash
+# Alias virtuels (redirections)
+virtual_alias_maps = hash:/etc/postfix/virtual_alias
+```
+
+---
+
+```bash
+sudo systemctl reload postfix
+```
+
+---
+
+### 🧪 Tester
+
+```bash
+echo "Test alias" | mail -s "Info" info@andromed.cloud
+```
+
+---
+
+```bash
+# Doit arriver dans la boîte de johndoe
+sudo ls /var/mail/vhosts/andromed.cloud/johndoe/new/
+```
+
+---
+
+## Redirection vers email externe
+
+**Besoin** : `facturation@andromed.cloud` → votre comptable externe
+
+---
+
+### Éditer virtual_alias
+
+```bash
+sudo nano /etc/postfix/virtual_alias
+```
+
+---
+
+Ajouter :
+
+```bash
+# Redirection externe
+facturation@andromed.cloud    comptable@cabinet-expert.fr
+```
+
+---
+
+```bash
+sudo postmap /etc/postfix/virtual_alias
+sudo systemctl reload postfix
+```
+
+---
+
+### 🧪 Tester
+
+```bash
+echo "Facture" | mail -s "Facture #123" facturation@andromed.cloud
+```
+
+---
+
+Le comptable doit recevoir l'email ! ✅
+
+---
+
+## Redirection multiple
+
+**Besoin** : `support@` envoie à plusieurs personnes
+
+---
+
+```bash
+sudo nano /etc/postfix/virtual_alias
+```
+
+---
+
+Ajouter :
+
+```bash
+# Support vers plusieurs boîtes
+support@andromed.cloud       johndoe@andromed.cloud, janedoe@andromed.cloud, admin@andromed.cloud
+```
+
+---
+
+```bash
+sudo postmap /etc/postfix/virtual_alias
+sudo systemctl reload postfix
+```
+
+---
+
+### 🧪 Tester
+
+```bash
+echo "Question support" | mail -s "Ticket #456" support@andromed.cloud
+```
+
+---
+
+Les 3 boîtes doivent recevoir l'email :
+
+```bash
+sudo ls /var/mail/vhosts/andromed.cloud/johndoe/new/
+sudo ls /var/mail/vhosts/andromed.cloud/janedoe/new/
+sudo ls /var/mail/vhosts/andromed.cloud/admin/new/
+```
+
+---
+
+# PARTIE 6 : Catch-all
+
+## Attraper toutes les adresses non définies
+
+**Besoin** : Toute adresse `*@andromed.cloud` non définie va chez admin
+
+---
+
+### Éditer virtual_alias
+
+```bash
+sudo nano /etc/postfix/virtual_alias
+```
+
+---
+
+Ajouter **À LA FIN** :
+
+```bash
+# Catch-all pour andromed.cloud (DOIT être à la fin)
+@andromed.cloud              admin@andromed.cloud
+```
+
+---
+
+⚠️ **Important** : Les règles spécifiques AVANT le catch-all !
+
+```bash
+# ✅ BON ORDRE
+contact@andromed.cloud       johndoe@andromed.cloud
+info@andromed.cloud          johndoe@andromed.cloud
+@andromed.cloud              admin@andromed.cloud
+
+# ❌ MAUVAIS ORDRE (catch-all écrase tout)
+@andromed.cloud              admin@andromed.cloud
+contact@andromed.cloud       johndoe@andromed.cloud  # jamais atteint !
+```
+
+---
+
+```bash
+sudo postmap /etc/postfix/virtual_alias
+sudo systemctl reload postfix
+```
+
+---
+
+### 🧪 Tester
+
+```bash
+echo "Test catch-all" | mail -s "Test" nimportequoi@andromed.cloud
+```
+
+---
+
+```bash
+# Doit arriver chez admin
+sudo ls /var/mail/vhosts/andromed.cloud/admin/new/
+```
+
+---
+
+⚠️ **Danger** : Les catch-all attirent **BEAUCOUP de spam** !
+
+```
+randomspam@andromed.cloud → admin
+phishing@andromed.cloud → admin
+test@andromed.cloud → admin
+...
+```
+
+---
+
+**Recommandation** : Évitez les catch-all ou utilisez un bon anti-spam (Rspamd)
+
+---
+
+# PARTIE 7 : Gérer plusieurs domaines
+
+## Ajouter un deuxième domaine
+
+**Nouveau domaine** : `ascent.cloud`
+
+Même serveur, domaine différent.
+
+---
+
+### Éditer virtual_domains
+
+```bash
+sudo nano /etc/postfix/virtual_domains
+```
+
+---
+
+Ajouter :
+
+```bash
+# Domaines virtuels gérés
+andromed.cloud
+ascent.cloud
+```
+
+---
+
+### Créer le répertoire
+
+```bash
+sudo mkdir -p /var/mail/vhosts/ascent.cloud
+sudo chown vmail:vmail /var/mail/vhosts/ascent.cloud
+sudo chmod 770 /var/mail/vhosts/ascent.cloud
+```
+
+---
+
+### Ajouter les boîtes dans vmailbox
+
+```bash
+sudo nano /etc/postfix/vmailbox
+```
+
+---
+
+Ajouter :
+
+```bash
+# Domaine : ascent.cloud
+contact@ascent.cloud         ascent.cloud/contact/
+admin@ascent.cloud           ascent.cloud/admin/
+```
+
+---
 
 ```bash
 sudo postmap /etc/postfix/vmailbox
+```
+
+---
+
+### Mettre à jour main.cf
+
+```bash
+sudo nano /etc/postfix/main.cf
+```
+
+---
+
+Modifier :
+
+```bash
+# Domaines virtuels avec vraies boîtes mail
+virtual_mailbox_domains = andromed.cloud, ascent.cloud
+```
+
+---
+
+```bash
 sudo systemctl reload postfix
 ```
 
 ---
 
-### ✅ Tester
+### 🧪 Tester
 
 ```bash
-echo "Test virtual mailbox" | mail -s "Test" user1@domain1.com
-
-# Vérifier
-sudo ls -la /var/mail/vhosts/domain1.com/user1/
+echo "Test Ascent" | mail -s "Test" contact@ascent.cloud
 ```
 
 ---
 
-## Domaines virtuels avec fichiers
-
-Pour cette formation, nous nous concentrons sur la gestion via fichiers texte, plus simple à comprendre et maintenir pour des configurations de base.
-
-## Canonical Mapping
-
-Réécrire les adresses avant traitement.
-
----
-
-### 📝 Fichier /etc/postfix/canonical
-
 ```bash
-# Format :
-# pattern  résultat
-
-# Réécrire l'expéditeur
-@oldmachine.domain.com    @newmachine.domain.com
-
-# Réécrire une adresse spécifique
-john@localhost            john@example.com
+sudo ls /var/mail/vhosts/ascent.cloud/contact/new/
 ```
 
 ---
 
-### 🔧 Types de canonical
+# PARTIE 8 : Alias système (root, postmaster)
 
-**sender_canonical_maps** : Réécrire l'expéditeur
+## Gérer les alias système
 
-```bash
-sender_canonical_maps = hash:/etc/postfix/sender_canonical
-```
+Les alias comme `root@`, `postmaster@` doivent être redirigés.
 
-**recipient_canonical_maps** : Réécrire le destinataire
+---
 
-```bash
-recipient_canonical_maps = hash:/etc/postfix/recipient_canonical
-```
-
-**canonical_maps** : Réécrire les deux
+### Fichier /etc/aliases
 
 ```bash
-canonical_maps = hash:/etc/postfix/canonical
+sudo nano /etc/aliases
 ```
 
 ---
 
-### 🔄 Compiler
+Modifier/Ajouter :
 
 ```bash
-sudo postmap /etc/postfix/canonical
-sudo systemctl reload postfix
-```
-
----
-
-## Relocated Mapping
-
-Informer que l'adresse a changé.
-
-### 📝 Fichier /etc/postfix/relocated
-
-```bash
-# Format :
-# ancienne@adresse  nouvelle@adresse
-
-john@oldcompany.com     john@newcompany.com
-sales@oldcompany.com    contact@newcompany.com
-```
-
----
-
-### ⚙️ Configuration
-
-```bash
-relocated_maps = hash:/etc/postfix/relocated
-```
-
-```bash
-sudo postmap /etc/postfix/relocated
-sudo systemctl reload postfix
-```
-
-**Comportement** : Postfix rejette l'email avec un message :
-
-```
-550 5.1.1 <john@oldcompany.com>: Recipient address rejected:
-User has moved to john@newcompany.com
-```
-
----
-
-## Transport Maps
-
-Définir comment et où livrer les emails.
-
-### 📝 Fichier /etc/postfix/transport
-
-```bash
-# Format :
-# domaine  transport:nexthop
-
-# Envoyer via SMTP vers un serveur spécifique
-domain1.com       smtp:[mail.domain1.com]
-
-# Livraison locale
-domain2.com       local:
-
-# Via relais
-domain3.com       relay:[relay.domain3.com]:587
-```
-
----
-
-### ⚙️ Configuration
-
-```bash
-transport_maps = hash:/etc/postfix/transport
-```
-
-```bash
-sudo postmap /etc/postfix/transport
-sudo systemctl reload postfix
-```
-
----
-
-## Combinaison Alias + Virtual
-
-**Question** : Quelle priorité ?
-
-**Réponse** : Alias → Virtual → Local
-
-**Exemple** :
-
-```bash
-# /etc/aliases
+# Redirections des comptes système
 postmaster: root
-
-# /etc/postfix/virtual
-root@example.com: admin@external.com
+hostmaster: root
+webmaster: root
+abuse: root
+security: root
+noc: root
 ```
 
 ---
-
-Email à `postmaster@example.com` :
-1. Alias : `postmaster` → `root`
-2. Virtual : `root@example.com` → `admin@external.com`
-3. Résultat : `admin@external.com`
-
----
-
-## Cas d'usage pratiques
-
-### 🏢 Entreprise multi-domaines
 
 ```bash
-# /etc/postfix/virtual
-
-# Domaine principal : example.com
-contact@example.com       support-team
-sales@example.com         sales-team
-info@example.com          reception
-
-# Domaine secondaire : example.fr (redirige vers .com)
-@example.fr               $1@example.com
+# Rediriger root vers une vraie boîte
+root: admin@andromed.cloud
 ```
 
 ---
-
-### 📧 Adresses temporaires
-
-```bash
-# Créer des adresses jetables
-promo2025@example.com     marketing@example.com
-event-dec@example.com     events@example.com
-
-# Après l'événement, supprimer la ligne et recompiler
-```
-
----
-
-### 🎭 Alias personnels
-
-```bash
-# Noms sympathiques
-jimmy@example.com         j.surquin@example.com
-bob@example.com           robert.martin@example.com
-```
-
----
-
-### 📮 Départements
-
-```bash
-# Un alias vers toute une équipe
-dev@example.com           :include:/etc/postfix/lists/dev-team.txt
-marketing@example.com     :include:/etc/postfix/lists/marketing-team.txt
-```
-
----
-
-**Contenu de** `/etc/postfix/lists/dev-team.txt` :
-
-```
-john@example.com
-jane@example.com
-bob@example.com
-alice@example.com
-```
-
----
-
-### 🔄 Migration de domaine
-
-```bash
-# Ancien domaine redirige vers nouveau
-@oldcompany.com           $1@newcompany.com
-
-# Sauf exceptions
-ceo@oldcompany.com        ceo@newcompany.com
-```
-
----
-
-## Scripts de gestion
-
-### 🔧 Ajouter un alias automatiquement
-
-```bash
-#!/bin/bash
-# add-alias.sh
-
-ALIAS=$1
-DEST=$2
-
-# Ajouter au fichier virtual
-echo "$ALIAS    $DEST" | sudo tee -a /etc/postfix/virtual
-
-# Recompiler
-sudo postmap /etc/postfix/virtual
-sudo systemctl reload postfix
-
-echo "✅ Alias $ALIAS → $DEST créé !"
-```
-
----
-
-**Utilisation** :
-
-```bash
-chmod +x add-alias.sh
-./add-alias.sh contact@domain1.com support@example.com
-```
-
----
-
-### 🗑️ Supprimer un alias
-
-```bash
-#!/bin/bash
-# remove-alias.sh
-
-ALIAS=$1
-
-# Supprimer du fichier
-sudo sed -i "/^$ALIAS/d" /etc/postfix/virtual
-
-# Recompiler
-sudo postmap /etc/postfix/virtual
-sudo systemctl reload postfix
-
-echo "✅ Alias $ALIAS supprimé !"
-```
-
----
-
-### 📋 Lister les alias
-
-```bash
-#!/bin/bash
-# list-aliases.sh
-
-echo "=== Alias locaux (/etc/aliases) ==="
-sudo grep -v '^#' /etc/aliases | grep -v '^$'
-echo ""
-
-echo "=== Alias virtuels (/etc/postfix/virtual) ==="
-sudo grep -v '^#' /etc/postfix/virtual | grep -v '^$'
-```
-
----
-
-## Validation et tests
-
-### ✅ Vérifier un alias local
-
-```bash
-postalias -q postmaster /etc/aliases
-# Output: root
-```
-
----
-
-### ✅ Vérifier un alias virtuel
-
-```bash
-postmap -q contact@domain1.com /etc/postfix/virtual
-# Output: john@example.com
-```
-
----
-
-### ✅ Tester la résolution complète
-
-```bash
-# Installer postfix-policyd-spf-python si pas déjà fait
-sudo apt install postfix-policyd-spf-python
-
-# Tester
-postmap -q contact@domain1.com hash:/etc/postfix/virtual
-```
-
----
-
-### 🧪 Test d'envoi
-
-```bash
-# Envoyer un email de test
-echo "Test alias" | mail -s "Test" contact@domain1.com
-
-# Suivre les logs
-sudo tail -f /var/log/mail.log | grep contact@domain1.com
-```
-
----
-
-## Troubleshooting
-
-### ❌ Problème : Alias ne fonctionne pas
-
-**Cause 1** : Fichier pas recompilé
 
 ```bash
 sudo newaliases
-# ou
-sudo postmap /etc/postfix/virtual
 ```
 
 ---
 
-**Cause 2** : Fichier mal configuré dans main.cf
+### 🧪 Tester
 
 ```bash
-postconf virtual_alias_maps
-# Doit afficher : hash:/etc/postfix/virtual
+echo "Test postmaster" | mail -s "Test" postmaster
 ```
 
 ---
-
-**Cause 3** : Permissions incorrectes
 
 ```bash
-sudo chmod 644 /etc/postfix/virtual
-sudo chown root:root /etc/postfix/virtual
+# Doit arriver dans admin@andromed.cloud
+sudo ls /var/mail/vhosts/andromed.cloud/admin/new/
 ```
 
 ---
 
-### ❌ Problème : Boucle infinie
+# PARTIE 9 : Intégration avec Dovecot
+
+Jusqu'ici, on a stocké les emails. Maintenant, on veut **les lire** avec IMAP !
+
+---
+
+## Configuration Dovecot
+
+### Fichier 10-mail.conf
 
 ```bash
-# ❌ NE PAS FAIRE
-john@example.com    jane@example.com
-jane@example.com    john@example.com
-```
-
-Postfix détecte et rejette !
-
----
-
-**Dans les logs** :
-
-```
-mail for john@example.com loops back to myself
+sudo nano /etc/dovecot/conf.d/10-mail.conf
 ```
 
 ---
 
-### ❌ Problème : Catch-all trop permissif
+Configurer :
 
 ```bash
-# ❌ Attrape TOUS les emails !
-@   catchall@example.com
-```
+# Location des boîtes mail
+mail_location = maildir:/var/mail/vhosts/%d/%n
 
-Solution : Soyez spécifique
-
-```bash
-@domain1.com    catchall@example.com
-```
-
----
-
-## Bonnes pratiques
-
-### 💡 Organisation
-
-**Séparez les fichiers par fonction** :
-
-```bash
-/etc/postfix/virtual-aliases
-/etc/postfix/virtual-mailboxes
-/etc/postfix/virtual-domains
+# Utilisateur et groupe
+mail_uid = vmail
+mail_gid = vmail
+first_valid_uid = 5000
+first_valid_gid = 5000
 ```
 
 ---
 
-**Dans main.cf** :
+**Variables Dovecot** :
+- `%d` = domaine (andromed.cloud)
+- `%n` = utilisateur local (johndoe)
+- `%u` = adresse complète (johndoe@andromed.cloud)
+
+---
+
+### Fichier 10-auth.conf
 
 ```bash
-virtual_alias_maps = 
-    hash:/etc/postfix/virtual-aliases,
-    hash:/etc/postfix/virtual-users
+sudo nano /etc/dovecot/conf.d/10-auth.conf
 ```
 
 ---
 
-### 💡 Documentation
-
-**Commentez vos fichiers** :
-
 ```bash
-# === Domaine principal ===
-contact@example.com       support@example.com
+# Mécanismes d'authentification
+auth_mechanisms = plain login
 
-# === Domaine client ABC Corp ===
-# Créé le 2025-01-15, expire le 2026-01-15
-info@abccorp.com          abccorp-support@example.com
+# Désactiver l'auth en clair (sauf SSL)
+disable_plaintext_auth = yes
 ```
 
 ---
 
-### 💡 Sécurité
-
-**Limitez les catch-all** :
-
-Les catch-all attirent le spam !
+### Créer le fichier d'utilisateurs virtuels
 
 ```bash
-# ✅ Bon : spécifique
-contact@domain.com    support@example.com
-
-# ⚠️ Mauvais : attrape tout
-@domain.com           spam-magnet@example.com
+sudo nano /etc/dovecot/users
 ```
 
 ---
 
-### 💡 Sauvegarde
+Contenu :
 
 ```bash
-# Sauvegarde régulière
-sudo cp /etc/aliases /etc/aliases.backup
-sudo cp /etc/postfix/virtual /etc/postfix/virtual.backup
-
-# Avec date
-sudo cp /etc/postfix/virtual /etc/postfix/virtual.$(date +%Y%m%d)
+# Format : utilisateur@domaine:{PLAIN}motdepasse
+johndoe@andromed.cloud:{PLAIN}MotDePasse123!
+janedoe@andromed.cloud:{PLAIN}MotDePasse456!
+contact@andromed.cloud:{PLAIN}MotDePasse789!
+admin@andromed.cloud:{PLAIN}AdminPass123!
 ```
 
 ---
 
-## Exercices pratiques
-
-### 🎯 Exercice 1 : Alias locaux
-
-1. Créez un alias `contact` qui pointe vers votre email
-2. Créez un alias `support` vers plusieurs destinations
-3. Testez l'envoi
-4. Vérifiez la réception
-
----
-
-### 🎯 Exercice 2 : Domaine virtuel
-
-1. Ajoutez un domaine virtuel `test.local`
-2. Créez des alias pour `admin@test.local` et `info@test.local`
-3. Créez un catch-all pour ce domaine
-4. Testez
-
----
-
-### 🎯 Exercice 3 : Liste de diffusion
-
-1. Créez un fichier `/etc/postfix/lists/team.txt`
-2. Ajoutez 3-4 adresses
-3. Créez un alias `team@` qui utilise :include:
-4. Envoyez un email à `team@` et vérifiez que tout le monde le reçoit
-
----
-
-### 🎯 Exercice 4 : Script d'administration
-
-1. Créez un script pour ajouter automatiquement un alias virtuel
-2. Le script doit prendre 2 arguments : alias et destination
-3. Il doit recompiler et recharger Postfix
-4. Testez-le
-
----
-
-## Points clés à retenir
-
-### 💡 Alias vs Virtual
-
-**Alias** (`/etc/aliases`) :
-- Pour comptes locaux système
-- `newaliases` pour compiler
-
-**Virtual** (`/etc/postfix/virtual`) :
-- Pour domaines virtuels
-- `postmap` pour compiler
-
----
-
-### 💡 Commandes essentielles
+⚠️ **Important** : En production, utilisez des hash (SHA512-CRYPT) !
 
 ```bash
-# Compiler
-sudo newaliases               # Pour aliases
-sudo postmap /etc/postfix/virtual   # Pour virtual
+# Générer un hash
+doveadm pw -s SHA512-CRYPT
+```
 
-# Tester
-postalias -q ALIAS /etc/aliases
-postmap -q ADRESSE /etc/postfix/virtual
+---
+
+### Configuration de l'authentification
+
+```bash
+sudo nano /etc/dovecot/conf.d/auth-passwdfile.conf.ext
+```
+
+---
+
+Créer/Modifier :
+
+```bash
+passdb {
+  driver = passwd-file
+  args = scheme=PLAIN username_format=%u /etc/dovecot/users
+}
+
+userdb {
+  driver = static
+  args = uid=vmail gid=vmail home=/var/mail/vhosts/%d/%n
+}
+```
+
+---
+
+### Activer cette authentification
+
+```bash
+sudo nano /etc/dovecot/conf.d/10-auth.conf
+```
+
+---
+
+Commenter les auth par défaut et ajouter :
+
+```bash
+# Désactiver
+#!include auth-system.conf.ext
+
+# Activer
+!include auth-passwdfile.conf.ext
+```
+
+---
+
+### Permissions
+
+```bash
+sudo chmod 640 /etc/dovecot/users
+sudo chown root:dovecot /etc/dovecot/users
+```
+
+---
+
+### Redémarrer Dovecot
+
+```bash
+sudo systemctl restart dovecot
+sudo systemctl status dovecot
+```
+
+---
+
+## 🧪 Tester l'authentification
+
+```bash
+doveadm auth test johndoe@andromed.cloud MotDePasse123!
+```
+
+---
+
+Résultat attendu :
+
+```bash
+passdb: johndoe@andromed.cloud auth succeeded
+userdb: johndoe@andromed.cloud
+  home      : /var/mail/vhosts/andromed.cloud/johndoe
+  uid       : 5000
+  gid       : 5000
+```
+
+---
+
+## Tester avec un client email
+
+### Paramètres de configuration
+
+**Serveur IMAP** :
+- Serveur : `mail.andromed.cloud`
+- Port : `993` (IMAPS)
+- SSL/TLS : Activé
+- Utilisateur : `johndoe@andromed.cloud`
+- Mot de passe : `MotDePasse123!`
+
+---
+
+**Serveur SMTP** :
+- Serveur : `mail.andromed.cloud`
+- Port : `587` (Submission)
+- STARTTLS : Activé
+- Authentification : Oui
+- Utilisateur : `johndoe@andromed.cloud`
+- Mot de passe : `MotDePasse123!`
+
+---
+
+# PARTIE 10 : Commandes utiles
+
+## Lister les boîtes mail
+
+```bash
+# Toutes les boîtes
+sudo find /var/mail/vhosts -name "new" -type d
+```
+
+---
+
+## Compter les emails par boîte
+
+```bash
+# Emails de johndoe
+sudo ls /var/mail/vhosts/andromed.cloud/johndoe/new/ | wc -l
+```
+
+---
+
+## Lire un email
+
+```bash
+# Lister les emails
+sudo ls /var/mail/vhosts/andromed.cloud/johndoe/new/
+```
+
+---
+
+```bash
+# Lire un email spécifique
+sudo cat /var/mail/vhosts/andromed.cloud/johndoe/new/1234567890.V1I2M3.mail
+```
+
+---
+
+## Vérifier une adresse
+
+```bash
+# Vérifier si l'adresse existe dans vmailbox
+postmap -q johndoe@andromed.cloud /etc/postfix/vmailbox
+```
+
+---
+
+Résultat :
+
+```
+andromed.cloud/johndoe/
+```
+
+---
+
+## Vérifier un alias
+
+```bash
+# Vérifier une redirection
+postmap -q info@andromed.cloud /etc/postfix/virtual_alias
+```
+
+---
+
+Résultat :
+
+```
+johndoe@andromed.cloud
+```
+
+---
+
+## Purger une boîte
+
+```bash
+# Supprimer tous les emails de johndoe
+sudo rm -rf /var/mail/vhosts/andromed.cloud/johndoe/new/*
+sudo rm -rf /var/mail/vhosts/andromed.cloud/johndoe/cur/*
+```
+
+---
+
+## Taille des boîtes
+
+```bash
+# Taille de toutes les boîtes
+sudo du -sh /var/mail/vhosts/andromed.cloud/*/
+```
+
+---
+
+```bash
+# Taille d'une boîte spécifique
+sudo du -sh /var/mail/vhosts/andromed.cloud/johndoe/
+```
+
+---
+
+# PARTIE 11 : Scripts d'administration
+
+## Script : Créer une nouvelle adresse
+
+```bash
+sudo nano /usr/local/bin/add-virtual-mailbox.sh
+```
+
+---
+
+Contenu :
+
+```bash
+#!/bin/bash
+# add-virtual-mailbox.sh
+
+if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 email@domain password"
+    exit 1
+fi
+
+EMAIL=$1
+PASSWORD=$2
+DOMAIN=$(echo $EMAIL | cut -d@ -f2)
+USER=$(echo $EMAIL | cut -d@ -f1)
+```
+
+---
+
+```bash
+# Ajouter à vmailbox
+echo "$EMAIL    $DOMAIN/$USER/" | sudo tee -a /etc/postfix/vmailbox
+sudo postmap /etc/postfix/vmailbox
+
+# Ajouter à Dovecot users
+echo "$EMAIL:{PLAIN}$PASSWORD" | sudo tee -a /etc/dovecot/users
+```
+
+---
+
+```bash
+# Créer le répertoire
+sudo mkdir -p /var/mail/vhosts/$DOMAIN/$USER/{new,cur,tmp}
+sudo chown -R vmail:vmail /var/mail/vhosts/$DOMAIN/$USER
+sudo chmod -R 700 /var/mail/vhosts/$DOMAIN/$USER
 
 # Recharger
+sudo systemctl reload postfix
+sudo systemctl reload dovecot
+
+echo "✅ Boîte mail $EMAIL créée !"
+```
+
+---
+
+```bash
+# Rendre exécutable
+sudo chmod +x /usr/local/bin/add-virtual-mailbox.sh
+```
+
+---
+
+### 🧪 Utiliser le script
+
+```bash
+sudo /usr/local/bin/add-virtual-mailbox.sh test@andromed.cloud Password123
+```
+
+---
+
+## Script : Supprimer une adresse
+
+```bash
+sudo nano /usr/local/bin/remove-virtual-mailbox.sh
+```
+
+---
+
+Contenu :
+
+```bash
+#!/bin/bash
+# remove-virtual-mailbox.sh
+
+if [ "$#" -ne 1 ]; then
+    echo "Usage: $0 email@domain"
+    exit 1
+fi
+
+EMAIL=$1
+DOMAIN=$(echo $EMAIL | cut -d@ -f2)
+USER=$(echo $EMAIL | cut -d@ -f1)
+```
+
+---
+
+```bash
+# Supprimer de vmailbox
+sudo sed -i "/^$EMAIL[[:space:]]/d" /etc/postfix/vmailbox
+sudo postmap /etc/postfix/vmailbox
+
+# Supprimer de Dovecot users
+sudo sed -i "/^$EMAIL:/d" /etc/dovecot/users
+```
+
+---
+
+```bash
+# Supprimer le répertoire
+sudo rm -rf /var/mail/vhosts/$DOMAIN/$USER
+
+# Recharger
+sudo systemctl reload postfix
+sudo systemctl reload dovecot
+
+echo "✅ Boîte mail $EMAIL supprimée !"
+```
+
+---
+
+```bash
+sudo chmod +x /usr/local/bin/remove-virtual-mailbox.sh
+```
+
+---
+
+## Script : Lister toutes les adresses
+
+```bash
+sudo nano /usr/local/bin/list-virtual-mailboxes.sh
+```
+
+---
+
+Contenu :
+
+```bash
+#!/bin/bash
+# list-virtual-mailboxes.sh
+
+echo "========================================="
+echo "  BOÎTES MAIL VIRTUELLES"
+echo "========================================="
+echo ""
+
+grep -v '^#' /etc/postfix/vmailbox | grep -v '^$' | while read line; do
+    email=$(echo $line | awk '{print $1}')
+    path=$(echo $line | awk '{print $2}')
+    count=$(sudo ls /var/mail/vhosts/$path/new 2>/dev/null | wc -l)
+    size=$(sudo du -sh /var/mail/vhosts/$path 2>/dev/null | awk '{print $1}')
+    printf "%-40s [%3d emails] [%s]\n" "$email" "$count" "$size"
+done
+
+echo ""
+echo "========================================="
+```
+
+---
+
+```bash
+sudo chmod +x /usr/local/bin/list-virtual-mailboxes.sh
+```
+
+---
+
+### 🧪 Utiliser le script
+
+```bash
+sudo /usr/local/bin/list-virtual-mailboxes.sh
+```
+
+---
+
+Résultat :
+
+```
+=========================================
+  BOÎTES MAIL VIRTUELLES
+=========================================
+
+johndoe@andromed.cloud                  [  5 emails] [128K]
+janedoe@andromed.cloud                  [  2 emails] [64K]
+contact@andromed.cloud                  [ 12 emails] [256K]
+admin@andromed.cloud                    [  8 emails] [192K]
+
+=========================================
+```
+
+---
+
+# PARTIE 12 : Troubleshooting
+
+## ❌ Problème : Email non délivré
+
+### Vérifier les logs
+
+```bash
+sudo tail -50 /var/log/mail.log | grep ERROR
+```
+
+---
+
+### Erreur courante 1
+
+```
+User unknown in virtual mailbox table
+```
+
+**Cause** : L'adresse n'existe pas dans vmailbox
+
+---
+
+**Solution** :
+
+```bash
+# Vérifier
+postmap -q johndoe@andromed.cloud /etc/postfix/vmailbox
+
+# Si vide, ajouter
+sudo nano /etc/postfix/vmailbox
+# Ajouter la ligne
+sudo postmap /etc/postfix/vmailbox
+```
+
+---
+
+### Erreur courante 2
+
+```
+Unable to create file /var/mail/vhosts/.../new/: Permission denied
+```
+
+**Cause** : Problème de permissions
+
+---
+
+**Solution** :
+
+```bash
+# Vérifier les permissions
+ls -ld /var/mail/vhosts/
+ls -ld /var/mail/vhosts/andromed.cloud/
+```
+
+---
+
+```bash
+# Corriger
+sudo chown -R vmail:vmail /var/mail/vhosts
+sudo chmod -R 770 /var/mail/vhosts
+```
+
+---
+
+### Erreur courante 3
+
+```
+fatal: parameter virtual_uid_maps: unknown user name: vmail
+```
+
+**Cause** : L'utilisateur vmail n'existe pas
+
+---
+
+**Solution** :
+
+```bash
+# Vérifier
+id vmail
+
+# Si erreur, recréer
+sudo groupadd -g 5000 vmail
+sudo useradd -g vmail -u 5000 vmail -d /var/mail/vhosts -s /sbin/nologin
+```
+
+---
+
+## ❌ Problème : Authentification Dovecot échoue
+
+### Vérifier les logs
+
+```bash
+sudo tail -50 /var/log/dovecot/dovecot.log | grep auth
+```
+
+---
+
+### Tester l'authentification
+
+```bash
+doveadm auth test johndoe@andromed.cloud MotDePasse123!
+```
+
+---
+
+Si erreur :
+
+```
+auth failed
+```
+
+---
+
+**Vérifier le fichier users** :
+
+```bash
+sudo cat /etc/dovecot/users | grep johndoe
+```
+
+---
+
+**Format correct** :
+
+```
+johndoe@andromed.cloud:{PLAIN}MotDePasse123!
+```
+
+---
+
+**Permissions** :
+
+```bash
+sudo chmod 640 /etc/dovecot/users
+sudo chown root:dovecot /etc/dovecot/users
+```
+
+---
+
+## 🔍 Mode debug Postfix
+
+```bash
+# Activer
+sudo postconf -e "debug_peer_list=127.0.0.1"
+sudo postconf -e "debug_peer_level=3"
 sudo systemctl reload postfix
 ```
 
 ---
 
-### 💡 Configuration main.cf
+```bash
+# Tester
+echo "Debug test" | mail -s "Test" johndoe@andromed.cloud
+```
+
+---
 
 ```bash
-# Alias locaux
-alias_maps = hash:/etc/aliases
-
-# Domaines virtuels (alias)
-virtual_alias_domains = domain1.com, domain2.com
-virtual_alias_maps = hash:/etc/postfix/virtual
-
-# Domaines virtuels (mailbox)
-virtual_mailbox_domains = domain3.com
-virtual_mailbox_maps = hash:/etc/postfix/vmailbox
-virtual_mailbox_base = /var/mail/vhosts
+# Voir les logs détaillés
+sudo tail -f /var/log/mail.log
 ```
+
+---
+
+```bash
+# Désactiver
+sudo postconf -e "debug_peer_list="
+sudo postconf -e "debug_peer_level=0"
+sudo systemctl reload postfix
+```
+
+---
+
+# PARTIE 13 : Exercices pratiques
+
+## 🎯 Exercice 1 : Première boîte virtuelle
+
+**Objectif** : Créer votre première adresse complète
+
+---
+
+**Tâches** :
+
+1. Créer `alice@andromed.cloud` dans vmailbox
+2. Ajouter le mot de passe dans Dovecot users
+3. Compiler et recharger
+4. Envoyer un email de test
+5. Vérifier que l'email est arrivé
+6. Tester l'authentification avec doveadm
+
+---
+
+### ✅ Solution Exercice 1
+
+```bash
+# 1. Ajouter dans vmailbox
+sudo nano /etc/postfix/vmailbox
+
+# Ajouter
+alice@andromed.cloud        andromed.cloud/alice/
+```
+
+---
+
+```bash
+# 2. Compiler
+sudo postmap /etc/postfix/vmailbox
+```
+
+---
+
+```bash
+# 3. Créer le répertoire
+sudo mkdir -p /var/mail/vhosts/andromed.cloud/alice/{new,cur,tmp}
+sudo chown -R vmail:vmail /var/mail/vhosts/andromed.cloud/alice
+sudo chmod -R 700 /var/mail/vhosts/andromed.cloud/alice
+```
+
+---
+
+```bash
+# 4. Ajouter dans Dovecot
+sudo nano /etc/dovecot/users
+
+# Ajouter
+alice@andromed.cloud:{PLAIN}AlicePass123!
+```
+
+---
+
+```bash
+# 5. Recharger
+sudo systemctl reload postfix
+sudo systemctl reload dovecot
+```
+
+---
+
+```bash
+# 6. Tester envoi
+echo "Bonjour Alice" | mail -s "Bienvenue" alice@andromed.cloud
+```
+
+---
+
+```bash
+# 7. Vérifier
+sudo ls /var/mail/vhosts/andromed.cloud/alice/new/
+sudo cat /var/mail/vhosts/andromed.cloud/alice/new/*
+```
+
+---
+
+```bash
+# 8. Tester auth
+doveadm auth test alice@andromed.cloud AlicePass123!
+```
+
+---
+
+## 🎯 Exercice 2 : Alias et redirections
+
+**Objectif** : Créer des redirections complexes
+
+---
+
+**Tâches** :
+
+1. Créer `info@andromed.cloud` qui redirige vers alice
+2. Créer `team@andromed.cloud` vers alice + johndoe
+3. Créer `billing@andromed.cloud` vers votre email externe
+4. Tester les 3 redirections
+
+---
+
+### ✅ Solution Exercice 2
+
+```bash
+# 1. Éditer virtual_alias
+sudo nano /etc/postfix/virtual_alias
+```
+
+---
+
+Ajouter :
+
+```bash
+# Exercice 2
+info@andromed.cloud         alice@andromed.cloud
+team@andromed.cloud         alice@andromed.cloud, johndoe@andromed.cloud
+billing@andromed.cloud      votre@email.com
+```
+
+---
+
+```bash
+# 2. Compiler et recharger
+sudo postmap /etc/postfix/virtual_alias
+sudo systemctl reload postfix
+```
+
+---
+
+```bash
+# 3. Tests
+echo "Test info" | mail -s "Info" info@andromed.cloud
+echo "Test team" | mail -s "Team" team@andromed.cloud
+echo "Test billing" | mail -s "Billing" billing@andromed.cloud
+```
+
+---
+
+```bash
+# 4. Vérifier
+sudo ls /var/mail/vhosts/andromed.cloud/alice/new/
+sudo ls /var/mail/vhosts/andromed.cloud/johndoe/new/
+# Vérifier votre boîte externe
+```
+
+---
+
+## 🎯 Exercice 3 : Deuxième domaine
+
+**Objectif** : Gérer un second domaine
+
+---
+
+**Tâches** :
+
+1. Ajouter le domaine `exemple.local`
+2. Créer `contact@exemple.local`
+3. Créer `admin@exemple.local`
+4. Configurer un catch-all vers admin
+5. Tester
+
+---
+
+### ✅ Solution Exercice 3
+
+```bash
+# 1. Créer le répertoire
+sudo mkdir -p /var/mail/vhosts/exemple.local
+sudo chown vmail:vmail /var/mail/vhosts/exemple.local
+sudo chmod 770 /var/mail/vhosts/exemple.local
+```
+
+---
+
+```bash
+# 2. Ajouter dans vmailbox
+sudo nano /etc/postfix/vmailbox
+
+# Ajouter
+contact@exemple.local       exemple.local/contact/
+admin@exemple.local         exemple.local/admin/
+```
+
+---
+
+```bash
+sudo postmap /etc/postfix/vmailbox
+```
+
+---
+
+```bash
+# 3. Créer les répertoires
+sudo mkdir -p /var/mail/vhosts/exemple.local/contact/{new,cur,tmp}
+sudo mkdir -p /var/mail/vhosts/exemple.local/admin/{new,cur,tmp}
+sudo chown -R vmail:vmail /var/mail/vhosts/exemple.local
+sudo chmod -R 700 /var/mail/vhosts/exemple.local/contact
+sudo chmod -R 700 /var/mail/vhosts/exemple.local/admin
+```
+
+---
+
+```bash
+# 4. Ajouter les mots de passe Dovecot
+sudo nano /etc/dovecot/users
+
+# Ajouter
+contact@exemple.local:{PLAIN}ContactPass!
+admin@exemple.local:{PLAIN}AdminPass!
+```
+
+---
+
+```bash
+# 5. Configurer catch-all
+sudo nano /etc/postfix/virtual_alias
+
+# Ajouter À LA FIN
+@exemple.local              admin@exemple.local
+```
+
+---
+
+```bash
+sudo postmap /etc/postfix/virtual_alias
+```
+
+---
+
+```bash
+# 6. Mettre à jour main.cf
+sudo nano /etc/postfix/main.cf
+
+# Modifier
+virtual_mailbox_domains = andromed.cloud, exemple.local
+```
+
+---
+
+```bash
+# 7. Recharger
+sudo systemctl reload postfix
+sudo systemctl reload dovecot
+```
+
+---
+
+```bash
+# 8. Tests
+echo "Test 1" | mail -s "Contact" contact@exemple.local
+echo "Test 2" | mail -s "Admin" admin@exemple.local
+echo "Test 3" | mail -s "Random" random@exemple.local
+```
+
+---
+
+```bash
+# 9. Vérifier
+sudo ls /var/mail/vhosts/exemple.local/contact/new/
+sudo ls /var/mail/vhosts/exemple.local/admin/new/
+```
+
+---
+
+## 🎯 Exercice 4 : Script automatisé
+
+**Objectif** : Utiliser les scripts d'administration
+
+---
+
+**Tâches** :
+
+1. Utiliser le script pour créer `bob@andromed.cloud`
+2. Lister toutes les boîtes avec le script de listing
+3. Envoyer un email à bob
+4. Vérifier avec le script que bob a 1 email
+5. Supprimer bob avec le script
+
+---
+
+### ✅ Solution Exercice 4
+
+```bash
+# 1. Créer bob
+sudo /usr/local/bin/add-virtual-mailbox.sh bob@andromed.cloud BobPass123
+```
+
+---
+
+```bash
+# 2. Lister
+sudo /usr/local/bin/list-virtual-mailboxes.sh
+```
+
+---
+
+```bash
+# 3. Envoyer email
+echo "Salut Bob" | mail -s "Test" bob@andromed.cloud
+```
+
+---
+
+```bash
+# 4. Relister (bob doit avoir 1 email)
+sudo /usr/local/bin/list-virtual-mailboxes.sh
+```
+
+---
+
+```bash
+# 5. Supprimer
+sudo /usr/local/bin/remove-virtual-mailbox.sh bob@andromed.cloud
+```
+
+---
+
+```bash
+# 6. Vérifier que bob est supprimé
+sudo /usr/local/bin/list-virtual-mailboxes.sh
+```
+
+---
+
+# PARTIE 14 : Récapitulatif
+
+## 🎯 Ce que vous savez maintenant
+
+### ✅ Vous savez gérer des centaines d'emails SANS utilisateurs système
+
+```
+johndoe@andromed.cloud → /var/mail/vhosts/andromed.cloud/johndoe/
+janedoe@andromed.cloud → /var/mail/vhosts/andromed.cloud/janedoe/
+...
+```
+
+---
+
+### ✅ Architecture complète
+
+```
+┌──────────────┐
+│   Internet   │
+└──────┬───────┘
+       │ SMTP
+┌──────▼───────┐
+│   Postfix    │ ← virtual_mailbox_maps
+└──────┬───────┘
+       │
+┌──────▼───────┐
+│   /var/mail  │
+│    /vhosts   │ ← vmail (UID 5000)
+└──────┬───────┘
+       │
+┌──────▼───────┐
+│   Dovecot    │ ← IMAP/POP3
+└──────┬───────┘
+       │
+┌──────▼───────┐
+│   Clients    │ (Outlook, Apple Mail, etc.)
+└──────────────┘
+```
+
+---
+
+### 💡 Points clés
+
+**1. Un seul utilisateur technique : vmail**
+- UID/GID 5000
+- Pas de login possible
+- Possède toutes les boîtes
+
+---
+
+**2. Fichiers Postfix**
+
+```bash
+/etc/postfix/vmailbox        # Boîtes virtuelles
+/etc/postfix/virtual_alias   # Redirections
+/etc/postfix/virtual_domains # Domaines gérés
+```
+
+---
+
+**3. Fichiers Dovecot**
+
+```bash
+/etc/dovecot/users           # Utilisateurs + mots de passe
+/etc/dovecot/conf.d/10-mail.conf   # Configuration maildir
+/etc/dovecot/conf.d/10-auth.conf   # Configuration auth
+```
+
+---
+
+**4. Structure des répertoires**
+
+```
+/var/mail/vhosts/
+├── andromed.cloud/
+│   ├── johndoe/
+│   │   ├── new/    (nouveaux emails)
+│   │   ├── cur/    (emails lus)
+│   │   └── tmp/    (temporaire)
+│   ├── janedoe/
+│   └── contact/
+└── exemple.local/
+    ├── contact/
+    └── admin/
+```
+
+---
+
+**5. Commandes essentielles**
+
+```bash
+# Ajouter une boîte
+sudo nano /etc/postfix/vmailbox
+sudo postmap /etc/postfix/vmailbox
+
+# Ajouter un alias
+sudo nano /etc/postfix/virtual_alias
+sudo postmap /etc/postfix/virtual_alias
+```
+
+---
+
+```bash
+# Vérifier
+postmap -q EMAIL /etc/postfix/vmailbox
+postmap -q EMAIL /etc/postfix/virtual_alias
+
+# Recharger
+sudo systemctl reload postfix
+sudo systemctl reload dovecot
+```
+
+---
+
+**6. Ordre de résolution**
+
+```
+1. virtual_alias_maps (redirections)
+2. virtual_mailbox_maps (boîtes réelles)
+3. Livraison
+```
+
+---
+
+## 🔐 Sécurité
+
+### ✅ Bonnes pratiques
+
+- Utilisateur vmail sans login
+- Permissions 770 sur /var/mail/vhosts
+- Hash des mots de passe (SHA512-CRYPT)
+- SSL/TLS obligatoire
+- Pas de catch-all (ou avec anti-spam)
+
+---
+
+### ⚠️ À éviter
+
+- ❌ Créer des utilisateurs système pour chaque email
+- ❌ Permissions trop permissives (777)
+- ❌ Mots de passe en clair visibles
+- ❌ Catch-all sans protection
+- ❌ Pas de quota (risque de saturation disque)
+
+---
+
+## 🚀 Pour aller plus loin
+
+### Base de données MySQL/PostgreSQL
+
+Au lieu de fichiers texte, utiliser une BDD :
+
+```bash
+virtual_mailbox_maps = mysql:/etc/postfix/mysql-virtual-mailbox.cf
+virtual_alias_maps = mysql:/etc/postfix/mysql-virtual-alias.cf
+```
+
+---
+
+### Interface web de gestion
+
+- **Postfixadmin** : Gérer les domaines/boîtes via web
+- **Roundcube** : Webmail
+- **iRedMail** : Solution complète
+
+---
+
+### Quotas avancés
+
+```bash
+# Dans Dovecot
+plugin {
+  quota = maildir:User quota
+  quota_rule = *:storage=1GB
+}
+```
+
+---
+
+## 🎉 Félicitations !
+
+Vous savez maintenant :
+
+✅ Gérer des centaines d'adresses email sans polluer le système
+
+✅ Créer des boîtes virtuelles avec Postfix + Dovecot
+
+✅ Faire des redirections simples et complexes
+
+✅ Gérer plusieurs domaines sur un serveur
+
+✅ Automatiser avec des scripts
+
+✅ Déboguer les problèmes courants
 
 ---
 
 ## Prochaine étape
 
-Maintenant que vous savez gérer les alias et les domaines virtuels, passons à la **protection anti-spam** ! 🛡️
+Maintenant que vous maîtrisez les domaines virtuels, passons à la **protection anti-spam** ! 🛡️
 
 <div class="pt-12">
   <span @click="next" class="px-2 p-3 rounded cursor-pointer hover:bg-white hover:bg-opacity-10 neon-border">
     Module suivant : Protection anti-spam <carbon:arrow-right class="inline"/>
   </span>
 </div>
-
