@@ -48,10 +48,10 @@ Sans protection, votre serveur sera rapidement submergé.
 
 Pensez à un château fort :
 
-1. **Douves** : Restrictions réseau (RBL, rate limiting)
-2. **Remparts** : Restrictions SMTP (HELO, sender, recipient)
-3. **Gardes** : Vérifications d'authenticité (SPF, DKIM, DMARC)
-4. **Inspection** : Filtrage basique du contenu
+1. **Couche 1** : Restrictions réseau (RBL, rate limiting)
+2. **Couche 2** : Restrictions SMTP (HELO, sender, recipient, client)
+
+💡 **Note** : Les protections avancées (Greylisting, SpamAssassin, Rspamd) seront vues dans la formation **Perfectionnement**.
 
 ---
 
@@ -71,36 +71,34 @@ Quand un serveur se connecte à vous :
 
 ---
 
-### 📋 RBL populaires en 2025
+### 📋 RBL recommandé pour débuter
 
-**Spamhaus ZEN** (le plus utilisé) : `zen.spamhaus.org` - Combine plusieurs listes - Très fiable, peu de faux positifs
-
-**Barracuda** : `b.barracudacentral.org` - Spécialisé dans les botnets
-
-**SpamCop** : `bl.spamcop.net` - Basé sur les signalements utilisateurs
-
-**SORBS** : `dnsbl.sorbs.net` - Détecte les proxys ouverts et relais
+**Spamhaus ZEN** (le plus utilisé et fiable) :
+- Domaine : `zen.spamhaus.org`
+- Combine plusieurs listes Spamhaus
+- Très fiable, peu de faux positifs
+- **Le meilleur choix pour une configuration de base**
 
 ---
 
 ### ⚙️ Configuration dans main.cf
 
 ```bash
-# Vérification RBL
+# Vérification RBL avec Spamhaus ZEN
 smtpd_recipient_restrictions = 
     permit_mynetworks,
     permit_sasl_authenticated,
     reject_unauth_destination,
-    reject_rbl_client zen.spamhaus.org,
-    reject_rbl_client b.barracudacentral.org,
-    reject_rbl_client bl.spamcop.net
+    reject_rbl_client zen.spamhaus.org
 ```
 
 ---
 
 ### ⚠️ Attention aux faux positifs !
 
-Les RBL peuvent blacklister des IPs légitimes. **Solution** : Utiliser plusieurs RBL et tester régulièrement
+Les RBL peuvent parfois blacklister des IPs légitimes.
+
+**Solution** : Whitelister les IPs/domaines de confiance si nécessaire
 
 ### ✅ Tester si une IP est blacklistée
 
@@ -141,76 +139,6 @@ smtpd_client_message_rate_limit = 100
 ```
 
 ---
-
-## Greylisting
-
-Technique basée sur le principe : **les spammeurs ne réessaient pas**.
-
-### 🔍 Fonctionnement
-
-1. Premier email d'un expéditeur inconnu → Rejet temporaire (450)
-2. Serveur légitime réessaie après quelques minutes → Accepté
-3. Spammer abandonne immédiatement → Bloqué
-
-### 📦 Installation de Postgrey
-
-```bash
-# Ubuntu/Debian
-sudo apt install postgrey
-
-# Rocky Linux
-sudo dnf install postgrey
-```
-
-### ⚙️ Configuration Postfix
-
-Dans `/etc/postfix/main.cf` :
-
-```bash
-smtpd_recipient_restrictions = 
-    permit_mynetworks,
-    permit_sasl_authenticated,
-    reject_unauth_destination,
-    check_policy_service inet:127.0.0.1:10023
-```
-
----
-
-### 🔧 Configuration Postgrey
-
-Fichier `/etc/default/postgrey` :
-
-```bash
-POSTGREY_OPTS="--inet=127.0.0.1:10023 --delay=300"
-```
-
-`--delay=300` : Délai de 5 minutes avant d'accepter
-
----
-
-### ♻️ Redémarrer
-
-```bash
-sudo systemctl restart postgrey
-sudo systemctl reload postfix
-```
-
-### ⚠️ Inconvénient
-
-Le greylisting retarde **tous** les premiers emails (même légitimes) de 5-10 minutes.
-
-Peut être gênant pour certains services (notifications urgentes, codes OTP).
-
----
-
-**Solution** : Whitelist pour certains domaines importants
-
-```bash
-# /etc/postgrey/whitelist_clients.local
-gmail.com
-microsoft.com
-paypal.com
-```
 
 # Couche 2 : Restrictions SMTP
 
@@ -382,145 +310,37 @@ sudo postmap /etc/postfix/client_access
 sudo systemctl reload postfix
 ```
 
-# Couche 3 : Filtrage basique
+---
 
-## Filtrage par mots-clés
+## 💡 Pour aller plus loin
 
-Pour une formation de base, nous nous concentrons sur les restrictions SMTP plutôt que sur les content filters avancés.
+Les protections avancées suivantes seront vues dans la formation **Perfectionnement Postfix** :
+
+- **Greylisting** (Postgrey) : Retarder temporairement les emails inconnus
+- **SpamAssassin** : Filtrage de contenu avec score bayésien
+- **Rspamd** : Solution moderne et performante
+- **Amavis** : Intégration complète anti-virus + anti-spam
 
 ---
 
-### 📝 Filtrage basique par restrictions
+# Configuration complète anti-spam
 
-Pour une formation de 2 jours, nous nous concentrons sur les **restrictions SMTP** qui sont plus simples et efficaces pour débuter :
+## Fichier /etc/postfix/main.cf
 
-- **RBL** (DNS Blacklists)
-- **Rate limiting** 
-- **Greylisting**
-- **Restrictions HELO/sender/recipient**
-
-Les content filters avancés (SpamAssassin, Rspamd) nécessitent une formation dédiée.
-
----
-
-### 🔗 Intégration avec Postfix
-
-**Méthode 1** : Via master.cf (simple mais limité)
-
-Dans `/etc/postfix/master.cf`, modifier la ligne `smtp` :
+Ajouter ces paramètres pour une protection de base efficace :
 
 ```bash
-smtp      inet  n       -       y       -       -       smtpd
-  -o content_filter=spamassassin
-```
+# ============================================
+# PROTECTION ANTI-SPAM - CONFIGURATION BASE
+# ============================================
 
----
-
-Ajouter à la fin de `master.cf` :
-
-```bash
-spamassassin unix -     n       n       -       -       pipe
-  user=spamd argv=/usr/bin/spamc -f -e  
-  /usr/sbin/sendmail -oi -f ${sender} ${recipient}
-```
-
----
-
-**Méthode 2** : Via Amavis (avancé, recommandé pour production)
-
-### 🎯 Entraîner SpamAssassin
-
-SpamAssassin utilise le **Bayesian learning** pour s'améliorer.
-
-**Entraîner avec du spam** :
-
-```bash
-sa-learn --spam /path/to/spam/folder
-```
-
-**Entraîner avec du ham (emails légitimes)** :
-
-```bash
-sa-learn --ham /path/to/ham/folder
-```
-
-**Voir les statistiques** :
-
-```bash
-sa-learn --dump magic
-```
-
----
-
-### 📊 Tester SpamAssassin
-
-```bash
-# Tester un email
-spamassassin -t < email.txt
-
-# Voir le score uniquement
-spamc < email.txt | grep X-Spam-Status
-```
-
----
-
-## Rspamd (alternative moderne)
-
-Rspamd est plus rapide et plus moderne que SpamAssassin.
-
-### 📦 Installation
-
-```bash
-# Ubuntu/Debian
-sudo apt install rspamd
-
-# Rocky Linux
-sudo dnf install rspamd
-```
-
-### ⚙️ Configuration basique
-
-Fichier `/etc/rspamd/local.d/worker-controller.inc` :
-
-```
-password = "votre_mot_de_passe_hash";
-enable_password = "votre_mot_de_passe_hash";
-```
-
----
-
-Générer le hash :
-
-```bash
-rspamadm pw
-```
-
-### 🌐 Interface web
-
-Rspamd fournit une interface web sur `http://serveur:11334`
-
----
-
-### 🔗 Intégration avec Postfix
-
-Via milter (nous verrons ça dans le module dédié).
-
-# Combinaison des protections
-
-## Configuration complète recommandée
-
-```bash
 # === RESTRICTIONS CLIENT ===
 smtpd_client_restrictions = 
     permit_mynetworks,
     permit_sasl_authenticated,
     reject_unknown_client_hostname,
     check_client_access hash:/etc/postfix/client_access
-```
 
----
-
-```bash
 # === RESTRICTIONS HELO ===
 smtpd_helo_required = yes
 smtpd_helo_restrictions = 
@@ -529,11 +349,7 @@ smtpd_helo_restrictions =
     reject_invalid_helo_hostname,
     reject_non_fqdn_helo_hostname,
     reject_unknown_helo_hostname
-```
 
----
-
-```bash
 # === RESTRICTIONS SENDER ===
 smtpd_sender_restrictions = 
     permit_mynetworks,
@@ -541,11 +357,7 @@ smtpd_sender_restrictions =
     reject_non_fqdn_sender,
     reject_unknown_sender_domain,
     check_sender_access hash:/etc/postfix/sender_access
-```
 
----
-
-```bash
 # === RESTRICTIONS RECIPIENT ===
 smtpd_recipient_restrictions = 
     permit_mynetworks,
@@ -553,23 +365,33 @@ smtpd_recipient_restrictions =
     reject_unauth_destination,
     reject_non_fqdn_recipient,
     reject_unknown_recipient_domain,
-    reject_rbl_client zen.spamhaus.org,
-    reject_rbl_client b.barracudacentral.org,
-    check_policy_service inet:127.0.0.1:10023
-```
+    reject_rbl_client zen.spamhaus.org
 
----
-
-```bash
 # === RATE LIMITING ===
 smtpd_client_connection_count_limit = 10
 smtpd_client_connection_rate_limit = 30
 smtpd_client_message_rate_limit = 100
 anvil_rate_time_unit = 60s
 
-# === AUTRES ===
+# === SÉCURITÉ GÉNÉRALE ===
 disable_vrfy_command = yes
 smtpd_delay_reject = yes
+```
+
+---
+
+## Appliquer la configuration
+
+```bash
+# Vérifier la configuration
+postfix check
+```
+
+---
+
+```bash
+# Recharger Postfix
+sudo systemctl reload postfix
 ```
 
 ---
@@ -624,15 +446,24 @@ sudo grep 'reject:' /var/log/mail.log | \
 sudo grep 'reject:' /var/log/mail.log | tail -20
 ```
 
-## Affiner les règles
 
-### 🎯 Réduire les faux positifs
+## Troubleshooting rapide
 
-Si des emails légitimes sont rejetés :
+### ❌ Problème : Emails légitimes rejetés
 
-1. **Identifier la règle responsable** dans les logs
-2. **Whitelister** le domaine/IP si légitime
-3. **Ajuster le score** si utilisation de SpamAssassin
+**Diagnostic** :
+
+```bash
+sudo grep 'reject:' /var/log/mail.log | tail -20
+```
+
+---
+
+**Solution** :
+
+1. Identifier la règle responsable
+2. Whitelister l'IP ou le domaine légitime
+3. Recharger Postfix
 
 ---
 
@@ -648,105 +479,10 @@ partenaire-important.com    OK
 
 ---
 
-### 🔥 Augmenter la sévérité
-
-Si trop de spam passe :
-
-1. Ajouter plus de RBL
-2. Réduire le seuil SpamAssassin (`required_score`)
-3. Activer le greylisting
-4. Ajouter des règles custom
-
----
-
-## Scripts utiles
-
-### 🔍 Analyser les spams reçus
-
 ```bash
-#!/bin/bash
-# spam-analysis.sh
-
-echo "=== Analyse des spams reçus ==="
-echo "Top 10 expéditeurs :"
-sudo grep 'X-Spam-Status: Yes' /var/log/mail.log | \
-  grep -oP 'from=<[^>]+>' | sort | uniq -c | sort -rn | head -10
-```
-
----
-
-### 📊 Rapport quotidien
-
-```bash
-#!/bin/bash
-# anti-spam-report.sh
-
-DATE=$(date +%Y-%m-%d)
-
-echo "=== Rapport anti-spam $DATE ==="
-echo ""
-echo "Rejets par type :"
-sudo grep 'reject:' /var/log/mail.log | \
-  awk '{print $7}' | sort | uniq -c | sort -rn
-echo ""
-echo "Top 5 IPs rejetées :"
-```
-
----
-
-```bash
-sudo grep 'reject:' /var/log/mail.log | \
-  grep -oP '\[\d+\.\d+\.\d+\.\d+\]' | \
-  sort | uniq -c | sort -rn | head -5
-echo ""
-echo "Spams détectés par SpamAssassin :"
-sudo grep 'X-Spam-Status: Yes' /var/log/mail.log | wc -l
-```
-
----
-
-## Troubleshooting
-
-### ❌ Problème : Trop d'emails légitimes rejetés
-
-**Diagnostic** : Consulter les logs
-
-```bash
-sudo grep 'reject:' /var/log/mail.log | tail -50
-```
-
----
-
-**Solution** :
-
-1. Identifier la règle trop stricte
-2. Whitelister les domaines/IPs légitimes
-3. Ajuster les paramètres
-
-### ❌ Problème : RBL trop lente
-
-**Symptôme** : Postfix timeout lors de connexions
-
-**Solution** : Réduire le nombre de RBL
-
-```bash
-# Garder seulement les plus fiables
-smtpd_recipient_restrictions = 
-    ...
-    reject_rbl_client zen.spamhaus.org
-```
-
----
-
-### ❌ Problème : Greylisting trop agressif
-
-**Solution** : Whitelister les domaines importants
-
-```bash
-# /etc/postgrey/whitelist_clients.local
-gmail.com
-outlook.com
-important-client.com
+sudo postmap /etc/postfix/sender_access
+sudo postmap /etc/postfix/client_access
+sudo systemctl reload postfix
 ```
 
 ---
@@ -755,79 +491,118 @@ important-client.com
 
 ### 🎯 Exercice 1 : Configuration RBL
 
-1. Ajoutez 2-3 RBL à votre configuration
-2. Testez avec une IP blacklistée connue
-3. Consultez les logs pour voir les rejets
+**Objectif** : Mettre en place la protection RBL avec Spamhaus
 
 ---
 
-### 🎯 Exercice 2 : Restrictions HELO
+**Tâches** :
 
-1. Configurez les restrictions HELO
-2. Testez avec telnet en envoyant un HELO invalide
-3. Vérifiez le rejet
-
----
-
-### 🎯 Exercice 3 : Greylisting
-
-1. Installez et configurez Postgrey
-2. Envoyez un email depuis un nouveau serveur
-3. Observez le délai avant acceptance
+1. Ajouter Spamhaus ZEN dans `smtpd_recipient_restrictions`
+2. Recharger Postfix
+3. Tester avec une IP blacklistée : `dig 4.3.2.1.zen.spamhaus.org`
+4. Consulter les logs pour voir les rejets
 
 ---
 
-### 🎯 Exercice 4 : SpamAssassin
+**Commandes utiles** :
 
-1. Installez SpamAssassin
-2. Configurez l'intégration avec Postfix
-3. Envoyez un email de test avec GTUBE (test de spam)
-4. Vérifiez qu'il est marqué comme spam
-
----
-
-**GTUBE** (Generic Test for Unsolicited Bulk Email) :
-
+```bash
+sudo nano /etc/postfix/main.cf
+sudo systemctl reload postfix
+sudo grep 'reject_rbl_client' /var/log/mail.log
 ```
-XJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST-EMAIL*C.34X
+
+---
+
+### 🎯 Exercice 2 : Restrictions HELO complètes
+
+**Objectif** : Bloquer les HELO invalides et suspects
+
+---
+
+**Tâches** :
+
+1. Configurer les restrictions HELO dans main.cf
+2. Créer le fichier `/etc/postfix/helo_access`
+3. Ajouter votre domaine pour rejeter les usurpations
+4. Tester avec telnet
+
+---
+
+**Test avec telnet** :
+
+```bash
+telnet localhost 25
+HELO localhost
+# Doit être rejeté car non-FQDN
+
+HELO votre-domaine.com
+# Doit être rejeté car usurpation
+```
+
+---
+
+**Vérifier les logs** :
+
+```bash
+sudo grep 'reject:.*HELO' /var/log/mail.log
 ```
 
 ---
 
 ## Points clés à retenir
 
-### 💡 Défense en profondeur
+### 💡 Protection anti-spam de base
 
-**Couche 1** : Réseau (RBL, rate limiting)
+**Couche 1 - Réseau** :
+- RBL Spamhaus ZEN (le plus fiable)
+- Rate limiting (10 connexions, 30/min)
 
-**Couche 2** : SMTP (HELO, sender, recipient)
-
-**Couche 3** : Contenu (SpamAssassin, Rspamd)
+**Couche 2 - SMTP** :
+- Restrictions HELO (rejet HELO invalides)
+- Restrictions Sender (domaines valides)
+- Restrictions Recipient (éviter open relay)
+- Restrictions Client (blacklist/whitelist IPs)
 
 ---
 
-### 💡 Balance faux positifs / faux négatifs
+### 💡 Ordre des règles = important !
 
-Trop strict = emails légitimes rejetés
-
-Trop laxiste = spam qui passe
-
-**Solution** : Ajuster progressivement et monitorer
+1. `permit_mynetworks` (vos serveurs)
+2. `permit_sasl_authenticated` (utilisateurs authentifiés)
+3. `reject_unauth_destination` (anti open relay)
+4. Restrictions diverses
+5. `reject_rbl_client` en dernier (coûteux)
 
 ---
 
 ### 💡 Commandes essentielles
 
 ```bash
+# Vérifier la configuration
+postfix check
+
 # Recharger config
 sudo systemctl reload postfix
 
 # Voir les rejets
-sudo grep 'reject:' /var/log/mail.log
+sudo grep 'reject:' /var/log/mail.log | tail -20
 
-# Tester SpamAssassin
-spamassassin -t < email.txt
+# Statistiques des rejets
+sudo grep 'reject:' /var/log/mail.log | \
+  awk '{print $7}' | sort | uniq -c | sort -rn
 ```
+
+---
+
+### 💡 Équilibre et ajustement
+
+- Trop strict → emails légitimes rejetés
+- Trop laxiste → spam qui passe
+
+**Solution** : Monitorer les logs et ajuster progressivement
+
+**Whitelist** : Toujours possible pour les partenaires de confiance
 
 ---
 

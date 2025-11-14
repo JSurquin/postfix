@@ -648,36 +648,6 @@ EOF
 
 ---
 
-### 📦 docker-compose.yml complet
-
-```yaml
-version: '3.8'
-
-services:
-  postfix:
-    image: ubuntu:24.04
-    container_name: postfix
-    hostname: mail.jimmylan.fr
-    ports:
-      - "2525:25"
-    volumes:
-      - ./postfix-data:/var/spool/postfix
-      - ./postfix-config:/etc/postfix
-    environment:
-      - POSTFIX_HOSTNAME=mail.jimmylan.fr
-      - POSTFIX_DOMAIN=example.com
-    command: >
-      bash -c "
-      apt-get update &&
-      DEBIAN_FRONTEND=noninteractive apt-get install -y postfix mailutils &&
-      postconf -e 'myhostname=mail.jimmylan.fr' &&
-      postconf -e 'mydomain=example.com' &&
-      postfix start-fg
-      "
-```
-
----
-
 ## Troubleshooting courant
 
 ### ❌ Problème : Postfix ne démarre pas
@@ -805,11 +775,21 @@ Avant de passer au module suivant, vérifiez que :
 
 ### 💡 Ce qu'il faut retenir
 
-**Configuration minimale** : `myhostname`, `mydomain`, `myorigin` sont essentiels - `inet_interfaces` définit les interfaces d'écoute - `mynetworks` contrôle qui peut envoyer des emails
+**Configuration minimale** : `myhostname`, `mydomain`, `myorigin` sont essentiels 
 
-**Sécurité de base** : Ne jamais faire un open relay (`mynetworks = 0.0.0.0/0`) - Toujours vérifier le DNS (surtout le PTR) - Limiter les tailles de messages
+- `inet_interfaces` définit les interfaces d'écoute - `mynetworks` contrôle qui peut envoyer des emails
 
-**Outils essentiels** : `postconf` (voir et modifier la configuration) - `mailq` / `postqueue -p` (voir la file d'attente) - `postsuper` (gérer la file d'attente) - `postfix check` (vérifier la syntaxe)
+**Sécurité de base** : Ne jamais faire un open relay (`mynetworks = 0.0.0.0/0`) 
+
+- Toujours vérifier le DNS (surtout le PTR) pour les enregistrements A, MX et PTR
+
+- Limiter les tailles de messages
+
+**Outils essentiels** : `postconf` (voir et modifier la configuration) - `mailq` / `postqueue -p` (voir la file d'attente) 
+
+- `postsuper` (gérer la file d'attente) 
+
+- `postfix check` (vérifier la syntaxe)
 
 **Logs** : `/var/log/mail.log` ou `/var/log/maillog` - Toujours consulter les logs en cas de problème - `tail -f` est votre ami
 

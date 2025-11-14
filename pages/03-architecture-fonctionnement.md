@@ -63,6 +63,15 @@ Pensez à une usine où chaque ouvrier a une tâche précise : c'est exactement 
 
 ---
 
+**Un schéma plus visuel :**
+
+<img src="/diag.png" alt="Architecture Postfix"
+class="mx-auto -mt-12"
+height='auto'
+/>
+
+---
+
 ## Le processus Master
 
 Le **master** est le chef d'orchestre. C'est lui qui lance tous les autres processus, surveille leur santé, les redémarre en cas de crash et gère leur cycle de vie.

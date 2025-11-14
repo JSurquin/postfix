@@ -301,17 +301,6 @@ Nous utiliserons **Docker** pour certains exercices afin de faciliter les tests 
 
 ---
 
-## Objectifs de la formation perfectionnement
-
-À la fin de la formation perfectionnement, vous serez capable de :
-
-✅ Configurer des relais SMTP simples  
-✅ Gérer les domaines virtuels avec des fichiers  
-✅ Diagnostiquer et résoudre des problèmes courants  
-✅ Gérer un serveur mail de base en production
-
----
-
 ## Les ressources utiles
 
 ### 📖 Documentation officielle
