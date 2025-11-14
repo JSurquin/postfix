@@ -62,8 +62,8 @@ Pensez à une usine où chaque ouvrier a une tâche précise : c'est exactement 
 ```
 
 ---
-
-**Un schéma plus visuel :**
+layout: text-image
+---
 
 <img src="/diag.png" alt="Architecture Postfix"
 class="mx-auto -mt-12"
