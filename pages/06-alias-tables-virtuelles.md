@@ -52,27 +52,122 @@ Vous voulez gérer des centaines d'adresses email :
 
 ---
 
-## Les 2 approches
+# Les 3 façons de gérer les boîtes mail
 
-### 1️⃣ Virtual Alias (Redirection)
-
-```bash
-# Redirige vers une vraie boîte externe
-contact@andromed.cloud → admin@gmail.com
-```
-
-**Usage** : Redirection simple, pas de stockage
+Avant de commencer, comprenons bien les **3 méthodes** possibles avec Postfix.
 
 ---
 
-### 2️⃣ Virtual Mailbox (Stockage réel)
+## 1️⃣ Comptes système réels (utilisateurs Unix)
+
+**Principe** : Chaque adresse mail = 1 utilisateur Unix
 
 ```bash
-# Stocke dans /var/mail/vhosts/andromed.cloud/johndoe/
-johndoe@andromed.cloud → mailbox virtuelle
+# User Unix : johndoe
+# Maildir : /home/johndoe/Maildir/
+johndoe@andromed.cloud → /home/johndoe/Maildir/
 ```
 
-**Usage** : Vraies boîtes mail sur le serveur
+---
+
+**Avantages** :
+- Simple à mettre en place
+- Postfix + Dovecot en mode "system users"
+
+---
+
+**Inconvénients** :
+- 25 boîtes mail → 25 comptes Unix 😬
+- Risques de sécurité (accès SSH à gérer)
+- Pas scalable
+- Gestion lourde
+
+---
+
+**Verdict** : ❌ OK pour 1-2 boîtes perso, **pas pour un serveur professionnel**
+
+---
+
+## 2️⃣ Aliases (redirections simples)
+
+**Principe** : Pas de boîte mail, juste une redirection
+
+```bash
+# Dans /etc/aliases ou virtual_alias_maps
+contact@andromed.cloud → johndoe@andromed.cloud
+```
+
+---
+
+**Usage** :
+- Redirections internes (`contact@`, `support@`)
+- Regroupements
+- Renvois externes
+
+---
+
+**Important** : ⚠️ Un alias **n'est PAS une boîte mail**
+
+Il n'y a **pas de Maildir séparé**, c'est juste une **règle de redirection**.
+
+---
+
+**Verdict** : ✅ Utile, mais **complémentaire**, pas une solution complète
+
+---
+
+## 3️⃣ Virtual users (domaines virtuels)
+
+**Principe** : Séparer les comptes mail des comptes Unix
+
+```bash
+# johndoe@andromed.cloud existe comme boîte mail
+# MAIS pas comme utilisateur Unix !
+johndoe@andromed.cloud → /var/mail/vhosts/andromed.cloud/johndoe/
+```
+
+---
+
+**Architecture** :
+
+- Adresses stockées dans Postfix (fichiers ou BDD)
+- **1 seul utilisateur Unix** : `vmail` (UID 5000)
+- `vmail` possède **TOUS** les Maildirs
+- Dovecot + Postfix gèrent l'authentification
+
+---
+
+**Avantages** :
+- ✅ Scalable (centaines d'adresses)
+- ✅ Sécurisé (pas de comptes Unix multiples)
+- ✅ Gestion centralisée
+- ✅ Multi-domaines facile
+
+---
+
+**Verdict** : 🏆 **C'est la méthode professionnelle !**
+
+---
+
+## 📊 Tableau récapitulatif
+
+| Méthode | Utilisateur Unix ? | Boîte mail réelle ? | Quand l'utiliser |
+|---------|-------------------|---------------------|------------------|
+| User système | Oui | Oui | Petits serveurs perso |
+| Alias | Non | Non (redirige) | `contact@`, redirections |
+| Virtual users | Non (1 seul `vmail`) | Oui | **Serveurs pro** ⭐ |
+
+---
+
+## 🎯 Notre choix : Virtual users !
+
+Dans ce module, nous allons utiliser la **3ème méthode** :
+
+✅ Des centaines d'adresses SANS créer d'utilisateurs système
+
+✅ Un seul user technique : `vmail`
+
+✅ Architecture propre et scalable
 
 ---
 
@@ -264,6 +359,8 @@ sudo nano /etc/postfix/virtual_domains
 
 ---
 
+**Dans : /etc/postfix/virtual_domains**
+
 Contenu :
 
 ```bash
@@ -282,6 +379,8 @@ sudo nano /etc/postfix/vmailbox
 ```
 
 ---
+
+**Dans : /etc/postfix/vmailbox**
 
 Contenu :
 
@@ -310,6 +409,8 @@ Donc `andromed.cloud/johndoe/` → `/var/mail/vhosts/andromed.cloud/johndoe/`
 # Compiler vmailbox
 sudo postmap /etc/postfix/vmailbox
 ```
+
+> postmap est un outil de postfix qui compile les fichiers de configuration.
 
 ---
 
