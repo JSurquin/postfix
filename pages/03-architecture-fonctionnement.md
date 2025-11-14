@@ -115,7 +115,11 @@ smtp      inet  n       -       y       -       -       smtpd
 
 **Rôle** : Recevoir les emails depuis Internet ou les clients
 
-**Responsabilités** : Écoute sur le port 25 (ou 587 pour submission) - Dialogue SMTP avec les clients - Applique les restrictions et politiques - Accepte ou rejette les messages - Passe les messages acceptés à `cleanup`
+**Responsabilités** : Écoute sur le port 25 (ou 587 pour submission) - Dialogue SMTP avec les clients
+
+- Applique les restrictions et politiques
+- Accepte ou rejette les messages
+- Passe les messages acceptés à `cleanup`
 
 **Analogie** : C'est le réceptionniste de l'hôtel qui accueille les clients et vérifie leurs réservations.
 
@@ -125,7 +129,11 @@ smtp      inet  n       -       y       -       -       smtpd
 
 **Rôle** : Récupérer les emails déposés localement
 
-**Responsabilités** : Surveille le répertoire `maildrop/` - Récupère les emails déposés par les programmes locaux (via `sendmail`) - Passe les messages à `cleanup`
+**Responsabilités** : Surveille le répertoire `maildrop/`
+
+- Récupère les emails déposés par les programmes locaux (via `sendmail`)
+
+- Passe les messages à `cleanup`
 
 **Analogie** : C'est l'employé qui ramasse le courrier déposé dans la boîte aux lettres interne.
 
@@ -135,7 +143,13 @@ smtp      inet  n       -       y       -       -       smtpd
 
 **Rôle** : Nettoyer et normaliser les messages
 
-**Responsabilités** : Ajoute les en-têtes manquants (Date, Message-ID, etc.) - Complète les adresses (user → user@domain.com) - Extrait les destinataires des en-têtes - Écrit le message dans la file `incoming/` - Notifie le `qmgr`
+**Responsabilités** : Ajoute les en-têtes manquants (Date, Message-ID, etc.)
+
+- Complète les adresses (user → user@domain.com)
+
+- Extrait les destinataires des en-têtes
+
+- Écrit le message dans la file `incoming/` - Notifie le `qmgr`
 
 **Analogie** : C'est le service qualité qui vérifie que le courrier est conforme avant expédition.
 
@@ -145,7 +159,13 @@ smtp      inet  n       -       y       -       -       smtpd
 
 **Rôle** : Gérer les files d'attente - C'est le **cœur** de Postfix !
 
-**Responsabilités** : Surveille les files d'attente - Décide quand envoyer les messages - Choisit le bon processus de livraison - Gère les tentatives et les délais - Optimise l'envoi (regroupe par destination)
+**Responsabilités** : Surveille les files d'attente
+
+- Décide quand envoyer les messages
+
+- Choisit le bon processus de livraison
+
+- Gère les tentatives et les délais - Optimise l'envoi (regroupe par destination)
 
 **Analogie** : C'est le chef de gare qui décide quels trains partent, quand, et vers où.
 
@@ -155,7 +175,13 @@ smtp      inet  n       -       y       -       -       smtpd
 
 **Rôle** : Envoyer les emails vers d'autres serveurs
 
-**Responsabilités** : Se connecte aux serveurs destinataires - Négocie TLS si possible - Transmet le message - Gère les erreurs temporaires (retry) et permanentes - Notifie le `qmgr` du résultat
+**Responsabilités** : Se connecte aux serveurs destinataires
+
+- Négocie TLS si possible
+
+- Transmet le message
+
+- Gère les erreurs temporaires (retry) et permanentes - Notifie le `qmgr` du résultat
 
 **Analogie** : C'est le facteur qui livre le courrier chez le destinataire.
 
@@ -165,7 +191,13 @@ smtp      inet  n       -       y       -       -       smtpd
 
 **Rôle** : Livrer les emails locaux
 
-**Responsabilités** : Livre les emails dans les boîtes locales - Gère les fichiers `.forward` - Applique les alias - Peut invoquer des programmes externes (filtres)
+**Responsabilités** : Livre les emails dans les boîtes locales
+
+- Gère les fichiers `.forward`
+
+- Applique les alias
+
+- Peut invoquer des programmes externes (filtres)
 
 **Analogie** : C'est le facteur qui distribue le courrier dans les boîtes aux lettres de l'immeuble.
 
@@ -175,7 +207,11 @@ smtp      inet  n       -       y       -       -       smtpd
 
 **Rôle** : Gérer les rebonds (emails non délivrés)
 
-**Responsabilités** : Génère les messages de non-délivrance (bounce) - Notifie l'expéditeur en cas d'échec définitif - Gère les messages d'avertissement (delay warning)
+**Responsabilités** : Génère les messages de non-délivrance (bounce)
+
+- Notifie l'expéditeur en cas d'échec définitif
+
+- Gère les messages d'avertissement (delay warning)
 
 **Analogie** : C'est le service retour qui renvoie le courrier avec la mention "n'habite pas à l'adresse indiquée".
 
@@ -185,7 +221,11 @@ smtp      inet  n       -       y       -       -       smtpd
 
 **Rôle** : Réécriture d'adresses
 
-**Responsabilités** : Résout les adresses (lookup DNS) - Applique les règles de réécriture - Détermine le transport approprié
+**Responsabilités** : Résout les adresses (lookup DNS)
+
+- Applique les règles de réécriture
+
+- Détermine le transport approprié
 
 **Analogie** : C'est le service qui réécrit les adresses, par exemple si vous avez un alias sur votre domaine, Postfix va réécrire l'adresse pour que l'email arrive à la bonne personne.
 
@@ -199,14 +239,14 @@ Postfix utilise plusieurs files d'attente dans `/var/spool/postfix/` :
 
 ### 📂 maildrop
 
-**Contenu** : Messages déposés localement par les programmes  
-**Processus responsable** : `pickup`  
+**Contenu** : Messages déposés localement par les programmes
+**Processus responsable** : `pickup`
 **Durée de vie** : Très courte (quelques secondes)
 
 ### 📂 incoming
 
-**Contenu** : Messages reçus, en cours de nettoyage  
-**Processus responsable** : `cleanup`  
+**Contenu** : Messages reçus, en cours de nettoyage
+**Processus responsable** : `cleanup`
 **Durée de vie** : Courte (secondes à minutes)
 
 </small>
@@ -217,22 +257,22 @@ Postfix utilise plusieurs files d'attente dans `/var/spool/postfix/` :
 
 ### 📂 active
 
-**Contenu** : Messages en cours de livraison  
-**Processus responsable** : `qmgr`  
+**Contenu** : Messages en cours de livraison
+**Processus responsable** : `qmgr`
 **Taille limite** : Contrôlée (évite la saturation mémoire)
 
 ### 📂 deferred
 
-**Contenu** : Messages en échec temporaire  
-**Processus responsable** : `qmgr`  
+**Contenu** : Messages en échec temporaire
+**Processus responsable** : `qmgr`
 **Durée de vie** : Jusqu'à 5 jours par défaut
 
 Les messages en `deferred` sont retentés selon un algorithme exponentiel : 1ère tentative immédiate, 2ème après quelques minutes, 3ème après 15-30 minutes, 4ème après 1 heure, etc.
 
 ### 📂 hold
 
-**Contenu** : Messages mis en attente manuellement  
-**Processus responsable** : Admin (vous !)  
+**Contenu** : Messages mis en attente manuellement
+**Processus responsable** : Admin (vous !)
 **Durée de vie** : Jusqu'à libération manuelle
 
 </small>
@@ -241,10 +281,9 @@ Les messages en `deferred` sont retentés selon un algorithme exponentiel : 1èr
 
 ### 📂 corrupt
 
-**Contenu** : Messages corrompus  
-**Processus responsable** : Aucun (pour investigation)  
+**Contenu** : Messages corrompus
+**Processus responsable** : Aucun (pour investigation)
 **Durée de vie** : Jusqu'à suppression manuelle
-
 
 ---
 
