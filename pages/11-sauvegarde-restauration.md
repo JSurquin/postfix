@@ -32,81 +32,23 @@ Imaginez perdre tous vos emails professionnels des 5 dernières années en une s
 
 # Quoi sauvegarder ?
 
-## 📂 Fichiers de configuration
+## Les 4 éléments critiques
 
-```
-/etc/postfix/
-├── main.cf
-├── master.cf
-├── virtual
-├── vmailbox
-├── aliases
-├── sender_access
-├── recipient_access
-├── transport
-└── ...
-```
+**1. Configuration Postfix** : `/etc/postfix/` (main.cf, master.cf, tables...)
+
+**2. Clés DKIM** : `/etc/opendkim/`
+
+**3. Certificats SSL** : `/etc/letsencrypt/`
+
+**4. Mailboxes** : `/var/mail/vhosts/`
 
 ---
 
-## 🔑 Clés DKIM
+## Optionnel
 
-```
-/etc/opendkim/
-├── opendkim.conf
-├── KeyTable
-├── SigningTable
-├── TrustedHosts
-└── keys/
-    └── example.com/
-        ├── mail.private
-        └── mail.txt
-```
+**Queue Postfix** : `/var/spool/postfix/` (change constamment, rarement sauvegardé)
 
-## 🔒 Certificats SSL
-
-```
-/etc/letsencrypt/
-├── live/
-│   └── mail.example.com/
-│       ├── fullchain.pem
-│       └── privkey.pem
-└── renewal/
-    └── mail.example.com.conf
-```
-
----
-
-## 📧 Mailboxes (emails des utilisateurs)
-
-```
-/var/mail/vhosts/
-├── example.com/
-│   ├── user1/
-│   │   ├── cur/
-│   │   ├── new/
-│   │   └── tmp/
-│   └── user2/
-└── example.org/
-```
-
----
-
-## 📊 Queue Postfix
-
-```
-/var/spool/postfix/
-├── active/
-├── deferred/
-├── hold/
-└── ...
-```
-
-⚠️ **Note** : La queue change constamment. Sauvegarder la queue complète n'est généralement pas nécessaire.
-
-## 🗄️ Tables de correspondance
-
-Les fichiers de tables (aliases, virtual, etc.) sont déjà inclus dans `/etc/postfix/` donc pas de sauvegarde supplémentaire nécessaire.
+**Bases de données** : Si vous utilisez MySQL/PostgreSQL pour domaines virtuels
 
 ---
 
@@ -114,285 +56,96 @@ Les fichiers de tables (aliases, virtual, etc.) sont déjà inclus dans `/etc/po
 
 ## Règle 3-2-1
 
-**3** copies de vos données - **2** supports différents - **1** copie hors site
+**3** copies - **2** supports différents - **1** copie hors site
 
-**Exemple** : 1. Données originales sur le serveur - 2. Sauvegarde locale sur disque externe - 3. Sauvegarde distante sur un autre serveur/cloud
+---
 
-## Fréquence de sauvegarde
+## Fréquence
 
-**Configuration** : Quotidienne (voire après chaque modification) - **Mailboxes** : 2-4 fois par jour (selon criticité) - **Bases de données** : Quotidienne ou après chaque changement
+- Configuration : **Quotidienne**
+- Mailboxes : **2-4 fois/jour** (selon criticité)
+- Bases de données : **Quotidienne**
 
-## Rétention
+---
 
-**Court terme** : 7 jours (sauvegardes complètes) - **Moyen terme** : 4 semaines (sauvegardes hebdomadaires) - **Long terme** : 1 an (sauvegardes mensuelles)
+## Rétention simple
+
+- **7 jours** : Sauvegardes quotidiennes
+- **4 semaines** : Sauvegardes hebdomadaires
+- **1 an** : Sauvegardes mensuelles
 
 ---
 
 # Méthodes de sauvegarde
 
-## Sauvegarde manuelle avec tar
+## Méthode 1 : tar (simple)
 
-### 📦 Créer une archive
+### 📦 Créer une sauvegarde
 
 ```bash
 #!/bin/bash
-# backup-postfix.sh
-
 DATE=$(date +%Y%m%d-%H%M%S)
 BACKUP_DIR="/backup/postfix"
 mkdir -p $BACKUP_DIR
+
+# Tout en un
+sudo tar czf $BACKUP_DIR/postfix-full-$DATE.tar.gz \
+  /etc/postfix \
+  /etc/opendkim \
+  /etc/letsencrypt \
+  /var/mail/vhosts
+
+echo "✅ Backup completed: $DATE"
 ```
 
 ---
 
-```bash
-# Configuration Postfix
-sudo tar czf $BACKUP_DIR/postfix-config-$DATE.tar.gz /etc/postfix/
-
-# DKIM
-sudo tar czf $BACKUP_DIR/dkim-$DATE.tar.gz /etc/opendkim/
-
-# Certificats SSL
-sudo tar czf $BACKUP_DIR/ssl-$DATE.tar.gz /etc/letsencrypt/
-```
-
----
+### 🔄 Restaurer
 
 ```bash
-# Mailboxes (peut être très gros !)
-sudo tar czf $BACKUP_DIR/mailboxes-$DATE.tar.gz /var/mail/vhosts/
-
-# Queue (optionnel)
-# sudo tar czf $BACKUP_DIR/queue-$DATE.tar.gz /var/spool/postfix/
-
-echo "Backup completed: $DATE"
-```
-
----
-
-### 🔄 Restaurer une archive
-
-```bash
-# Restaurer configuration
-sudo tar xzf postfix-config-20250113-120000.tar.gz -C /
-
-# Restaurer DKIM
-sudo tar xzf dkim-20250113-120000.tar.gz -C /
-
-# Recharger Postfix
+sudo tar xzf postfix-full-XXXXXXXX.tar.gz -C /
 sudo systemctl reload postfix
 ```
 
 ---
 
-## Sauvegarde avec rsync
+## Méthode 2 : rsync (incrémental)
 
-rsync est idéal pour les **sauvegardes incrémentales**.
-
----
-
-### 🔄 Sauvegarde locale
+**Avantage** : Seuls les fichiers modifiés sont copiés (rapide !)
 
 ```bash
 #!/bin/bash
-# backup-rsync.sh
-
 BACKUP_DIR="/backup/postfix"
 DATE=$(date +%Y%m%d)
 
-# Configuration
+# Sauvegarde locale
 rsync -avz --delete /etc/postfix/ $BACKUP_DIR/$DATE/postfix/
-
-# DKIM
 rsync -avz --delete /etc/opendkim/ $BACKUP_DIR/$DATE/opendkim/
-```
-
----
-
-```bash
-# SSL
-rsync -avz --delete /etc/letsencrypt/ $BACKUP_DIR/$DATE/letsencrypt/
-
-# Mailboxes (peut être long)
 rsync -avz --delete /var/mail/vhosts/ $BACKUP_DIR/$DATE/mailboxes/
 ```
 
 ---
 
-**Avantage** : Seuls les fichiers modifiés sont copiés (rapide !).
-
----
-
-### 🌐 Sauvegarde distante
+### Sauvegarde distante
 
 ```bash
-#!/bin/bash
-# backup-rsync-remote.sh
-
-REMOTE_USER="backup"
-REMOTE_HOST="backup-server.com"
-REMOTE_DIR="/backups/mail-server"
+# Vers un autre serveur (nécessite clé SSH)
+rsync -avz -e ssh /etc/postfix/ backup@server.com:/backups/postfix/
 ```
 
 ---
 
-```bash
-# Sync vers serveur distant
-rsync -avz --delete -e ssh \
-  /etc/postfix/ \
-  $REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/postfix/
 
-rsync -avz --delete -e ssh \
-  /var/mail/vhosts/ \
-  $REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/mailboxes/
-```
+## Sauvegarde des bases de données (optionnel)
 
----
-
-**Prérequis** : Clé SSH configurée pour connexion sans mot de passe.
+Si vous utilisez MySQL/PostgreSQL pour les domaines virtuels :
 
 ```bash
-ssh-keygen -t ed25519
-ssh-copy-id backup@backup-server.com
-```
+# MySQL
+mysqldump -u root -p mailserver | gzip > /backup/maildb-$(date +%Y%m%d).sql.gz
 
----
-
-## Sauvegarde avec Borg
-
-Borg est un outil de sauvegarde dédupliquée et chiffrée.
-
----
-
-### 📦 Installation
-
-```bash
-# Ubuntu/Debian
-sudo apt install borgbackup
-
-# Rocky Linux
-sudo dnf install borgbackup
-```
-
----
-
-### 🔧 Initialiser un dépôt
-
-```bash
-# Local
-sudo borg init --encryption=repokey /backup/borg-repo
-
-# Distant
-sudo borg init --encryption=repokey backup@server.com:/backups/mail-server
-```
-
----
-
-### 💾 Créer une sauvegarde
-
-```bash
-#!/bin/bash
-# backup-borg.sh
-
-REPO="/backup/borg-repo"
-DATE=$(date +%Y-%m-%d-%H:%M:%S)
-
-sudo borg create \
-  --stats \
-  --progress \
-  --compression lz4 \
-  $REPO::postfix-$DATE \
-  /etc/postfix \
-  /etc/opendkim \
-  /etc/letsencrypt \
-  /var/mail/vhosts
-```
-
----
-
-**Avantages de Borg** :
-- Déduplication (économise de l'espace)
-- Chiffrement intégré
-- Compression
-- Snapshots avec historique
-
----
-
-### 📜 Lister les sauvegardes
-
-```bash
-sudo borg list /backup/borg-repo
-```
-
----
-
-### 🔄 Restaurer avec Borg
-
-```bash
-# Lister le contenu d'une sauvegarde
-sudo borg list /backup/borg-repo::postfix-2025-01-13-12:00:00
-
-# Restaurer
-sudo borg extract /backup/borg-repo::postfix-2025-01-13-12:00:00
-```
-
----
-
-### 🧹 Nettoyer les vieilles sauvegardes
-
-```bash
-# Garder 7 sauvegardes quotidiennes, 4 hebdo, 6 mensuelles
-sudo borg prune \
-  --keep-daily=7 \
-  --keep-weekly=4 \
-  --keep-monthly=6 \
-  /backup/borg-repo
-```
-
----
-
-## Sauvegarde des bases de données
-
-### 🗄️ MySQL
-
-```bash
-#!/bin/bash
-# backup-mysql.sh
-
-DATE=$(date +%Y%m%d-%H%M%S)
-BACKUP_DIR="/backup/mysql"
-mkdir -p $BACKUP_DIR
-
-mysqldump -u root -p'password' \
-  --single-transaction \
-  --quick \
-  mailserver > $BACKUP_DIR/maildb-$DATE.sql
-```
-
----
-
-```bash
-# Compresser
-gzip $BACKUP_DIR/maildb-$DATE.sql
-
-echo "MySQL backup completed: $DATE"
-```
-
----
-
-### 🐘 PostgreSQL
-
-```bash
-#!/bin/bash
-# backup-postgresql.sh
-
-DATE=$(date +%Y%m%d-%H%M%S)
-BACKUP_DIR="/backup/postgresql"
-mkdir -p $BACKUP_DIR
-
-sudo -u postgres pg_dump mailserver | gzip > $BACKUP_DIR/maildb-$DATE.sql.gz
-
-echo "PostgreSQL backup completed: $DATE"
+# PostgreSQL
+sudo -u postgres pg_dump mailserver | gzip > /backup/maildb-$(date +%Y%m%d).sql.gz
 ```
 
 ---
@@ -422,278 +175,81 @@ sudo crontab -e
 
 # Restauration
 
-## Restauration complète
-
-### 🔄 Scénario : Serveur crashé
-
-1. Réinstaller le système d'exploitation
-2. Réinstaller Postfix et dépendances
-3. Restaurer les configurations
-4. Restaurer les mailboxes
-5. Restaurer les bases de données
-6. Redémarrer les services
-7. Tester
-
----
-
-### 📋 Script de restauration
+## Procédure simple
 
 ```bash
 #!/bin/bash
 # restore-postfix.sh
 
-BACKUP_DIR="/backup/postfix"
-BACKUP_DATE="20250113-120000"
+# 1. Arrêter les services
+sudo systemctl stop postfix opendkim
 
-echo "🔄 Restoring Postfix from $BACKUP_DATE"
-```
+# 2. Restaurer depuis l'archive
+sudo tar xzf /backup/postfix/postfix-full-*.tar.gz -C /
 
----
-
-```bash
-# Arrêter les services
-sudo systemctl stop postfix
-sudo systemctl stop opendkim
-
-# Restaurer configuration
-sudo tar xzf $BACKUP_DIR/postfix-config-$BACKUP_DATE.tar.gz -C /
-
-# Restaurer DKIM
-sudo tar xzf $BACKUP_DIR/dkim-$BACKUP_DATE.tar.gz -C /
-```
-
----
-
-```bash
-# Restaurer SSL
-sudo tar xzf $BACKUP_DIR/ssl-$BACKUP_DATE.tar.gz -C /
-
-# Restaurer mailboxes
-sudo tar xzf $BACKUP_DIR/mailboxes-$BACKUP_DATE.tar.gz -C /
-
-# Permissions
+# 3. Corriger les permissions
 sudo chown -R postfix:postfix /etc/postfix
 sudo chown -R opendkim:opendkim /etc/opendkim
 sudo chown -R vmail:vmail /var/mail/vhosts
-```
 
----
-
-```bash
-# Recompiler les tables
+# 4. Recompiler les tables
 sudo postmap /etc/postfix/virtual
-sudo postmap /etc/postfix/transport
 sudo newaliases
 
-# Vérifier la config
+# 5. Vérifier et redémarrer
 sudo postfix check
+sudo systemctl start opendkim postfix
+
+echo "✅ Restauration terminée !"
+```
+
+---
+
+## Tester les sauvegardes !
+
+⚠️ **Une sauvegarde non testée = Une sauvegarde qui ne marche pas !**
+
+**Plan** : Testez la restauration tous les 3 mois sur une VM
+
+---
+
+---
+
+## 💡 Pour aller plus loin
+
+Les outils avancés suivants seront vus dans la formation **Perfectionnement** :
+
+- **Borg Backup** : Sauvegarde dédupliquée et chiffrée
+- **Rclone vers Cloud** : S3, Google Cloud, Backblaze
+- **Bacula** : Solution d'entreprise complète
+- **Restic** : Alternative moderne à Borg
+
+---
+
+# Monitoring simple
+
+## Vérifier les sauvegardes
+
+```bash
+# Lister les sauvegardes récentes
+ls -lh /backup/postfix/ | tail -10
 ```
 
 ---
 
 ```bash
-# Redémarrer les services
-sudo systemctl start opendkim
-sudo systemctl start postfix
-
-echo "✅ Restore completed!"
+# Vérifier la taille
+du -sh /backup/postfix/
 ```
 
 ---
 
-## Restauration partielle
-
-### 🔧 Restaurer seulement la configuration
+## Alerte simple avec cron
 
 ```bash
-sudo tar xzf postfix-config-20250113-120000.tar.gz -C /
-sudo postfix check
-sudo systemctl reload postfix
-```
-
----
-
-### 📧 Restaurer un seul utilisateur
-
-```bash
-# Extraire les emails d'un utilisateur spécifique
-sudo tar xzf mailboxes-20250113-120000.tar.gz \
-  -C / \
-  var/mail/vhosts/example.com/user1/
-```
-
----
-
-### 🔑 Restaurer seulement DKIM
-
-```bash
-sudo tar xzf dkim-20250113-120000.tar.gz -C /
-sudo chown -R opendkim:opendkim /etc/opendkim
-sudo systemctl restart opendkim
-```
-
----
-
-# Tests de restauration
-
-## Pourquoi tester ?
-
-**Une sauvegarde non testée est une sauvegarde qui ne fonctionne pas !**
-
----
-
-### ✅ Plan de test
-
-1. Créer une VM de test
-2. Installer Postfix de base
-3. Restaurer depuis la sauvegarde
-4. Vérifier que tout fonctionne
-5. Envoyer/recevoir des emails de test
-6. Noter les problèmes rencontrés
-7. Documenter la procédure
-
----
-
-### 📅 Fréquence des tests
-
-**Minimum** : 1 fois tous les 3 mois
-
-**Recommandé** : 1 fois par mois
-
-**Idéal** : Automatiser les tests
-
----
-
-# Sauvegarde vers le cloud
-
-## Options cloud
-
-**AWS S3** : Stockage objet économique
-
-**Google Cloud Storage** : Alternative à S3
-
-**Backblaze B2** : Moins cher que S3
-
-**OVH Object Storage** : Alternative européenne
-
----
-
-## Sauvegarde vers S3 avec rclone
-
-### 📦 Installation
-
-```bash
-# Ubuntu/Debian
-sudo apt install rclone
-
-# Rocky Linux
-sudo dnf install rclone
-```
-
----
-
-### ⚙️ Configuration
-
-```bash
-rclone config
-```
-
----
-
-Suivez les instructions pour configurer S3 :
-
-```
-name: s3-backup
-type: s3
-provider: AWS
-access_key_id: YOUR_ACCESS_KEY
-secret_access_key: YOUR_SECRET_KEY
-region: eu-west-3
-```
-
----
-
-### 💾 Sauvegarder vers S3
-
-```bash
-#!/bin/bash
-# backup-to-s3.sh
-
-DATE=$(date +%Y%m%d)
-LOCAL_BACKUP="/backup/postfix"
-S3_BUCKET="s3-backup:my-mail-backups"
-
-# Créer l'archive locale
-tar czf /tmp/postfix-$DATE.tar.gz /etc/postfix /etc/opendkim /var/mail/vhosts
-```
-
----
-
-```bash
-# Upload vers S3
-rclone copy /tmp/postfix-$DATE.tar.gz $S3_BUCKET/daily/
-
-# Nettoyer
-rm /tmp/postfix-$DATE.tar.gz
-
-echo "✅ Backup uploaded to S3"
-```
-
----
-
-### 🔄 Restaurer depuis S3
-
-```bash
-# Lister les backups
-rclone ls s3-backup:my-mail-backups/daily/
-
-# Télécharger
-rclone copy s3-backup:my-mail-backups/daily/postfix-20250113.tar.gz /tmp/
-
-# Extraire
-sudo tar xzf /tmp/postfix-20250113.tar.gz -C /
-```
-
----
-
-# Monitoring des sauvegardes
-
-## Vérifications automatiques
-
-```bash
-#!/bin/bash
-# check-backups.sh
-
-BACKUP_DIR="/backup/postfix"
-MAX_AGE=86400  # 24 heures
-
-LATEST=$(find $BACKUP_DIR -name "postfix-config-*.tar.gz" -mtime -1 | wc -l)
-
-if [ $LATEST -eq 0 ]; then
-    echo "⚠️ No recent backup found!" | mail -s "ALERT: Backup failed" admin@example.com
-else
-    echo "✅ Backup OK"
-fi
-```
-
----
-
-### ⏰ Exécuter quotidiennement
-
-```bash
-0 9 * * * /usr/local/bin/check-backups.sh
-```
-
----
-
-## Alertes en cas d'échec
-
-```bash
-#!/bin/bash
-# backup-with-alert.sh
-
-if /usr/local/bin/backup-postfix.sh; then
-    echo "✅ Backup successful" | mail -s "Backup OK" admin@example.com
+# Dans le script de sauvegarde, ajouter :
+if [ $? -eq 0 ]; then
+    echo "✅ Backup OK" | mail -s "Backup Success" admin@example.com
 else
     echo "❌ Backup FAILED!" | mail -s "ALERT: Backup FAILED" admin@example.com
 fi
@@ -729,92 +285,94 @@ fi
 
 # Exercices pratiques
 
-## 🎯 Exercice 1 : Sauvegarde manuelle
+## 🎯 Exercice 1 : Sauvegarde et restauration
 
-1. Créez un script de sauvegarde avec tar
-2. Sauvegardez `/etc/postfix/` et `/etc/opendkim/`
-3. Vérifiez que les archives sont créées
+**Objectif** : Créer une sauvegarde et la restaurer
 
 ---
 
-## 🎯 Exercice 2 : Restauration
+**Tâches** :
 
-1. Modifiez un fichier de config
-2. Restaurez depuis la sauvegarde
-3. Vérifiez que le fichier est bien restauré
-
----
-
-## 🎯 Exercice 3 : Automatisation
-
-1. Configurez un cron pour sauvegarder quotidiennement
-2. Testez manuellement le script
-3. Vérifiez les logs cron
+1. Créez un script de sauvegarde avec tar pour `/etc/postfix/`
+2. Exécutez le script et vérifiez l'archive
+3. Modifiez un fichier de config (ex: `main.cf`)
+4. Restaurez depuis la sauvegarde
+5. Vérifiez que la modification a été annulée
 
 ---
 
-## 🎯 Exercice 4 : Sauvegarde distante
+**Commandes utiles** :
 
-1. Configurez rsync vers un autre serveur (ou localhost)
-2. Testez la synchronisation
-3. Vérifiez que les fichiers sont bien copiés
+```bash
+# Créer la sauvegarde
+sudo tar czf /backup/postfix-$(date +%Y%m%d).tar.gz /etc/postfix/
+
+# Vérifier l'archive
+tar tzf /backup/postfix-*.tar.gz | head
+
+# Restaurer
+sudo tar xzf /backup/postfix-*.tar.gz -C /
+```
 
 ---
 
-## 🎯 Exercice 5 : Test de restauration
+## 🎯 Exercice 2 : Automatisation
 
-1. Créez une VM de test
-2. Installez Postfix
-3. Restaurez votre configuration depuis la sauvegarde
-4. Vérifiez que Postfix démarre correctement
+**Objectif** : Automatiser les sauvegardes quotidiennes
+
+---
+
+**Tâches** :
+
+1. Créez le script `/usr/local/bin/backup-postfix.sh`
+2. Rendez-le exécutable
+3. Configurez un cron pour l'exécuter à 2h du matin
+4. Testez manuellement le script
+5. Vérifiez les logs cron le lendemain
+
+---
+
+**Configuration cron** :
+
+```bash
+sudo crontab -e
+
+# Ajouter :
+0 2 * * * /usr/local/bin/backup-postfix.sh
+
+# Vérifier les logs
+sudo grep CRON /var/log/syslog | grep backup
+```
 
 ---
 
 # Points clés à retenir
 
-## 💡 Quoi sauvegarder
+## 💡 Essentiel
 
-**Configuration** : `/etc/postfix/`, `/etc/opendkim/`
-
-**Certificats** : `/etc/letsencrypt/`
-
-**Mailboxes** : `/var/mail/vhosts/`
-
-**Tables de correspondance** : Fichiers de configuration Postfix
+**Quoi sauvegarder** :
+- Configuration : `/etc/postfix/`, `/etc/opendkim/`
+- Certificats : `/etc/letsencrypt/`
+- Mailboxes : `/var/mail/vhosts/`
+- Bases de données (si utilisées)
 
 ---
 
-## 💡 Outils
-
-**tar** : Simple et universel
-
-**rsync** : Incrémental et rapide
-
-**Borg** : Dédupliqué et chiffré
-
-**rclone** : Vers le cloud
+**Outils de base** :
+- `tar` : Simple et universel
+- `rsync` : Incrémental et rapide
 
 ---
 
-## 💡 Règle 3-2-1
-
-**3** copies
-
-**2** supports différents
-
-**1** copie hors site
+**Règle 3-2-1** :
+- 3 copies, 2 supports différents, 1 copie hors site
 
 ---
 
-## 💡 Automatisation
-
-**Cron** : Planification automatique
-
-**Alertes** : Notifier si échec
-
-**Monitoring** : Vérifier régulièrement
-
-**Tests** : Restaurer pour de vrai !
+**Automatisation** :
+- Cron pour planifier
+- Alertes en cas d'échec
+- **Tester les restaurations !**
 
 ---
 

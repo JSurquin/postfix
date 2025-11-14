@@ -248,217 +248,63 @@ Les messages en `deferred` sont retentés selon un algorithme exponentiel : 1èr
 
 ## Le parcours d'un email
 
-Suivons un email de bout en bout !
-
----
-
-### 📧 Scénario 1 : Email entrant depuis Internet
+### 📧 Email entrant (réception)
 
 ```
-1. Connexion au port 25
-   → Process smtpd démarre
-
-2. Dialogue SMTP
-   EHLO client.jimmylan.fr
-   MAIL FROM:<sender@jimmylan.fr>
-   RCPT TO:<user@jimmylan.fr>
-   DATA
-   [contenu email]
-   .
-
-3. smtpd applique les restrictions
-   → Vérifie le sender
-   → Vérifie le recipient
-   → Applique les RBL, SPF, etc.
+1. smtpd reçoit la connexion (port 25)
+   ↓
+2. Applique les restrictions (RBL, SPF...)
+   ↓
+3. cleanup normalise le message
+   ↓
+4. qmgr place en queue active
+   ↓
+5. local délivre dans Maildir/
+   ✅ Email livré !
 ```
 
 ---
 
-```
-4. Message accepté
-   → smtpd passe à cleanup
-
-5. cleanup normalise le message
-   → Ajoute Message-ID
-   → Complète les headers
-   → Écrit dans incoming/
-
-6. cleanup notifie qmgr
-```
-
----
+### 📤 Email sortant (envoi)
 
 ```
-7. qmgr récupère le message
-   → Déplace vers active/
-   → Détermine le transport (local)
-
-8. qmgr invoque le process local
-   → local lit le message
-   → Applique les alias
-   → Livre dans Maildir/
-
-9. Message délivré !
+1. Application → sendmail → maildrop/
+   ↓
+2. pickup récupère → cleanup
+   ↓
+3. qmgr place en queue active
+   ↓
+4. smtp se connecte au serveur distant
+   ↓
+5. Transmission via SMTP
+   ✅ Email envoyé !
 ```
 
 ---
 
-### 📤 Scénario 2 : Email sortant (envoi local)
+### ❌ Email en échec
 
 ```
-1. Programme local appelle sendmail
-   echo "Test" | sendmail user@example.com
-
-2. sendmail écrit dans maildrop/
-
-3. pickup détecte le nouveau fichier
-   → Récupère le message
-   → Passe à cleanup
-```
-
----
-
-```
-4. cleanup normalise
-   → Complète l'adresse sender
-   → Ajoute headers manquants
-   → Écrit dans incoming/
-
-5. qmgr prend le relais
-   → Déplace vers active/
-   → Détermine le transport (smtp)
-
-6. qmgr invoque le process smtp
+1. smtp ne peut pas livrer (erreur connexion)
+   ↓
+2. qmgr → deferred/ (file différée)
+   ↓
+3. Nouvelles tentatives espacées (5min, 15min, 1h...)
+   ↓
+4. Après 5 jours → bounce (NDR à l'expéditeur)
+   ✉️ Message abandonné
 ```
 
 ---
 
-```
-7. smtp se connecte au serveur destination
-   → Résolution DNS (MX record)
-   → Connexion au port 25
-   → Négociation TLS
-   → Transmission du message
+## Communication
 
-8. Serveur distant accepte
-   → smtp notifie qmgr
-   → Message supprimé de la queue
+Les processus communiquent via :
+- **Sockets Unix** dans `/var/spool/postfix/`
+- **Fichiers** dans les files d'attente
+- **Verrous (locks)** pour éviter la corruption
 
-9. Email délivré !
-```
-
----
-
-### ❌ Scénario 3 : Échec de livraison
-
-```
-1-6. Même processus que scénario 2
-
-7. smtp tente la connexion
-   → Erreur : Connection refused
-
-8. smtp notifie qmgr de l'échec temporaire
-   → qmgr déplace le message dans deferred/
-   → Planifie un retry dans 5 minutes
-```
-
----
-
-```
-9. Après 5 minutes, qmgr réessaie
-   → Déplace dans active/
-   → Relance smtp
-
-10. Si échec persiste
-    → Nouvelle tentative après 15 min
-    → Puis 30 min, 1h, 2h, etc.
-
-11. Après 5 jours d'échecs
-    → bounce génère un message de non-délivrance
-    → Envoie à l'expéditeur original
-    → Message original supprimé
-```
-
----
-
-## Communication inter-processus
-
-Les processus Postfix communiquent via :
-
-### 🔌 Sockets Unix
-
-Fichiers spéciaux dans `/var/spool/postfix/` :
-
-```bash
-ls -la /var/spool/postfix/public/
-# cleanup
-# pickup
-# qmgr
-# showq
-```
-
-#### 📬 Files système
-
-<small>
-
-Messages = fichiers dans les répertoires de queue
-
-Format optimisé pour : 
-
-- Rapidité d'accès 
-
-- Intégrité (pas de corruption en cas de crash)
-
-- Atomicité des opérations
-
-</small>
-
----
-
-### 🔒 Locking
-
-Postfix utilise des verrous (locks) pour éviter : Les accès concurrents au même fichier - Les race conditions - La corruption de données
-
----
-
-## Gestion de la mémoire et des ressources
-
-### 🎛️ Limites par défaut
-
-```bash
-# Nombre max de processus smtpd simultanés
-default_process_limit = 100
-
-# Taille max de la queue active
-qmgr_message_active_limit = 20000
-
-# Taille max de la queue recipient
-qmgr_message_recipient_limit = 20000
-```
-
----
-
-### ⚡ Optimisation des performances
-
-**Connection caching** : Réutilisation des connexions SMTP , permet de gagner du temps de connexion.
-
-```bash
-smtp_connection_cache_on_demand = yes
-smtp_connection_cache_destinations = example.com
-```
-
----
-
-**Lazy binding** : Connexions LDAP/DB à la demande
-
-LDAP : Lightweight Directory Access Protocol = protocole de gestion des annuaires LDAP (annuaire des utilisateurs, des groupes, des permissions, etc.)
-
-DB : Database = base de données (base de données des utilisateurs, des groupes, des permissions, etc.)
-
-```bash
-# Pas de connexion permanente
-ldap_cache_size = 0
-```
+💡 C'est transparent, pas besoin de configurer !
 
 ---
 
@@ -726,53 +572,43 @@ sudo qshape deferred
 
 ## Points clés à retenir
 
-### 💡 Architecture
-
-**Master = Chef d'orchestre** : Lance et surveille tous les processus - Configuré via `master.cf`
-
-**Processus spécialisés** : `smtpd` (Réception) - `smtp` (Envoi) - `qmgr` (Gestion des files) - `cleanup` (Normalisation) - `local` (Livraison locale)
-
-**Files d'attente** : `maildrop` → `incoming` → `active` → livraison - `deferred` pour les échecs temporaires - `hold` pour mise en attente manuelle
-
-**Sécurité** : Chroot pour la plupart des processus - Séparation des privilèges - Principe du moindre privilège
-
-**Communication** : Sockets Unix entre processus - Fichiers dans les queues - Pas de communication directe
+**Architecture modulaire** :
+- Master = chef d'orchestre
+- Processus spécialisés : smtpd, smtp, qmgr, cleanup, local
+- Communication via sockets et fichiers
 
 ---
 
-## Exercice pratique
+**Files d'attente** :
+- maildrop → incoming → active → livraison
+- deferred pour les échecs
+- hold pour mise en attente manuelle
 
-<small>
+---
 
-### 🎯 Exercice 1 : Observer l'architecture
+**Sécurité** :
+- Séparation des privilèges
+- Chroot pour isoler les processus
 
-1. Listez tous les processus Postfix actifs
-2. Identifiez le PID du master
-3. Comptez combien de processus `smtpd` tournent
+---
+
+## Exercices pratiques
+
+### 🎯 Exercice 1 : Observer les processus
+
+```bash
+ps aux | grep postfix
+sudo postconf -d | grep default_process_limit
+```
+
+---
 
 ### 🎯 Exercice 2 : Suivre un message
 
-1. Envoyez un email de test
-2. Notez son Queue ID dans les logs
-3. Suivez son parcours complet à travers les processus
-
-### 🎯 Exercice 3 : Explorer les queues
-
-1. Créez des messages en deferred (envoi vers domaine inexistant)
-2. Explorez le contenu de `/var/spool/postfix/deferred/`
-3. Utilisez `postcat` pour lire un message
-
 ```bash
-sudo postcat -q QUEUE_ID
+echo "Test" | mail -s "Suivi" user@example.com
+sudo tail -f /var/log/mail.log | grep "Queue ID"
 ```
-
-### 🎯 Exercice 4 : Modifier master.cf
-
-1. Augmentez le nombre max de processus `smtpd` à 200
-2. Ajoutez le service submission sur le port 587
-3. Rechargez Postfix et vérifiez que le port est ouvert
-
-</small>
 
 ---
 
