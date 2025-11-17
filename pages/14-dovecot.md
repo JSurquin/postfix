@@ -81,6 +81,26 @@ apt install -y dovecot-lmtpd dovecot-mysql dovecot-sieve
 
 ---
 
+## 🧩 Petite aparté : LMTPD et Dovecot-Sieve
+
+### 📮 LMTPD
+**Définition simple :** Reçoit les emails de Postfix et les dépose dans les boîtes aux lettres.  
+
+**Analogie :**  
+Postfix = facteur qui apporte les sacs de courrier  
+LMTPD = personne dans le centre de tri qui ouvre les sacs et range chaque lettre dans la bonne case  
+
+---
+
+### 🧹 Dovecot-Sieve
+**Définition simple :** Langage de règles qui trie automatiquement les emails (spam, newsletter, etc.)  
+
+**Analogie :**  
+Sieve = assistant personnel qui lit chaque enveloppe et place chaque email dans le bon dossier  
+Sans Sieve, tout tombe en vrac dans la même boîte
+
+---
+
 ## 📦 Installation sur CentOS/RHEL
 
 ### Installation avec dnf/yum

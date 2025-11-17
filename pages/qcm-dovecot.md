@@ -443,6 +443,9 @@ Bravo ! Vous êtes prêt à déployer un serveur de messagerie complet.
 
 <div class="pt-12">
   <span @click="next" class="px-2 p-3 rounded cursor-pointer hover:bg-white hover:bg-opacity-10 neon-border">
-    Retour au sommaire <carbon:arrow-right class="inline"/>
+  <Link class="dark:!text-purple-300" to="sommaire-initiation">
+    Retour au sommaire
+ <carbon:arrow-right class="inline"/>
+ </Link>
   </span>
 </div>

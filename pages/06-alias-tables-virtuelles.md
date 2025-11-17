@@ -625,8 +625,6 @@ webmaster@andromed.cloud     admin@andromed.cloud
 sudo postmap /etc/postfix/virtual_alias
 ```
 
----
-
 ### Configuration main.cf
 
 ```bash
@@ -645,8 +643,6 @@ virtual_alias_maps = hash:/etc/postfix/virtual_alias
 ```bash
 sudo systemctl reload postfix
 ```
-
----
 
 ### 🧪 Tester
 
@@ -675,16 +671,12 @@ sudo ls /var/mail/vhosts/andromed.cloud/johndoe/new/
 sudo nano /etc/postfix/virtual_alias
 ```
 
----
-
 Ajouter :
 
 ```bash
 # Redirection externe
 facturation@andromed.cloud    comptable@cabinet-expert.fr
 ```
-
----
 
 ```bash
 sudo postmap /etc/postfix/virtual_alias
@@ -699,8 +691,6 @@ sudo systemctl reload postfix
 echo "Facture" | mail -s "Facture #123" facturation@andromed.cloud
 ```
 
----
-
 Le comptable doit recevoir l'email ! ✅
 
 ---
@@ -709,13 +699,9 @@ Le comptable doit recevoir l'email ! ✅
 
 **Besoin** : `support@` envoie à plusieurs personnes
 
----
-
 ```bash
 sudo nano /etc/postfix/virtual_alias
 ```
-
----
 
 Ajouter :
 
@@ -724,14 +710,10 @@ Ajouter :
 support@andromed.cloud       johndoe@andromed.cloud, janedoe@andromed.cloud, admin@andromed.cloud
 ```
 
----
-
 ```bash
 sudo postmap /etc/postfix/virtual_alias
 sudo systemctl reload postfix
 ```
-
----
 
 ### 🧪 Tester
 
