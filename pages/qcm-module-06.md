@@ -16,12 +16,6 @@ D) Aucune, c'est automatique
 
 ---
 
-### ✅ Réponse : B
-
-`newaliases` (ou `postalias /etc/aliases`) compile le fichier en base de données binaire `.db` que Postfix utilise.
-
----
-
 ## Question 2
 
 Quelle est la différence entre alias et virtual ?
@@ -33,12 +27,6 @@ B) Alias = domaines locaux, Virtual = domaines non locaux
 C) Virtual = plus récent que Alias  
 
 D) Alias = plus sécurisé
-
----
-
-### ✅ Réponse : B
-
-**Alias** fonctionne pour les domaines dans `mydestination` (locaux). **Virtual** pour les domaines NON locaux (dans `virtual_alias_domains`).
 
 ---
 
@@ -56,12 +44,6 @@ D) `example.com admin@example.com`
 
 ---
 
-### ✅ Réponse : B
-
-`@example.com admin@example.com` capture TOUS les emails pour example.com. Attention à le placer EN DERNIER dans le fichier !
-
----
-
 ## Question 4
 
 Quel type de table est le plus couramment utilisé pour `virtual_alias_maps` sur une installation Postfix standard ?
@@ -73,12 +55,6 @@ B) `hash:/...`
 C) `texthash:/...`  
 
 D) `ldap:/...`
-
----
-
-### ✅ Réponse : B
-
-Le backend **hash** (fichiers `.db` générés par `postmap`) est disponible partout et performant pour quelques centaines d'entrées.
 
 ---
 
@@ -96,9 +72,21 @@ D) `postqueue -q user@example.com`
 
 ---
 
-### ✅ Réponse : C
+## Réponses - Module 6
 
-`postmap -q adresse table` interroge la table exactement comme Postfix le ferait, pratique pour valider une entrée sans envoyer d'email.
+<small>
+
+**Question 1 : Réponse B** - `newaliases` (ou `postalias /etc/aliases`) compile le fichier en base de données binaire `.db` que Postfix utilise.
+
+**Question 2 : Réponse B** - **Alias** fonctionne pour les domaines dans `mydestination` (locaux). **Virtual** pour les domaines NON locaux (dans `virtual_alias_domains`).
+
+**Question 3 : Réponse B** - `@example.com admin@example.com` capture TOUS les emails pour example.com. Attention à le placer EN DERNIER dans le fichier !
+
+**Question 4 : Réponse B** - Le backend **hash** (fichiers `.db` générés par `postmap`) est disponible partout et performant pour quelques centaines d'entrées.
+
+**Question 5 : Réponse C** - `postmap -q adresse table` interroge la table exactement comme Postfix le ferait, pratique pour valider une entrée sans envoyer d'email.
+
+</small>
 
 ---
 
@@ -110,6 +98,7 @@ Configurer des alias et domaines virtuels
 ### 📋 Tâches (20 minutes)
 
 1. **Créer des alias locaux** :
+
 ```bash
 sudo nano /etc/aliases
 # Ajouter :
@@ -120,7 +109,10 @@ sudo nano /etc/aliases
 sudo newaliases
 ```
 
+---
+
 2. **Tester les alias** :
+
 ```bash
 echo "Test alias" | mail -s "Test" postmaster
 ls ~/Maildir/new/
@@ -129,6 +121,7 @@ ls ~/Maildir/new/
 ---
 
 3. **Configurer un domaine virtuel** :
+
 ```bash
 # Dans main.cf
 sudo postconf -e "virtual_alias_domains = test.local"
@@ -140,10 +133,14 @@ sudo postmap /etc/postfix/virtual
 sudo systemctl reload postfix
 ```
 
+---
+
 4. **Tester** :
+
 ```bash
 echo "Test virtual" | mail -s "Test" admin@test.local
 ```
 
-**Bonus** : Créez un catch-all pour test.local
+---
 
+**Bonus** : Créez un catch-all pour test.local

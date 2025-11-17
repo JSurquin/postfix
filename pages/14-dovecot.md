@@ -154,6 +154,10 @@ dovecot --version
 
 ### Fichier principal : `/etc/dovecot/dovecot.conf`
 
+> lmtp = Local Mail Transfer Protocol (pour l'intégration avec Postfix)
+> imap = Internet Message Access Protocol (pour les clients IMAP)
+> pop3 = Post Office Protocol 3 (pour les clients POP3)
+
 ```bash
 # Protocoles activés
 protocols = imap pop3 lmtp
@@ -187,6 +191,13 @@ auth_debug_passwords = no
 ```bash
 # Location des boîtes emails
 mail_location = maildir:/var/mail/vhosts/%d/%n
+```
+
+Si vous n'utilisez pas de vmail mais un utilisateur classique alors :
+
+```bash
+# Location des boîtes emails
+mail_location = maildir:/home/%u/Maildir/
 ```
 
 ---
@@ -265,6 +276,122 @@ userdb {
 
 ---
 
+**Note** : L'authentification système convient pour de vrais utilisateurs Unix, mais pas pour nos **utilisateurs virtuels** !
+
+---
+
+## 🔑 Authentification utilisateurs virtuels
+
+### Pour les domaines virtuels (recommandé)
+
+Si vous avez configuré des domaines virtuels avec Postfix (comme dans le module 06), vous avez besoin d'une authentification par fichier.
+
+---
+
+### Créer le fichier d'utilisateurs
+
+```bash
+sudo nano /etc/dovecot/users
+```
+
+---
+
+Contenu :
+
+```bash
+# Format : utilisateur@domaine:{PLAIN}motdepasse
+johndoe@andromed.cloud:{PLAIN}MotDePasse123!
+janedoe@andromed.cloud:{PLAIN}MotDePasse456!
+contact@andromed.cloud:{PLAIN}MotDePasse789!
+admin@andromed.cloud:{PLAIN}AdminPass123!
+```
+
+---
+
+⚠️ **Important** : En production, utilisez des hash (SHA512-CRYPT) !
+
+```bash
+# Générer un hash sécurisé
+doveadm pw -s SHA512-CRYPT
+```
+
+---
+
+### Créer le fichier de configuration
+
+```bash
+sudo nano /etc/dovecot/conf.d/auth-passwdfile.conf.ext
+```
+
+---
+
+Contenu :
+
+```bash
+passdb {
+  driver = passwd-file
+  args = scheme=PLAIN username_format=%u /etc/dovecot/users
+}
+
+userdb {
+  driver = static
+  args = uid=vmail gid=vmail home=/var/mail/vhosts/%d/%n
+}
+```
+
+---
+
+### Activer cette authentification
+
+Dans `/etc/dovecot/conf.d/10-auth.conf` :
+
+```bash
+# Désactiver l'auth système
+#!include auth-system.conf.ext
+
+# Activer l'auth par fichier pour utilisateurs virtuels
+!include auth-passwdfile.conf.ext
+```
+
+---
+
+### Permissions du fichier
+
+```bash
+sudo chmod 640 /etc/dovecot/users
+sudo chown root:dovecot /etc/dovecot/users
+```
+
+---
+
+### Redémarrer Dovecot
+
+```bash
+sudo systemctl restart dovecot
+```
+
+---
+
+### 🧪 Tester l'authentification
+
+```bash
+doveadm auth test johndoe@andromed.cloud MotDePasse123!
+```
+
+---
+
+Résultat attendu :
+
+```bash
+passdb: johndoe@andromed.cloud auth succeeded
+userdb: johndoe@andromed.cloud
+  home      : /var/mail/vhosts/andromed.cloud/johndoe
+  uid       : 5000
+  gid       : 5000
+```
+
+---
+
 ## 🔌 Configuration des ports et services
 
 ### Fichier : `/etc/dovecot/conf.d/10-master.conf`
@@ -277,6 +404,8 @@ userdb {
 ---
 
 ## 📡 Configuration du service IMAP
+
+Ce qu'on va faire ici c'est activer les protocoles IMAP et IMAPS.
 
 ```bash
 service imap-login {
@@ -297,6 +426,8 @@ service imap-login {
 
 ## 📮 Configuration du service POP3
 
+Ce qu'on va faire ici c'est activer le protocole POP3 et POP3S.
+
 ```bash
 service pop3-login {
   inet_listener pop3 {
@@ -304,7 +435,7 @@ service pop3-login {
     # Désactiver si vous n'utilisez que SSL
     #port = 0
   }
-  
+  # Activer si vous utilisez SSL
   inet_listener pop3s {
     port = 995
     ssl = yes
@@ -317,6 +448,10 @@ service pop3-login {
 ## 🚀 Configuration du service LMTP
 
 ### Pour l'intégration avec Postfix
+
+Ce qu'on va faire ici c'est activer le protocole LMTP.
+
+Pourquoi l'activer ? Parce que Postfix va utiliser LMTP pour envoyer les emails à Dovecot.
 
 ```bash
 service lmtp {
@@ -333,6 +468,9 @@ service lmtp {
 ## 🔐 Configuration de l'authentification SMTP
 
 ### Pour l'envoi via Postfix
+
+Ce qu'on va faire ici c'est activer l'authentification SMTP via Dovecot.
+Comme ça on va pouvoir se connecter à Dovecot avec Postfix.
 
 ```bash
 service auth {
@@ -356,12 +494,12 @@ service auth {
 ### Fichier : `/etc/dovecot/conf.d/10-ssl.conf`
 
 ```bash
-# Activer SSL
+# Activer SSL (important)
 ssl = required
 ```
 
 ```bash
-# Certificats SSL
+# Certificats SSL (important, si vous utilisez Let's Encrypt => ceux du domaine)
 ssl_cert = </etc/letsencrypt/live/mail.example.com/fullchain.pem
 ssl_key = </etc/letsencrypt/live/mail.example.com/privkey.pem
 ```
@@ -470,6 +608,10 @@ smtpd_sasl_auth_enable = yes
 
 ---
 
+**SASL = Simple Authentication and Security Layer**
+
+Protocole qui permet l'authentification sécurisée des utilisateurs pour l'envoi d'emails via SMTP. Il évite que n'importe qui puisse utiliser votre serveur comme relais.
+
 ```bash
 # Options SASL (dans le main.cf de postfix)
 smtpd_sasl_security_options = noanonymous
@@ -481,10 +623,12 @@ broken_sasl_auth_clients = yes
 
 ```bash
 # Restreindre le relais aux utilisateurs authentifiés
-smtpd_relay_restrictions = 
+# N'oubliez pas d'activer le paramètre smtpd_sasl_auth_enable = yes dans le fichier main.cf de postfix
+smtpd_relay_restrictions =
     permit_mynetworks,
     permit_sasl_authenticated,
-    reject_unauth_destination
+    reject_unauth_destination,
+    # + les autres restrictions que nous avons vu avant
 ```
 
 ---

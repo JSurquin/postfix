@@ -25,14 +25,6 @@ D) Filtrer les spams
 
 ---
 
-### ✅ Réponse : C
-
-**Explication :**
-
-Dovecot est un serveur IMAP/POP3 qui permet aux clients email de récupérer leurs messages. Postfix gère l'envoi/réception SMTP, tandis que Dovecot gère l'accès aux boîtes aux lettres.
-
----
-
 ## Question 2 : Ports standards
 
 **Quels sont les ports standards pour IMAPS et SMTPS ?**
@@ -44,19 +36,6 @@ B) 993 et 465
 C) 995 et 587
 
 D) 110 et 25
-
----
-
-### ✅ Réponse : B
-
-**Explication :**
-
-- **993** : IMAPS (IMAP sur SSL/TLS)
-- **465** : SMTPS (SMTP sur SSL/TLS)
-- 143 : IMAP non chiffré
-- 587 : SMTP avec STARTTLS
-- 110 : POP3 non chiffré
-- 995 : POP3S
 
 ---
 
@@ -74,18 +53,6 @@ D) mdbox
 
 ---
 
-### ✅ Réponse : B
-
-**Explication :**
-
-**Maildir** est le format recommandé car :
-- Un fichier par email (pas de corruption globale)
-- Concurrent-safe (plusieurs processus simultanés)
-- Performant avec les gros volumes
-- Compatible avec la plupart des outils
-
----
-
 ## Question 4 : Authentification SMTP
 
 **Comment Postfix authentifie-t-il les utilisateurs pour l'envoi d'emails via Dovecot ?**
@@ -97,21 +64,6 @@ B) Via le socket auth de Dovecot (SASL)
 C) Via une base de données MySQL directe
 
 D) Via des fichiers passwd
-
----
-
-### ✅ Réponse : B
-
-**Explication :**
-
-Postfix utilise le mécanisme SASL de Dovecot via un socket Unix :
-
-```bash
-smtpd_sasl_type = dovecot
-smtpd_sasl_path = private/auth
-```
-
-Dovecot gère l'authentification pour Postfix.
 
 ---
 
@@ -129,19 +81,6 @@ D) Toutes les réponses ci-dessus
 
 ---
 
-### ✅ Réponse : D
-
-**Explication :**
-
-LMTP (Local Mail Transfer Protocol) présente plusieurs avantages :
-- Plus rapide que LDA
-- Livraison groupée (plusieurs destinataires)
-- Pas besoin de privilèges root
-- Meilleure gestion des erreurs
-- Protocole moderne et performant
-
----
-
 ## Question 6 : SSL/TLS
 
 **Quelle directive Dovecot force l'utilisation de SSL/TLS ?**
@@ -153,20 +92,6 @@ B) `ssl = required`
 C) `ssl_force = yes`
 
 D) `disable_plaintext_auth = yes`
-
----
-
-### ✅ Réponse : B
-
-**Explication :**
-
-```bash
-ssl = required
-```
-
-Force toutes les connexions à utiliser SSL/TLS.
-
-`disable_plaintext_auth = yes` empêche l'authentification en clair mais autorise les connexions non chiffrées.
 
 ---
 
@@ -184,18 +109,6 @@ D) Ce n'est pas nécessaire
 
 ---
 
-### ✅ Réponse : B
-
-**Explication :**
-
-L'utilisateur `vmail` permet :
-- Séparation des privilèges (principe du moindre privilège)
-- Sécurité : un utilisateur dédié avec UID/GID fixes
-- Gestion centralisée des permissions
-- Isolation des boîtes emails
-
----
-
 ## Question 8 : Configuration client
 
 **Quel paramètre SMTP doit-on utiliser pour l'envoi d'emails en 2025 ?**
@@ -207,19 +120,6 @@ B) Port 465 avec SSL/TLS
 C) Port 587 avec STARTTLS
 
 D) B et C sont corrects
-
----
-
-### ✅ Réponse : D
-
-**Explication :**
-
-Les deux configurations sont valides en 2025 :
-
-- **Port 587 + STARTTLS** : Standard moderne recommandé
-- **Port 465 + SSL/TLS** : Alternative valide (implicit TLS)
-
-Le port 25 ne doit pas être utilisé pour les clients (réservé aux MTA).
 
 ---
 
@@ -237,17 +137,6 @@ D) IMAP ne supporte pas SSL/TLS
 
 ---
 
-### ✅ Réponse : B
-
-**Explication :**
-
-- **IMAP** : Synchronisation, emails restent sur le serveur, accès multi-appareils
-- **POP3** : Téléchargement, emails supprimés du serveur (par défaut), un seul appareil
-
-IMAP est recommandé pour un usage moderne.
-
----
-
 ## Question 10 : Sieve
 
 **Qu'est-ce que Sieve dans Dovecot ?**
@@ -259,18 +148,6 @@ B) Un langage de filtrage des emails côté serveur
 C) Un outil de compression des boîtes emails
 
 D) Un système de sauvegarde
-
----
-
-### ✅ Réponse : B
-
-**Explication :**
-
-**Sieve** est un langage de script pour créer des règles de filtrage côté serveur :
-- Tri automatique (dossiers)
-- Filtrage du spam
-- Réponses automatiques
-- Transfert conditionnel
 
 ---
 
@@ -288,19 +165,6 @@ D) `/var/log/messages`
 
 ---
 
-### ✅ Réponse : B
-
-**Explication :**
-
-Dovecot utilise généralement :
-- `/var/log/dovecot/dovecot.log` : Log principal
-- `/var/log/dovecot/info.log` : Informations
-- `/var/log/dovecot/debug.log` : Débogage (si activé)
-
-Configuration dans `dovecot.conf`.
-
----
-
 ## Question 12 : Commande doveadm
 
 **Que fait la commande `doveadm auth test user@example.com` ?**
@@ -312,18 +176,6 @@ B) Teste l'authentification d'un utilisateur
 C) Supprime un utilisateur
 
 D) Change le mot de passe
-
----
-
-### ✅ Réponse : B
-
-**Explication :**
-
-```bash
-doveadm auth test user@example.com
-```
-
-Permet de tester l'authentification d'un utilisateur sans utiliser un client email. Très utile pour le débogage.
 
 ---
 
@@ -341,23 +193,6 @@ D) `nc mail.example.com 993`
 
 ---
 
-### ✅ Réponse : B
-
-**Explication :**
-
-```bash
-openssl s_client -connect mail.example.com:993
-```
-
-Permet de :
-- Tester la connexion SSL/TLS
-- Vérifier le certificat
-- Tester les commandes IMAP manuellement
-
-`telnet` ne supporte pas SSL/TLS.
-
----
-
 ## Question 14 : Quotas
 
 **Comment définir un quota de 1GB par utilisateur dans Dovecot ?**
@@ -369,23 +204,6 @@ B) `quota_rule = *:storage=1GB`
 C) `user_quota = 1024M`
 
 D) `mailbox_size_limit = 1GB`
-
----
-
-### ✅ Réponse : B
-
-**Explication :**
-
-Dans `/etc/dovecot/conf.d/90-quota.conf` :
-
-```bash
-plugin {
-  quota = maildir:User quota
-  quota_rule = *:storage=1GB
-}
-```
-
-Le format `*:storage=` s'applique à tous les dossiers.
 
 ---
 
@@ -403,21 +221,6 @@ D) Ce n'est plus nécessaire en 2025
 
 ---
 
-### ✅ Réponse : A
-
-**Explication :**
-
-Les paramètres DH (Diffie-Hellman) renforcent la sécurité SSL/TLS :
-- Perfect Forward Secrecy (PFS)
-- Protection contre les attaques futures
-- 4096 bits recommandé en 2025
-
-```bash
-openssl dhparam -out /etc/dovecot/dh.pem 4096
-```
-
----
-
 ## Question 16 : Firewall
 
 **Quelles commandes UFW sont nécessaires pour Dovecot ?**
@@ -429,21 +232,6 @@ B) `ufw allow 143,993,110,995`
 C) `ufw allow 80,443`
 
 D) `ufw allow 3306`
-
----
-
-### ✅ Réponse : B
-
-**Explication :**
-
-```bash
-ufw allow 143/tcp  # IMAP
-ufw allow 993/tcp  # IMAPS
-ufw allow 110/tcp  # POP3
-ufw allow 995/tcp  # POP3S
-```
-
-Les ports 25 et 587 sont pour Postfix (SMTP).
 
 ---
 
@@ -461,20 +249,6 @@ D) `local_transport = dovecot`
 
 ---
 
-### ✅ Réponse : C
-
-**Explication :**
-
-Dans `/etc/postfix/main.cf` :
-
-```bash
-mailbox_transport = lmtp:unix:private/dovecot-lmtp
-```
-
-Indique à Postfix de livrer les emails via le socket LMTP de Dovecot.
-
----
-
 ## Question 18 : Fail2ban
 
 **Pourquoi configurer Fail2ban avec Dovecot ?**
@@ -486,17 +260,6 @@ B) Pour protéger contre les attaques par force brute
 C) Pour compresser les logs
 
 D) Pour créer des sauvegardes automatiques
-
----
-
-### ✅ Réponse : B
-
-**Explication :**
-
-Fail2ban surveille les logs Dovecot et bannit temporairement les IP qui :
-- Font trop de tentatives de connexion échouées
-- Tentent des attaques par force brute
-- Ont un comportement suspect
 
 ---
 
@@ -514,19 +277,6 @@ D) %d = répertoire, %n = nom complet
 
 ---
 
-### ✅ Réponse : B
-
-**Explication :**
-
-Variables Dovecot :
-- **%d** : Domaine (exemple.com)
-- **%n** : Nom d'utilisateur local (avant @)
-- **%u** : Adresse email complète (user@exemple.com)
-
-Exemple : `user@exemple.com` → `/var/mail/vhosts/exemple.com/user/`
-
----
-
 ## Question 20 : Debug mode
 
 **Comment activer temporairement les logs de debug dans Dovecot ?**
@@ -541,60 +291,102 @@ D) `dovecot --debug`
 
 ---
 
-### ✅ Réponse : B
+## Réponses - QCM Dovecot (1/2)
 
-**Explication :**
+<small>
 
-Dans `/etc/dovecot/dovecot.conf` :
+**Question 1 : Réponse C** - Dovecot est un serveur IMAP/POP3 qui permet aux clients email de récupérer leurs messages.
 
-```bash
-mail_debug = yes
-auth_debug = yes
-auth_debug_passwords = yes  # ATTENTION : mots de passe en clair !
-auth_verbose = yes
-```
+**Question 2 : Réponse B** - 993 : IMAPS / 465 : SMTPS / 143 : IMAP / 587 : SMTP STARTTLS / 110 : POP3 / 995 : POP3S
 
-⚠️ À désactiver après débogage pour la sécurité.
+**Question 3 : Réponse B** - **Maildir** : un fichier par email, concurrent-safe, performant, compatible.
+
+**Question 4 : Réponse B** - Via socket Unix : `smtpd_sasl_type = dovecot` et `smtpd_sasl_path = private/auth`
+
+**Question 5 : Réponse D** - LMTP = plus rapide, livraison groupée, pas de privilèges root, meilleure gestion erreurs.
+
+**Question 6 : Réponse B** - `ssl = required` force SSL/TLS sur toutes les connexions.
+
+**Question 7 : Réponse B** - Séparation des privilèges, sécurité, UID/GID fixes, isolation des boîtes.
+
+**Question 8 : Réponse D** - Port 587 + STARTTLS (recommandé) et Port 465 + SSL/TLS sont valides en 2025.
+
+**Question 9 : Réponse B** - IMAP : sync, emails restent sur serveur. POP3 : téléchargement, emails supprimés.
+
+**Question 10 : Réponse B** - **Sieve** : langage de filtrage côté serveur (tri, spam, réponses auto).
+
+</small>
+
+---
+
+## Réponses - QCM Dovecot (2/2)
+
+<small>
+
+**Question 11 : Réponse B** - `/var/log/dovecot/dovecot.log`, `/var/log/dovecot/info.log`, `/var/log/dovecot/debug.log`
+
+**Question 12 : Réponse B** - `doveadm auth test` teste l'authentification sans client email.
+
+**Question 13 : Réponse B** - `openssl s_client -connect mail.example.com:993` teste SSL/TLS + certificat.
+
+**Question 14 : Réponse B** - Dans `90-quota.conf` : `quota_rule = *:storage=1GB`
+
+**Question 15 : Réponse A** - Paramètres DH = Perfect Forward Secrecy (PFS), 4096 bits recommandé.
+
+**Question 16 : Réponse B** - Ports IMAP/IMAPS/POP3/POP3S : 143, 993, 110, 995.
+
+**Question 17 : Réponse C** - `mailbox_transport = lmtp:unix:private/dovecot-lmtp` dans `main.cf`
+
+**Question 18 : Réponse B** - Protection contre force brute et tentatives de connexion échouées.
+
+**Question 19 : Réponse B** - %d = domaine, %n = nom local. Ex : `user@ex.com` → `/var/mail/vhosts/ex.com/user/`
+
+**Question 20 : Réponse B** - `mail_debug = yes`, `auth_debug = yes`, `auth_debug_passwords = yes` (⚠️ désactiver après)
+
+</small>
 
 ---
 
 ## 📊 Scoring
 
+<small>
+
 **Notation :**
 
-- **18-20 bonnes réponses** : Excellent ! 🏆
-  - Vous maîtrisez parfaitement Dovecot
+- **18-20 bonnes réponses** : Excellent ! 🏆 Vous maîtrisez parfaitement Dovecot
 
-- **15-17 bonnes réponses** : Très bien ! 🎯
-  - Solides connaissances, quelques révisions conseillées
+- **15-17 bonnes réponses** : Très bien ! 🎯 Solides connaissances, quelques révisions conseillées
 
-- **12-14 bonnes réponses** : Bien 👍
-  - Bonnes bases, revoir certains points avancés
+- **12-14 bonnes réponses** : Bien 👍 Bonnes bases, revoir certains points avancés
 
-- **Moins de 12** : À revoir 📚
-  - Relire le module et refaire les exercices
+- **Moins de 12** : À revoir 📚 Relire le module et refaire les exercices
+
+</small>
 
 ---
 
 ## 🎯 Points clés à retenir
+
+<small>
 
 1. **Dovecot = IMAP/POP3** (récupération des emails)
 2. **Postfix = SMTP** (envoi/réception)
 3. **LMTP** : Protocole de livraison local recommandé
 4. **Maildir** : Format de stockage moderne
 5. **SSL/TLS obligatoire** en production
-
----
-
 6. **Ports** : 993 (IMAPS), 587 (Submission)
 7. **vmail** : Utilisateur dédié pour la sécurité
 8. **SASL** : Authentification Postfix via Dovecot
 9. **Sieve** : Filtres côté serveur
 10. **Fail2ban** : Protection contre les attaques
 
+</small>
+
 ---
 
 ## 📚 Pour aller plus loin
+
+<small>
 
 **Sujets avancés :**
 - Haute disponibilité (réplication Dovecot)
@@ -603,11 +395,15 @@ auth_verbose = yes
 - Antispam côté serveur (Rspamd + Sieve)
 - Monitoring avancé (Prometheus, Grafana)
 
+</small>
+
 ---
 
 ## 🎓 Félicitations !
 
 Vous avez terminé le module Dovecot !
+
+<small>
 
 **Vous savez maintenant :**
 - ✅ Installer et configurer Dovecot
@@ -617,9 +413,13 @@ Vous avez terminé le module Dovecot !
 - ✅ Diagnostiquer et résoudre les problèmes
 - ✅ Optimiser les performances
 
+</small>
+
 ---
 
 ## 🚀 Prochaines étapes
+
+<small>
 
 Pour un serveur de messagerie complet :
 
@@ -630,6 +430,8 @@ Pour un serveur de messagerie complet :
 5. 🔄 Monitoring (logs, alertes)
 6. 🔄 Sauvegardes automatiques
 7. 🔄 Tests de délivrabilité
+
+</small>
 
 ---
 layout: intro
@@ -644,4 +446,3 @@ Bravo ! Vous êtes prêt à déployer un serveur de messagerie complet.
     Retour au sommaire <carbon:arrow-right class="inline"/>
   </span>
 </div>
-

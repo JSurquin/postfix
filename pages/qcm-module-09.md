@@ -17,12 +17,6 @@ D) STARTTLS est plus sécurisé
 
 ---
 
-### ✅ Réponse : B
-
-**SMTPS** (port 465) : Chiffrement dès la connexion. **STARTTLS** (port 25/587) : Connexion en clair puis upgrade TLS avec commande `STARTTLS`.
-
----
-
 ## Question 2
 
 Quel niveau TLS est recommandé pour le port 587 (submission) ?
@@ -34,12 +28,6 @@ B) `encrypt` (obligatoire)
 C) `none` (désactivé)  
 
 D) `dane` (DANE uniquement)
-
----
-
-### ✅ Réponse : B
-
-Pour le port 587 (submission), utilisez `smtpd_tls_security_level = encrypt` pour **forcer** TLS. Les clients doivent s'authentifier en chiffré !
 
 ---
 
@@ -57,12 +45,6 @@ D) Copier depuis un autre serveur
 
 ---
 
-### ✅ Réponse : B
-
-**Let's Encrypt** fournit des certificats SSL **gratuits, automatiques et reconnus** par tous les navigateurs/clients mail.
-
----
-
 ## Question 4
 
 Quelle commande permet de tester manuellement STARTTLS sur le port 25 d'un serveur distant ?
@@ -74,12 +56,6 @@ B) `openssl s_client -connect serveur:25 -starttls smtp`
 C) `openssl s_client -connect serveur:587`  
 
 D) `curl https://serveur:25`
-
----
-
-### ✅ Réponse : B
-
-`openssl s_client -connect serveur:25 -starttls smtp` négocie une session STARTTLS, affiche le certificat et les suites supportées.
 
 ---
 
@@ -97,9 +73,21 @@ D) `smtp_tls_policy_maps`
 
 ---
 
-### ✅ Réponse : B
+## Réponses - Module 9
 
-`smtp_tls_security_level` s'applique au client SMTP sortant de Postfix. Avec `encrypt`, vous forcez Postfix à n'envoyer que via TLS (sinon bounce).
+<small>
+
+**Question 1 : Réponse B** - **SMTPS** (port 465) : Chiffrement dès la connexion. **STARTTLS** (port 25/587) : Connexion en clair puis upgrade TLS avec commande `STARTTLS`.
+
+**Question 2 : Réponse B** - Pour le port 587 (submission), utilisez `smtpd_tls_security_level = encrypt` pour **forcer** TLS. Les clients doivent s'authentifier en chiffré !
+
+**Question 3 : Réponse B** - **Let's Encrypt** fournit des certificats SSL **gratuits, automatiques et reconnus** par tous les navigateurs/clients mail.
+
+**Question 4 : Réponse B** - `openssl s_client -connect serveur:25 -starttls smtp` négocie une session STARTTLS, affiche le certificat et les suites supportées.
+
+**Question 5 : Réponse B** - `smtp_tls_security_level` s'applique au client SMTP sortant de Postfix. Avec `encrypt`, vous forcez Postfix à n'envoyer que via TLS (sinon bounce).
+
+</small>
 
 ---
 
@@ -111,18 +99,25 @@ Configurer TLS sur Postfix
 ### 📋 Tâches (25 minutes)
 
 1. **Installer Certbot** :
+
 ```bash
 sudo apt install certbot  # Ubuntu/Debian
 # ou
 sudo dnf install certbot  # Rocky Linux
 ```
 
+---
+
 2. **Obtenir un certificat** (si domaine public) :
+
 ```bash
 sudo certbot certonly --standalone -d mail.votredomaine.com
 ```
 
+---
+
 3. **Configurer TLS dans Postfix** :
+
 ```bash
 sudo postconf -e "smtpd_tls_cert_file = /etc/letsencrypt/live/mail.votredomaine.com/fullchain.pem"
 sudo postconf -e "smtpd_tls_key_file = /etc/letsencrypt/live/mail.votredomaine.com/privkey.pem"
@@ -135,6 +130,7 @@ sudo postconf -e "smtp_tls_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1"
 ---
 
 4. **Configurer le port 587** :
+
 ```bash
 # Dans /etc/postfix/master.cf, décommenter/ajouter :
 submission inet n       -       y       -       -       smtpd
@@ -142,11 +138,15 @@ submission inet n       -       y       -       -       smtpd
   -o smtpd_sasl_auth_enable=yes
 ```
 
+---
+
 5. **Recharger et tester** :
+
 ```bash
 sudo systemctl reload postfix
 openssl s_client -connect localhost:587 -starttls smtp
 ```
 
-**Bonus** : Configurez le renouvellement automatique avec certbot
+---
 
+**Bonus** : Configurez le renouvellement automatique avec certbot

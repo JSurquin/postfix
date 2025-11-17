@@ -16,12 +16,6 @@ D) `inet_interfaces`
 
 ---
 
-### ✅ Réponse : B
-
-`myhostname = mail.example.com` définit le FQDN du serveur. C'est le paramètre le plus important !
-
----
-
 ## Question 2
 
 Quelle commande permet de recharger la configuration sans couper les connexions ?
@@ -33,12 +27,6 @@ B) `systemctl reload postfix`
 C) `postfix restart`  
 
 D) `killall postfix`
-
----
-
-### ✅ Réponse : B
-
-`systemctl reload postfix` recharge la config **sans couper** les connexions en cours. `restart` couperait tout !
 
 ---
 
@@ -56,12 +44,6 @@ D) TXT
 
 ---
 
-### ✅ Réponse : C
-
-L'enregistrement **MX** indique le serveur mail responsable du domaine. Sans lui, impossible de recevoir des emails !
-
----
-
 ## Question 4
 
 Quel paramètre Postfix contrôle les interfaces réseau sur lesquelles le service SMTP écoute ?
@@ -73,12 +55,6 @@ B) `inet_interfaces`
 C) `smtpd_banner`  
 
 D) `alias_database`
-
----
-
-### ✅ Réponse : B
-
-`inet_interfaces` définit si Postfix écoute sur `all`, `loopback-only` ou une IP précise. Pratique pour limiter l'écoute à `localhost` sur un serveur relai.
 
 ---
 
@@ -96,9 +72,21 @@ D) `postqueue -p`
 
 ---
 
-### ✅ Réponse : A
+## Réponses - Module 2
 
-`postfix check` réalise une série de vérifications (permissions, syntaxe, ownership) et affiche les problèmes potentiels avant redémarrage.
+<small>
+
+**Question 1 : Réponse B** - `myhostname = mail.example.com` définit le FQDN du serveur. C'est le paramètre le plus important !
+
+**Question 2 : Réponse B** - `systemctl reload postfix` recharge la config **sans couper** les connexions en cours. `restart` couperait tout !
+
+**Question 3 : Réponse C** - L'enregistrement **MX** indique le serveur mail responsable du domaine. Sans lui, impossible de recevoir des emails !
+
+**Question 4 : Réponse B** - `inet_interfaces` définit si Postfix écoute sur `all`, `loopback-only` ou une IP précise. Pratique pour limiter l'écoute à `localhost` sur un serveur relai.
+
+**Question 5 : Réponse A** - `postfix check` réalise une série de vérifications (permissions, syntaxe, ownership) et affiche les problèmes potentiels avant redémarrage.
+
+</small>
 
 ---
 
@@ -120,10 +108,13 @@ Installer et configurer Postfix pour la première fois
 ---
 
 3. **Test** : Envoyez un email de test local :
+
 ```bash
 echo "Test Postfix" | mail -s "Test" $USER
 ls ~/Maildir/new/
 ```
+
+---
 
 4. **Vérification** : Consultez les logs : `tail -f /var/log/mail.log`
 
@@ -141,6 +132,24 @@ sudo apt install postfix
 sudo nano /etc/postfix/main.cf
 ```
 
+---
+
+**dans la conf :**
+
+```bash
+myhostname = mail.votredomaine.local
+mydomain = votredomaine.local
+smtpd_banner = $myhostname ESMTP
+myorigin = $mydomain
+home_mailbox = Maildir/
+disable_vrfy_command = yes
+inet_interfaces = all
+mydestination = $myhostname, localhost, $mydomain
+inet_protocols = ipv4
+```
+
+---
+
 ```bash
 # Rechargement de la configuration
 sudo systemctl reload postfix
@@ -149,6 +158,8 @@ sudo systemctl reload postfix
 echo "Test Postfix" | mail -s "Test" $USER
 ls ~/Maildir/new/
 ```
+
+---
 
 ```bash
 # Vérification des logs

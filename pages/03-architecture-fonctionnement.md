@@ -90,6 +90,14 @@ cleanup   unix  n       -       y       -       0       cleanup
 qmgr      unix  n       -       n       300     1       qmgr
 ```
 
+Si vous voulez utiliser un environnement chrooté, vous pouvez le faire en ajoutant `y` à la place de `-` dans la colonne `chroot`.
+
+**exemple :**
+
+```bash
+smtp      inet  n       -       y       -       -       smtpd
+```
+
 ---
 
 Décryptons une ligne :
@@ -137,6 +145,10 @@ smtp      inet  n       -       y       -       -       smtpd
 
 **Analogie** : C'est l'employé qui ramasse le courrier déposé dans la boîte aux lettres interne.
 
+```bash
+pickup    unix  n       -       y       60      1       pickup
+```
+
 ---
 
 ### 🧹 cleanup
@@ -153,6 +165,10 @@ smtp      inet  n       -       y       -       -       smtpd
 
 **Analogie** : C'est le service qualité qui vérifie que le courrier est conforme avant expédition.
 
+```bash
+cleanup   unix  n       -       y       -       0       cleanup
+```
+
 ---
 
 ### 📊 qmgr (Queue manager)
@@ -168,6 +184,10 @@ smtp      inet  n       -       y       -       -       smtpd
 - Gère les tentatives et les délais - Optimise l'envoi (regroupe par destination)
 
 **Analogie** : C'est le chef de gare qui décide quels trains partent, quand, et vers où.
+
+```bash
+qmgr      unix  n       -       n       300     1       qmgr
+```
 
 ---
 
@@ -201,6 +221,10 @@ smtp      inet  n       -       y       -       -       smtpd
 
 **Analogie** : C'est le facteur qui distribue le courrier dans les boîtes aux lettres de l'immeuble.
 
+```bash
+smtp      inet  n       -       y       -       -       smtpd
+```
+
 ---
 
 ### ↩️ bounce
@@ -214,6 +238,10 @@ smtp      inet  n       -       y       -       -       smtpd
 - Gère les messages d'avertissement (delay warning)
 
 **Analogie** : C'est le service retour qui renvoie le courrier avec la mention "n'habite pas à l'adresse indiquée".
+
+```bash
+bounce    unix  n       -       n       -       0       bounce
+```
 
 ---
 
@@ -229,6 +257,10 @@ smtp      inet  n       -       y       -       -       smtpd
 
 **Analogie** : C'est le service qui réécrit les adresses, par exemple si vous avez un alias sur votre domaine, Postfix va réécrire l'adresse pour que l'email arrive à la bonne personne.
 
+```bash
+trivial-rewrite unix  -       -       -       -       -       trivial-rewrite
+```
+
 ---
 
 ## Les files d'attente
@@ -240,13 +272,17 @@ Postfix utilise plusieurs files d'attente dans `/var/spool/postfix/` :
 ### 📂 maildrop
 
 **Contenu** : Messages déposés localement par les programmes
+
 **Processus responsable** : `pickup`
+
 **Durée de vie** : Très courte (quelques secondes)
 
 ### 📂 incoming
 
 **Contenu** : Messages reçus, en cours de nettoyage
+
 **Processus responsable** : `cleanup`
+
 **Durée de vie** : Courte (secondes à minutes)
 
 </small>
@@ -258,21 +294,33 @@ Postfix utilise plusieurs files d'attente dans `/var/spool/postfix/` :
 ### 📂 active
 
 **Contenu** : Messages en cours de livraison
+
 **Processus responsable** : `qmgr`
+
 **Taille limite** : Contrôlée (évite la saturation mémoire)
 
 ### 📂 deferred
 
 **Contenu** : Messages en échec temporaire
+
 **Processus responsable** : `qmgr`
+
 **Durée de vie** : Jusqu'à 5 jours par défaut
 
 Les messages en `deferred` sont retentés selon un algorithme exponentiel : 1ère tentative immédiate, 2ème après quelques minutes, 3ème après 15-30 minutes, 4ème après 1 heure, etc.
 
+</small>
+
+---
+
+<small>
+
 ### 📂 hold
 
 **Contenu** : Messages mis en attente manuellement
+
 **Processus responsable** : Admin (vous !)
+
 **Durée de vie** : Jusqu'à libération manuelle
 
 </small>
@@ -282,7 +330,9 @@ Les messages en `deferred` sont retentés selon un algorithme exponentiel : 1èr
 ### 📂 corrupt
 
 **Contenu** : Messages corrompus
+
 **Processus responsable** : Aucun (pour investigation)
+
 **Durée de vie** : Jusqu'à suppression manuelle
 
 ---

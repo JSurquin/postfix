@@ -16,12 +16,6 @@ D) `postcat`
 
 ---
 
-### ✅ Réponse : B
-
-`mailq` (ou `postqueue -p`) affiche tous les messages en attente avec leur Queue ID, expéditeur, destinataire et raison du délai.
-
----
-
 ## Question 2
 
 Combien de temps un message reste-t-il dans la queue deferred par défaut ?
@@ -33,12 +27,6 @@ B) 24 heures
 C) 5 jours  
 
 D) Indéfiniment
-
----
-
-### ✅ Réponse : C
-
-Par défaut, `maximal_queue_lifetime = 5d` (5 jours). Après ça, un bounce est envoyé et le message supprimé.
 
 ---
 
@@ -56,12 +44,6 @@ D) `postfix delete QUEUE_ID`
 
 ---
 
-### ✅ Réponse : B
-
-`postsuper -d QUEUE_ID` supprime un message spécifique. `postsuper -d ALL` supprime TOUT (dangereux !).
-
----
-
 ## Question 4
 
 Quelle commande force Postfix à reprogrammer immédiatement la livraison de tous les messages en attente ?
@@ -73,12 +55,6 @@ B) `postqueue -f`
 C) `postsuper -r ALL`  
 
 D) `postfix reload`
-
----
-
-### ✅ Réponse : B
-
-`postqueue -f` (flush) redéclenche les tentatives de livraison pour tous les messages, y compris ceux en deferred.
 
 ---
 
@@ -96,9 +72,21 @@ D) `bounce`
 
 ---
 
-### ✅ Réponse : B
+## Réponses - Module 5
 
-La file **incoming** stocke les messages validés par `cleanup` avant qu'ils ne passent en **active**. C'est la zone tampon entre l'entrée et la livraison.
+<small>
+
+**Question 1 : Réponse B** - `mailq` (ou `postqueue -p`) affiche tous les messages en attente avec leur Queue ID, expéditeur, destinataire et raison du délai.
+
+**Question 2 : Réponse C** - Par défaut, `maximal_queue_lifetime = 5d` (5 jours). Après ça, un bounce est envoyé et le message supprimé.
+
+**Question 3 : Réponse B** - `postsuper -d QUEUE_ID` supprime un message spécifique. `postsuper -d ALL` supprime TOUT (dangereux !).
+
+**Question 4 : Réponse B** - `postqueue -f` (flush) redéclenche les tentatives de livraison pour tous les messages, y compris ceux en deferred.
+
+**Question 5 : Réponse B** - La file **incoming** stocke les messages validés par `cleanup` avant qu'ils ne passent en **active**. C'est la zone tampon entre l'entrée et la livraison.
+
+</small>
 
 ---
 
@@ -110,32 +98,46 @@ Manipuler les files d'attente Postfix
 ### 📋 Tâches (15 minutes)
 
 1. **Créer des messages en queue** : Envoyez vers un domaine inexistant :
+
 ```bash
 echo "Test queue" | mail -s "Test" fake@domaine-inexistant-123.com
 ```
 
+---
+
 2. **Observer la queue** :
+
 ```bash
 mailq
 postqueue -p
 ```
 
+---
+
 3. **Analyser un message** :
+
 ```bash
 # Récupérer le Queue ID depuis mailq
 sudo postcat -q VOTRE_QUEUE_ID
 ```
 
+---
+
 4. **Forcer un réessai** :
+
 ```bash
 postqueue -f
 ```
 
+---
+
 5. **Nettoyer** :
+
 ```bash
 sudo postsuper -d ALL deferred
 mailq  # Vérifier que la queue est vide
 ```
 
-**Bonus** : Utilisez `qshape` pour analyser les statistiques de la queue
+---
 
+**Bonus** : Utilisez `qshape` pour analyser les statistiques de la queue

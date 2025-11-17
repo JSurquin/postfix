@@ -70,13 +70,24 @@ Avant de commencer, comprenons bien les **3 méthodes** possibles avec Postfix.
 johndoe@andromed.cloud → /home/johndoe/Maildir/
 ```
 
+Dans ce cas il faut créer manuellement le dossier Maildir pour chaque utilisateur.
+```bash
+sudo mkdir -p /home/johndoe/Maildir/
+sudo chown -R johndoe:johndoe /home/johndoe/Maildir/
+sudo chmod -R 700 /home/johndoe/Maildir/
+```
+
+ou avec Dovecot :
+
+```bash
+sudo doveadm exec doveadm mailbox list -u johndoe
+```
+
 ---
 
 **Avantages** :
 - Simple à mettre en place
 - Postfix + Dovecot en mode "system users"
-
----
 
 **Inconvénients** :
 - 25 boîtes mail → 25 comptes Unix 😬
@@ -99,6 +110,27 @@ johndoe@andromed.cloud → /home/johndoe/Maildir/
 contact@andromed.cloud → johndoe@andromed.cloud
 ```
 
+**Un schéma d'explication :**
+
+```mermaid
+flowchart LR
+  subgraph "Envoyer depuis Internet"
+    X[Expéditeur] --> A1[smtp réception<br/>Postfix]
+  end
+  A1 --> A2["Dest: contact#64;andromed.cloud"]
+  A2 --> A3[Postfix: table d'alias<br/>/etc/aliases<br/>virtual_alias_maps]
+  A3 --> A4["Redirige vers johndoe#64;andromed.cloud"]
+  A4 --> B1[Dovecot:<br/>Authentification]
+  B1 --> B2["Maildir de johndoe<br/>/home/johndoe/Maildir/"]
+  B2 --> B3[johndoe lit son email]
+```
+> **Explication** :
+> - Postfix reçoit un mail pour `contact@andromed.cloud`
+> - Il regarde dans la table d'alias : "Oh, cet alias redirige vers `johndoe@andromed.cloud`"
+> - Le mail est donc remis dans la boîte de johndoe.
+> - johndoe relève sa boîte (par IMAP/POP3)
+> - Il n’y a **pas** de Maildir pour `contact@andromed.cloud` : c’est juste une redirection.
+
 ---
 
 **Usage** :
@@ -106,13 +138,9 @@ contact@andromed.cloud → johndoe@andromed.cloud
 - Regroupements
 - Renvois externes
 
----
-
 **Important** : ⚠️ Un alias **n'est PAS une boîte mail**
 
 Il n'y a **pas de Maildir séparé**, c'est juste une **règle de redirection**.
-
----
 
 **Verdict** : ✅ Utile, mais **complémentaire**, pas une solution complète
 
@@ -416,20 +444,40 @@ virtual_mailbox_domains = andromed.cloud
 
 # Mapping adresse → chemin mailbox
 virtual_mailbox_maps = hash:/etc/postfix/vmailbox
-```
 
----
-
-```bash
 # Répertoire de base pour les mailbox
 virtual_mailbox_base = /var/mail/vhosts
 
 # UID et GID de vmail
 virtual_uid_maps = static:5000
 virtual_gid_maps = static:5000
+
+# Transport pour les emails (important)
+virtual_transport = virtual
 ```
 
 ---
+
+# N'oubliez pas !
+
+**N'oubliez pas de retirer home_mailbox dans main.cf**
+
+```bash
+# N'oubliez pas de retirer home_mailbox dans main.cf
+#home_mailbox = Maildir/
+```
+
+Car on va utiliser le transport virtual pour les emails.
+
+**N'oubliez pas d'enlever `$mydomain` dans `mydestination` du fichier `main.cf`**
+
+Si non vous aurez :
+
+> 2025-11-17T11:56:08.083137+00:00 vps-02de336b postfix/trivial-rewrite[74147]: warning: do not list domain andromed.cloud in BOTH mydestination and virtual_mailbox_domains
+
+---
+
+Bonus de sécurité :
 
 ```bash
 # Taille maximum d'une boîte mail (100 Mo)
@@ -448,6 +496,7 @@ virtual_minimum_uid = 5000
 - `virtual_mailbox_base` : Racine des boîtes
 - `virtual_uid_maps` / `virtual_gid_maps` : Propriétaire (vmail)
 - `virtual_mailbox_limit` : Quota par boîte
+- `virtual_transport` : Transport pour les emails, si non précisé par défaut : `local`
 
 ---
 
@@ -532,13 +581,11 @@ drwx------ 2 vmail vmail 4096 Jan 15 14:30 tmp
 sudo ls /var/mail/vhosts/andromed.cloud/johndoe/new/
 ```
 
----
+puis : **cat** pour voir le contenu de l'email
 
 ```bash
 sudo cat /var/mail/vhosts/andromed.cloud/johndoe/new/*
 ```
-
----
 
 Vous verrez le contenu brut de l'email ! 📧
 
@@ -586,9 +633,7 @@ sudo postmap /etc/postfix/virtual_alias
 sudo nano /etc/postfix/main.cf
 ```
 
----
-
-Ajouter :
+**Ajouter à la fin :**
 
 ```bash
 # Alias virtuels (redirections)
@@ -706,11 +751,13 @@ sudo ls /var/mail/vhosts/andromed.cloud/admin/new/
 
 ---
 
-# PARTIE 6 : Catch-all
+# PARTIE 6 : Catch-all (bonus)
 
 ## Attraper toutes les adresses non définies
 
 **Besoin** : Toute adresse `*@andromed.cloud` non définie va chez admin
+
+> Comme je vous le précise plus tard, c'est du bonus, nous n'allons pas nous attarder sur cette partie car elle est sujette à recevoir beaucoup de spam.
 
 ---
 
@@ -851,8 +898,6 @@ sudo postmap /etc/postfix/vmailbox
 sudo nano /etc/postfix/main.cf
 ```
 
----
-
 Modifier :
 
 ```bash
@@ -860,21 +905,15 @@ Modifier :
 virtual_mailbox_domains = andromed.cloud, ascent.cloud
 ```
 
----
-
 ```bash
 sudo systemctl reload postfix
 ```
-
----
 
 ### 🧪 Tester
 
 ```bash
 echo "Test Ascent" | mail -s "Test" contact@ascent.cloud
 ```
-
----
 
 ```bash
 sudo ls /var/mail/vhosts/ascent.cloud/contact/new/
@@ -896,8 +935,6 @@ Les alias comme `root@`, `postmaster@` doivent être redirigés.
 sudo nano /etc/aliases
 ```
 
----
-
 Modifier/Ajouter :
 
 ```bash
@@ -917,13 +954,11 @@ noc: root
 root: admin@andromed.cloud
 ```
 
----
+Puis : 
 
 ```bash
 sudo newaliases
 ```
-
----
 
 ### 🧪 Tester
 
@@ -942,7 +977,36 @@ sudo ls /var/mail/vhosts/andromed.cloud/admin/new/
 
 # PARTIE 9 : Intégration avec Dovecot
 
-Jusqu'ici, on a stocké les emails. Maintenant, on veut **les lire** avec IMAP !
+(Veuillez lire avant le module Dovecot)
+
+<Link class="dark:!text-purple-300" to="dovecot">
+  Lire le module Dovecot
+</Link>
+
+⚠️ **Point important à comprendre** :
+
+Jusqu'ici, avec Postfix seul, on peut **RECEVOIR** des emails dans les boîtes virtuelles.
+
+Mais les utilisateurs ne peuvent **PAS encore les lire** !
+
+---
+
+**Pourquoi ?**
+
+- Postfix = Facteur qui dépose le courrier ✅
+- **Pas besoin de mot de passe** pour recevoir des emails
+- Les emails arrivent automatiquement dans `/var/mail/vhosts/`
+
+---
+
+**Maintenant avec Dovecot** :
+
+- Dovecot = La clé de la boîte aux lettres 🔑
+- **Besoin d'un mot de passe** pour ouvrir la boîte
+- Permet la lecture via IMAP/POP3
+- Fournit l'authentification SMTP pour l'envoi
+
+Passons à la configuration !
 
 ---
 
@@ -953,8 +1017,6 @@ Jusqu'ici, on a stocké les emails. Maintenant, on veut **les lire** avec IMAP !
 ```bash
 sudo nano /etc/dovecot/conf.d/10-mail.conf
 ```
-
----
 
 Configurer :
 
@@ -984,8 +1046,6 @@ first_valid_gid = 5000
 sudo nano /etc/dovecot/conf.d/10-auth.conf
 ```
 
----
-
 ```bash
 # Mécanismes d'authentification
 auth_mechanisms = plain login
@@ -1001,8 +1061,6 @@ disable_plaintext_auth = yes
 ```bash
 sudo nano /etc/dovecot/users
 ```
-
----
 
 Contenu :
 
@@ -1066,6 +1124,8 @@ Commenter les auth par défaut et ajouter :
 # Activer
 !include auth-passwdfile.conf.ext
 ```
+
+> Vous pouvez aussi tout faire dans le auth-system.conf d'ailleurs, libre à vous en terme de propreté ou non. 
 
 ---
 
@@ -1138,8 +1198,6 @@ userdb: johndoe@andromed.cloud
 sudo find /var/mail/vhosts -name "new" -type d
 ```
 
----
-
 ## Compter les emails par boîte
 
 ```bash
@@ -1147,16 +1205,12 @@ sudo find /var/mail/vhosts -name "new" -type d
 sudo ls /var/mail/vhosts/andromed.cloud/johndoe/new/ | wc -l
 ```
 
----
-
 ## Lire un email
 
 ```bash
 # Lister les emails
 sudo ls /var/mail/vhosts/andromed.cloud/johndoe/new/
 ```
-
----
 
 ```bash
 # Lire un email spécifique
@@ -1876,28 +1930,20 @@ sudo /usr/local/bin/add-virtual-mailbox.sh bob@andromed.cloud BobPass123
 sudo /usr/local/bin/list-virtual-mailboxes.sh
 ```
 
----
-
 ```bash
 # 3. Envoyer email
 echo "Salut Bob" | mail -s "Test" bob@andromed.cloud
 ```
-
----
 
 ```bash
 # 4. Relister (bob doit avoir 1 email)
 sudo /usr/local/bin/list-virtual-mailboxes.sh
 ```
 
----
-
 ```bash
 # 5. Supprimer
 sudo /usr/local/bin/remove-virtual-mailbox.sh bob@andromed.cloud
 ```
-
----
 
 ```bash
 # 6. Vérifier que bob est supprimé

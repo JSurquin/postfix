@@ -16,16 +16,9 @@ D) `virtual_alias_domains`
 
 ---
 
-### ✅ Réponse : B
-
-`mydestination` liste les domaines pour lesquels Postfix **livre localement** les emails (domaines finaux).
-
----
-
 ## Question 2
 
 Pour éviter un open relay, il faut ABSOLUMENT avoir :
-
 
 A) `smtpd_tls_security_level = encrypt`  
 
@@ -34,12 +27,6 @@ B) `reject_unauth_destination` dans les restrictions
 C) `smtpd_helo_required = yes`  
 
 D) `disable_vrfy_command = yes`
-
----
-
-### ✅ Réponse : B
-
-`reject_unauth_destination` **rejette** tout email vers un domaine non autorisé. Sans ça = **OPEN RELAY** !
 
 ---
 
@@ -57,12 +44,6 @@ D) `postfix check`
 
 ---
 
-### ✅ Réponse : B
-
-`postconf -n` affiche **uniquement** les paramètres modifiés (non par défaut).
-
----
-
 ## Question 4
 
 Quel paramètre permet de limiter la taille maximale d'un message accepté par Postfix ?
@@ -74,12 +55,6 @@ B) `message_size_limit`
 C) `bounce_queue_lifetime`  
 
 D) `smtp_tls_loglevel`
-
----
-
-### ✅ Réponse : B
-
-`message_size_limit` exprime la taille en octets d'un message accepté. Augmentez-le pour permettre les pièces jointes volumineuses ou réduisez-le pour limiter.
 
 ---
 
@@ -97,9 +72,21 @@ D) `postconf -d paramètre`
 
 ---
 
-### ✅ Réponse : C
+## Réponses - Module 4
 
-`postconf -X paramètre` enlève l'override dans `main.cf`. Postfix rebasculera alors sur la valeur par défaut (visible via `postconf -d`).
+<small>
+
+**Question 1 : Réponse B** - `mydestination` liste les domaines pour lesquels Postfix **livre localement** les emails (domaines finaux).
+
+**Question 2 : Réponse B** - `reject_unauth_destination` **rejette** tout email vers un domaine non autorisé. Sans ça = **OPEN RELAY** !
+
+**Question 3 : Réponse B** - `postconf -n` affiche **uniquement** les paramètres modifiés (non par défaut).
+
+**Question 4 : Réponse B** - `message_size_limit` exprime la taille en octets d'un message accepté. Augmentez-le pour permettre les pièces jointes volumineuses ou réduisez-le pour limiter.
+
+**Question 5 : Réponse C** - `postconf -X paramètre` enlève l'override dans `main.cf`. Postfix rebasculera alors sur la valeur par défaut (visible via `postconf -d`).
+
+</small>
 
 ---
 
@@ -111,25 +98,31 @@ Maîtriser la configuration du main.cf
 ### 📋 Tâches (20 minutes)
 
 1. **Paramètres de base** : Configurez ces paramètres essentiels :
+
 ```bash
 sudo postconf -e "message_size_limit = 20971520"  # 20 MB
 sudo postconf -e "smtpd_banner = \$myhostname ESMTP"
 sudo postconf -e "disable_vrfy_command = yes"
 ```
 
+---
+
 2. **Restrictions anti-spam** : Ajoutez des restrictions basiques :
+
 ```bash
 sudo postconf -e "smtpd_recipient_restrictions = permit_mynetworks, reject_unauth_destination"
 ```
 
+---
+
 3. **Vérification** : Vérifiez votre config :
+
 ```bash
 postfix check
 postconf -n | grep -E "(message_size|smtpd_banner|disable_vrfy|smtpd_recipient)"
 sudo systemctl reload postfix
 ```
 
+---
+
 4. **Test** : Testez l'envoi d'un email et vérifiez les logs
-
-**Bonus** : Configurez le `relayhost` pour utiliser un serveur SMTP externe
-

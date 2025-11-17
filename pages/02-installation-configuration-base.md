@@ -195,7 +195,7 @@ Pendant l'installation, un assistant graphique apparaît :
 
 > Il se peut que vous ne voyez pas cette étape, car Postfix est déjà installé sur votre système ou en fonction de la version il ne le propose pas, pas d'inquiétude.
 
-2. **Nom du système de messagerie** : Entrez votre domaine (jimmylan.fr)
+2. **Nom du système de messagerie** : Entrez votre domaine (andromed.cloud)
 
 ---
 
@@ -278,7 +278,7 @@ inet_interfaces = all  # ou localhost pour tests
 mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain
 
 # Réseaux autorisés (JAMAIS 0.0.0.0/0 = open relay!)
-mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
+#mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
 ```
 
 ---
@@ -349,13 +349,14 @@ inet_protocols = ipv4
 mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain
 
 # Réseaux autorisés
-mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
+#mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
 
 # Pas de relais
 relayhost =
 
 # Stockage des emails
 home_mailbox = Maildir/
+# Attention nous allons plus tard utiliser le transport virtual pour les emails, donc nous ne pouvons pas utiliser home_mailbox.
 
 # Bannière sécurisée
 smtpd_banner = $myhostname ESMTP
@@ -717,7 +718,11 @@ Avant de passer au module suivant, vérifiez que :
 2. Suivez les logs en temps réel
 3. Identifiez les étapes de traitement du message
 
-#### 🎯 Exercice 4 : Docker
+<div class="text-red-600">
+
+#### 🎯 Exercice 4 : Docker : Si vous avez vu Docker
+
+</div>
 
 1. Créez un conteneur Postfix avec Docker
 2. Configurez-le pour accepter les emails sur le port 2525

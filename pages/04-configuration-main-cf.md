@@ -327,16 +327,6 @@ home_mailbox = mail/
 
 **Maildir** est recommandé car : Plus sûr (pas de corruption d'un fichier énorme) - Plus rapide (accès concurrent possible) - Compatible avec IMAP - Standard moderne
 
-### 📦 mail_spool_directory
-
-Répertoire des mailbox système (format mbox)
-
-```bash
-mail_spool_directory = /var/mail
-```
-
-Si vous utilisez Maildir, ce paramètre est ignoré.
-
 ---
 
 ### 💾 message_size_limit
@@ -857,20 +847,13 @@ Voici un exemple de configuration complète et sécurisée pour 2025 :
 myhostname = mail.example.com
 mydomain = example.com
 myorigin = $mydomain
-
 # === RÉSEAU ===
 inet_interfaces = all
 inet_protocols = ipv4
-```
-
----
-
-```bash
 # === DESTINATIONS ===
 mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain
 mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
 relayhost =
-
 # === STOCKAGE ===
 home_mailbox = Maildir/
 message_size_limit = 52428800
@@ -886,24 +869,19 @@ disable_vrfy_command = yes
 smtpd_helo_required = yes
 
 # === RESTRICTIONS ===
-smtpd_recipient_restrictions = 
+smtpd_recipient_restrictions =
     permit_mynetworks,
     permit_sasl_authenticated,
     reject_unauth_destination,
     reject_invalid_hostname,
     reject_non_fqdn_recipient,
     reject_unknown_recipient_domain
-```
-
----
-
-```bash
-smtpd_helo_restrictions = 
+smtpd_helo_restrictions =
     permit_mynetworks,
     reject_invalid_helo_hostname,
     reject_non_fqdn_helo_hostname
 
-smtpd_sender_restrictions = 
+smtpd_sender_restrictions =
     permit_mynetworks,
     permit_sasl_authenticated,
     reject_non_fqdn_sender,
@@ -922,12 +900,14 @@ smtp_tls_security_level = may
 smtp_tls_protocols = >=TLSv1.2
 ```
 
+**(ne vous inquietez pas nous le voyons dans le module TLS)**
+
 ---
 
 ```bash
 # === SASL ===
 smtpd_sasl_auth_enable = yes
-smtpd_sasl_type = cyrus
+smtpd_sasl_type = dovecot
 smtpd_sasl_path = private/auth
 smtpd_sasl_security_options = noanonymous
 ```
@@ -936,12 +916,19 @@ smtpd_sasl_security_options = noanonymous
 
 ```bash
 # === PERFORMANCE ===
+# je limite le nombre de processus Postfix simultanés à 100
 default_process_limit = 100
+# je limite le nombre de messages actifs dans la queue à 20000
 qmgr_message_active_limit = 20000
+# je limite la fréquence de traitement de la file d'attente à 300 secondes
 queue_run_delay = 300s
+# je limite le délai minimum avant de retenter l'envoi à 300 secondes
 minimal_backoff_time = 300s
+# je limite le délai maximum entre deux tentatives à 4000 secondes
 maximal_backoff_time = 4000s
+# je limite la durée de vie de la file d'attente à 5 jours
 maximal_queue_lifetime = 5d
+# je limite la durée de vie de la file d'attente des messages rejetés à 5 jours
 bounce_queue_lifetime = 5d
 ```
 
@@ -1108,7 +1095,7 @@ smtpd_tls_loglevel = 2
 2. Testez avec telnet :
 
 ```bash
-telnet mail.example.com 25
+telnet mail.andromed.cloud 25
 ```
 
 3. Vérifiez que la bannière ne révèle plus d'informations
@@ -1152,11 +1139,11 @@ telnet mail.example.com 25
 
 ## Prochaine étape
 
-Maintenant que vous maîtrisez le `main.cf`, nous allons apprendre à **DKIM, SPF et DMARC** !
+Maintenant que vous maîtrisez le `main.cf`, nous allons apprendre les Alias et Domaines virtuels.
 
 <div class="pt-12">
   <span @click="next" class="px-2 p-3 rounded cursor-pointer hover:bg-white hover:bg-opacity-10 neon-border">
-    Module suivant : DKIM, SPF et DMARC <carbon:arrow-right class="inline"/>
+    Module suivant : Alias et Domaines virtuels <carbon:arrow-right class="inline"/>
   </span>
 </div>
 

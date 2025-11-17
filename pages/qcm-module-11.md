@@ -17,12 +17,6 @@ D) Cache DNS, cookies, sessions
 
 ---
 
-### ✅ Réponse : B
-
-Les **3 essentiels** : Configuration (`/etc/postfix/`), certificats SSL (`/etc/letsencrypt/`), clés DKIM (`/etc/opendkim/keys/`).
-
----
-
 ## Question 2
 
 Quelle est la règle 3-2-1 de sauvegarde ?
@@ -34,12 +28,6 @@ B) 3 copies, 2 supports différents, 1 copie hors site
 C) 3 jours, 2 semaines, 1 mois  
 
 D) 3 fichiers, 2 formats, 1 compression
-
----
-
-### ✅ Réponse : B
-
-**Règle 3-2-1** : **3** copies de vos données, sur **2** supports différents, avec **1** copie hors site.
 
 ---
 
@@ -57,12 +45,6 @@ D) Seulement en production
 
 ---
 
-### ✅ Réponse : B
-
-La queue change **constamment** et se vide naturellement. Sauvegarder la config est plus important que la queue.
-
----
-
 ## Question 4
 
 Quelle commande permet de sauvegarder la configuration active de Postfix dans un fichier texte versionné ?
@@ -74,12 +56,6 @@ B) `postconf -n > postfix.conf`
 C) `postqueue -p > postfix.conf`  
 
 D) `systemctl show postfix > postfix.conf`
-
----
-
-### ✅ Réponse : B
-
-`postconf -n` liste uniquement les paramètres personnalisés. Redirigez la sortie vers un fichier pour tracer vos changements dans Git ou une sauvegarde.
 
 ---
 
@@ -97,13 +73,27 @@ D) `cupsd`
 
 ---
 
-### ✅ Réponse : B
+## Réponses - Module 11
 
-`cron` (ou `cronie`) reste la méthode la plus simple pour lancer un script récurrent. Vous pouvez aussi créer un timer systemd si vous préférez.
+<small>
+
+**Question 1 : Réponse B** - Les **3 essentiels** : Configuration (`/etc/postfix/`), certificats SSL (`/etc/letsencrypt/`), clés DKIM (`/etc/opendkim/keys/`).
+
+**Question 2 : Réponse B** - **Règle 3-2-1** : **3** copies de vos données, sur **2** supports différents, avec **1** copie hors site.
+
+**Question 3 : Réponse B** - La queue change **constamment** et se vide naturellement. Sauvegarder la config est plus important que la queue.
+
+**Question 4 : Réponse B** - `postconf -n` liste uniquement les paramètres personnalisés. Redirigez la sortie vers un fichier pour tracer vos changements dans Git ou une sauvegarde.
+
+**Question 5 : Réponse B** - `cron` (ou `cronie`) reste la méthode la plus simple pour lancer un script récurrent. Vous pouvez aussi créer un timer systemd si vous préférez.
+
+</small>
 
 ---
 
 ## Exercice pratique - Module 11
+
+<small>
 
 ### 🎯 Objectif
 Sauvegarder et restaurer la configuration Postfix
@@ -111,6 +101,7 @@ Sauvegarder et restaurer la configuration Postfix
 ### 📋 Tâches (15 minutes)
 
 1. **Créer un script de sauvegarde** :
+
 ```bash
 #!/bin/bash
 # backup-postfix.sh
@@ -120,7 +111,13 @@ mkdir -p $BACKUP_DIR
 
 # Sauvegarder la configuration
 tar -czf $BACKUP_DIR/postfix-config-$DATE.tar.gz /etc/postfix/
+```
 
+</small>
+
+---
+
+```bash
 # Sauvegarder les certificats SSL
 tar -czf $BACKUP_DIR/ssl-certs-$DATE.tar.gz /etc/letsencrypt/
 
@@ -136,12 +133,16 @@ ls -lh $BACKUP_DIR/
 ---
 
 2. **Rendre exécutable et tester** :
+
 ```bash
 chmod +x backup-postfix.sh
 sudo ./backup-postfix.sh
 ```
 
+---
+
 3. **Simuler une restauration** :
+
 ```bash
 # Copier la config actuelle
 sudo cp -r /etc/postfix /etc/postfix.backup
@@ -155,12 +156,16 @@ postfix check
 sudo systemctl reload postfix
 ```
 
+---
+
 4. **Automatiser avec cron** :
+
 ```bash
 # Ajouter dans crontab
 sudo crontab -e
 # Ajouter : 0 2 * * * /chemin/vers/backup-postfix.sh
 ```
 
-**Bonus** : Envoyez les sauvegardes vers un serveur distant avec rsync ou scp
+---
 
+**Bonus** : Envoyez les sauvegardes vers un serveur distant avec rsync ou scp

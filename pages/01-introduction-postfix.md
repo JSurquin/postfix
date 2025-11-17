@@ -219,7 +219,21 @@ Internet
 
 **IMAP / POP3**
 - IMAP (port 143/993) : Synchronisation des emails sur plusieurs appareils
+
+Par exemple : Thunderbird, Outlook, Gmail (interface web)
+
 - POP3 (port 110/995) : Téléchargement et suppression des emails du serveur
+
+Par exemple : Roundcube, Rainloop, Horde, Squirrelmail, etc.
+
+---
+
+### Donc quand choisir IMAP ou POP3 ?
+
+- IMAP : Pour les utilisateurs qui ont besoin de synchroniser leurs emails sur plusieurs appareils.
+- POP3 : Pour les utilisateurs qui ont besoin de télécharger leurs emails sur un seul appareil.
+
+La plus part du temps, on utilise IMAP.
 
 ---
 
@@ -391,7 +405,7 @@ Postfix est un outil **puissant** et **fiable**. Avec cette formation, vous alle
 
 ### 🎓 Certification
 
-À la fin de chaque niveau (initiation et perfectionnement), vous passerez un QCM de validation. Un certificat de formation vous sera remis si vous obtenez au moins **70%** de bonnes réponses.
+À la fin de chaque niveau (initiation et perfectionnement), vous passerez un QCM de validation.
 
 ---
 

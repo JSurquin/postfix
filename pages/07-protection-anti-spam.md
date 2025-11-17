@@ -316,7 +316,7 @@ sudo systemctl reload postfix
 
 ## 💡 Pour aller plus loin
 
-Les protections avancées suivantes seront vues dans la formation **Perfectionnement Postfix** :
+Vous pouvez aller plus loin avec les protections avancées suivantes :
 
 - **Greylisting** (Postgrey) : Retarder temporairement les emails inconnus
 - **SpamAssassin** : Filtrage de contenu avec score bayésien
@@ -330,6 +330,8 @@ Les protections avancées suivantes seront vues dans la formation **Perfectionne
 ## Fichier /etc/postfix/main.cf
 
 Ajouter ces paramètres pour une protection de base efficace :
+
+---
 
 ```bash
 # ============================================
@@ -388,8 +390,6 @@ smtpd_delay_reject = yes
 # Vérifier la configuration
 postfix check
 ```
-
----
 
 ```bash
 # Recharger Postfix
@@ -617,4 +617,3 @@ La protection anti-spam de base est en place ! Maintenant, attaquons les logs !
     Module suivant : Logs et monitoring <carbon:arrow-right class="inline"/>
   </span>
 </div>
-

@@ -16,12 +16,6 @@ D) Afficher les emails dans un navigateur
 
 ---
 
-### ✅ Réponse : B
-
-Le MTA (comme Postfix) **achemine et délivre** les emails entre serveurs. Le MUA lit les emails, le MDA les stocke.
-
----
-
 ## Question 2
 
 Qui a créé Postfix et pourquoi ?
@@ -33,12 +27,6 @@ B) Wietse Venema - Pour avoir une alternative plus sécurisée à Sendmail
 C) Mark Zuckerberg - Pour Facebook  
 
 D) Apache Foundation - Pour le serveur web
-
----
-
-### ✅ Réponse : B
-
-**Wietse Venema** (IBM) a créé Postfix dans les années 1990 comme alternative **plus sécurisée, rapide et simple** à Sendmail.
 
 ---
 
@@ -56,12 +44,6 @@ D) Chiffrement obligatoire
 
 ---
 
-### ✅ Réponse : B
-
-Postfix utilise la **séparation des privilèges** : chaque processus a un rôle unique et les droits minimum nécessaires.
-
----
-
 ## Question 4
 
 Quel composant remet les emails dans la boîte de réception du destinataire ?
@@ -73,12 +55,6 @@ B) MDA
 C) MUA  
 
 D) LDA
-
----
-
-### ✅ Réponse : B
-
-Le **Mail Delivery Agent (MDA)** dépose le message dans la boîte du destinataire (via un MDA local ou `dovecot-lda`). Le MTA transporte, le MUA lit.
 
 ---
 
@@ -96,9 +72,21 @@ D) 587
 
 ---
 
-### ✅ Réponse : A
+## Réponses - Module 1
 
-Le **port 25/TCP** est le port SMTP historique utilisé entre MTAs. Le port 587 est dédié aux clients authentifiés (submission).
+<small>
+
+**Question 1 : Réponse B** - Le MTA (comme Postfix) **achemine et délivre** les emails entre serveurs. Le MUA lit les emails, le MDA les stocke.
+
+**Question 2 : Réponse B** - **Wietse Venema** (IBM) a créé Postfix dans les années 1990 comme alternative **plus sécurisée, rapide et simple** à Sendmail.
+
+**Question 3 : Réponse B** - Postfix utilise la **séparation des privilèges** : chaque processus a un rôle unique et les droits minimum nécessaires.
+
+**Question 4 : Réponse B** - Le **Mail Delivery Agent (MDA)** dépose le message dans la boîte du destinataire (via un MDA local ou `dovecot-lda`). Le MTA transporte, le MUA lit.
+
+**Question 5 : Réponse A** - Le **port 25/TCP** est le port SMTP historique utilisé entre MTAs. Le port 587 est dédié aux clients authentifiés (submission).
+
+</small>
 
 ---
 

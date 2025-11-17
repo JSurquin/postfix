@@ -16,12 +16,6 @@ D) cleanup
 
 ---
 
-### ✅ Réponse : C
-
-Le processus **master** est le chef d'orchestre. Il lance tous les autres processus, surveille leur santé et les redémarre si nécessaire.
-
----
-
 ## Question 2
 
 Quel processus gère les files d'attente et décide quand envoyer les messages ?
@@ -33,12 +27,6 @@ B) qmgr (queue manager)
 C) pickup  
 
 D) smtp
-
----
-
-### ✅ Réponse : B
-
-**qmgr** (queue manager) est le CŒUR de Postfix. Il gère toutes les files d'attente et décide quand envoyer les messages.
 
 ---
 
@@ -56,12 +44,6 @@ D) deferred
 
 ---
 
-### ✅ Réponse : C
-
-La file **active** contient les messages prêts à être envoyés et en cours de livraison (max 20 000 par défaut).
-
----
-
 ## Question 4
 
 Quel processus Postfix accepte les connexions SMTP entrantes depuis les clients ou d'autres MTAs ?
@@ -73,12 +55,6 @@ B) `smtpd`
 C) `smtp`  
 
 D) `cleanup`
-
----
-
-### ✅ Réponse : B
-
-`smtpd` est le démon serveur SMTP. Il gère l'authentification, applique les restrictions et remet les messages au processus `cleanup`.
 
 ---
 
@@ -96,9 +72,21 @@ D) Vérifier les signatures DKIM
 
 ---
 
-### ✅ Réponse : C
+## Réponses - Module 3
 
-`pickup` surveille la file **maildrop** (messages injectés localement par `sendmail`/`postdrop`) et les transfère vers `cleanup` pour traitement.
+<small>
+
+**Question 1 : Réponse C** - Le processus **master** est le chef d'orchestre. Il lance tous les autres processus, surveille leur santé et les redémarre si nécessaire.
+
+**Question 2 : Réponse B** - **qmgr** (queue manager) est le CŒUR de Postfix. Il gère toutes les files d'attente et décide quand envoyer les messages.
+
+**Question 3 : Réponse C** - La file **active** contient les messages prêts à être envoyés et en cours de livraison (max 20 000 par défaut).
+
+**Question 4 : Réponse B** - `smtpd` est le démon serveur SMTP. Il gère l'authentification, applique les restrictions et remet les messages au processus `cleanup`.
+
+**Question 5 : Réponse C** - `pickup` surveille la file **maildrop** (messages injectés localement par `sendmail`/`postdrop`) et les transfère vers `cleanup` pour traitement.
+
+</small>
 
 ---
 
@@ -110,12 +98,16 @@ Observer l'architecture de Postfix en action
 ### 📋 Tâches (10 minutes)
 
 1. **Observer les processus** :
+
 ```bash
 ps aux | grep postfix
 pstree -p $(pgrep -o master)
 ```
 
+---
+
 2. **Suivre un message** :
+
 ```bash
 # Envoyer un email
 echo "Test" | mail -s "Test architecture" $USER
@@ -124,10 +116,15 @@ echo "Test" | mail -s "Test architecture" $USER
 tail -f /var/log/mail.log | grep "postfix"
 ```
 
+---
+
 3. **Explorer les queues** :
+
 ```bash
 sudo ls -la /var/spool/postfix/active/
 sudo postqueue -p
 ```
+
+---
 
 **Bonus** : Utilisez `postcat -q QUEUE_ID` pour lire un message
