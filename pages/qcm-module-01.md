@@ -103,6 +103,8 @@ Alice (`alice@entreprise-a.fr`) envoie un email avec 3 destinataires :
 
 Le serveur de `entreprise-a.fr` utilise un **relais SMTP** externe pour les emails sortants.
 
+---
+
 ### 📝 Questions
 
 1. Identifiez tous les MTAs impliqués dans cette communication
@@ -122,6 +124,8 @@ Le serveur de `entreprise-a.fr` utilise un **relais SMTP** externe pour les emai
 
 ### ✅ Réponse détaillée
 
+<small>
+
 **1. MTAs impliqués :**
 - MTA de `entreprise-a.fr` (Postfix local)
 - Relais SMTP externe (pour sortie)
@@ -140,6 +144,8 @@ Le serveur de `entreprise-a.fr` utilise un **relais SMTP** externe pour les emai
 5. Relais SMTP → MTA entreprise-c.org
 6. MTAs destinataires → MDAs respectifs
 
+</small>
+
 ---
 
 ## Exercice pratique - Module 1 (Schéma)
@@ -147,7 +153,7 @@ Le serveur de `entreprise-a.fr` utilise un **relais SMTP** externe pour les emai
 ### ✅ Schéma de la solution
 
 ```mermaid
-graph TD
+graph LR
     A[MUA Alice] -->|SMTP 587| B[MTA entreprise-a.fr]
     B -->|Livraison locale| C[MDA Bob]
     B -->|SMTP 25| D[Relais SMTP externe]
