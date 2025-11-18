@@ -193,7 +193,7 @@ Postfix ne fonctionne généralement pas seul : **Postfixadmin** (interface web)
 Une stack email moderne ressemble à ça :
 
 ```mermaid
-graph TB
+graph LR
     A[Internet] --> B[Firewall]
     B --> C[Postfix MTA]
     C <--> D[Fichiers de<br/>configuration locaux]
