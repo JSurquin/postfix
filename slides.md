@@ -259,3 +259,86 @@ src: './pages/12-exercices-debutant.md'
 ---
 src: './pages/13-qcm-initiation.md'
 ---
+
+---
+
+# ❓ FAQ & Questions Pièges – Postfix/Dovecot 🔥
+layout: center
+
+## Questions fréquentes & pièges classiques
+
+- **SPF/DKIM/DMARC OK → mail en spam ?**
+  → Réputation IP/domaine, contenu, rDNS, blacklist.
+
+- **DMARC FAIL mais SPF/DKIM OK ?**
+  → Alignment FROM ≠ domaine SPF/DKIM.
+
+- **Pourquoi l'email n'est pas livré ?**
+  → DNS cassé, MX absent, port 25 bloqué, queue saturée.
+
+- **Dovecot “Invalid login” ?**
+  → passdb mal configuré, SSL obligatoire, droits Maildir.
+
+- **DKIM non détecté ?**
+  → Selector incorrect, TXT mal formaté, propagation DNS.
+
+---
+
+# 🪖 Scénarios Réels – Contexte Militaire
+
+## 1. 📡 Serveur sur réseau isolé (air‑gapped)
+- Pas d'accès DNS public  
+- MX internes seulement  
+- Certificats TLS internes  
+- Important : logs + traçabilité + rotation journalière
+
+## 2. ⚠️ Compromission interne : poste infecté envoyant mass‑mail
+- Désactivation immédiate du port 587  
+- Rotation des credentials  
+- Suppression de queue : `postsuper -d ALL`  
+- Analyse : `/var/log/maillog` et authentications  
+- Rétablissement progressif avec monitoring renforcé
+
+## 3. 🛡️ Besoin de résilience en cas d’attaque
+- Doubler les MX internes  
+- Ratelimit strict  
+- Greylisting interne  
+- Vérification régulière des files et des journaux  
+
+---
+
+# 🧰 Fiche de Secours – Diagnostic Rapide
+
+### 🔍 Vérifier l'état du service
+```
+systemctl status postfix
+systemctl status dovecot
+```
+
+### 📤 Voir les mails en queue
+```
+postqueue -p
+```
+Supprimer :
+```
+postsuper -d ALL
+```
+
+### 📡 Test SMTP
+```
+telnet mail.example.com 25
+```
+
+### 📜 Logs essentiels
+```
+tail -f /var/log/maillog
+grep -i "reject" /var/log/maillog
+```
+
+### 🔐 Vérifier DNS
+- MX : `dig mx example.com`
+- SPF : `dig txt example.com`
+- DKIM : `dig txt selector._domainkey.example.com`
+- DMARC : `_dmarc.example.com`
+
+---
