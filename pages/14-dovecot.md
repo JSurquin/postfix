@@ -30,20 +30,18 @@ routeAlias: 'dovecot'
 
 ### Workflow complet
 
-```
-┌──────────┐    SMTP     ┌──────────┐    LMTP     ┌──────────┐
-│ Internet │ ─────────> │ Postfix  │ ─────────> │ Dovecot  │
-└──────────┘            └──────────┘            └──────────┘
-                             │                        │
-                             │                        │
-                        Envoi emails          Lecture emails
-                                                   (IMAP/POP3)
-                                                       │
-                                                       ▼
-                                              ┌──────────────┐
-                                              │   Clients    │
-                                              │ (Mail apps)  │
-                                              └──────────────┘
+```mermaid
+graph LR
+    A[Internet] -->|SMTP| B[Postfix]
+    B -->|LMTP| C[Dovecot]
+    B -.->|Envoi emails| B
+    C -->|IMAP/POP3| D[Clients<br/>Mail apps]
+    C -.->|Lecture emails| D
+    
+    style A fill:#e1f5ff
+    style B fill:#fff4e1
+    style C fill:#e1ffe1
+    style D fill:#ffe1f5
 ```
 
 ---
