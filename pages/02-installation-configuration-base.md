@@ -161,20 +161,194 @@ dig -x 203.0.113.10 +short
 
 ### 🔥 Configuration du firewall
 
-Avant d'installer Postfix, ouvrez les ports nécessaires :
+Avant d'installer Postfix, comprenons les ports que nous allons utiliser !
+
+---
+
+## 🌐 Comprendre les ports mail
+
+Avant d'ouvrir les ports, il est crucial de comprendre leur rôle.
+
+Dans cette formation, nous allons configurer un serveur mail complet :
+- **Postfix** pour envoyer/recevoir des emails
+- **Dovecot** pour permettre aux clients (Outlook, Thunderbird, Apple Mail) de consulter leurs emails
+- **TLS/SSL** pour sécuriser toutes les communications
+
+Pour cela, nous devons ouvrir plusieurs ports selon leur usage :
+- Ports **SMTP** : pour l'envoi de mails
+- Ports **IMAP** : pour la lecture de mails
+- Ports **POP3** : pour le téléchargement de mails (optionnel)
+
+---
+
+## 📧 Ports SMTP - Envoi de mails
+
+| Port | Protocole / Mode | Usage | Notes |
+|------|------------------|-------|-------|
+| **25** | SMTP (plain) | Envoi serveur → serveur | Port standard pour le trafic entre serveurs mail. Les FAI bloquent souvent ce port pour les clients. |
+| **587** | SMTP Submission + STARTTLS | Envoi client → serveur | **Port recommandé** pour tous les clients modernes (Outlook, Thunderbird, Apple Mail). TLS négocié après connexion. |
+| **465** | SMTPS (SSL direct) | Envoi client → serveur | SSL/TLS dès la connexion. Supporté par la plupart des clients mail. |
+
+---
+
+### 📧 Détails des ports SMTP
+
+**Port 25 - SMTP (Communication serveur à serveur)**
+- C'est le port historique du protocole SMTP
+- Utilisé pour le **relay entre serveurs** mail (exemple : gmail.com → votre-domaine.com)
+- Les clients finaux (Outlook, Apple Mail) ne doivent **PAS** utiliser ce port
+- Beaucoup de FAI bloquent ce port pour éviter le spam
+
+**Port 587 - Submission (Client à serveur)**
+- **Port recommandé** pour l'envoi depuis un client mail
+- Obligatoire pour Thunderbird, Apple Mail, et la plupart des clients modernes
+- Utilise **STARTTLS** : connexion en clair puis passage en TLS
+- Nécessite généralement une authentification (SMTP AUTH)
+
+**Port 465 - SMTPS (Client à serveur avec SSL)**
+- SSL/TLS est actif **dès le début** de la connexion
+- Port historique mais toujours très utilisé
+- Supporté par Outlook, Apple Mail, Gmail
+- Alternative au port 587
+
+---
+
+## 📥 Ports IMAP - Lecture de mails
+
+| Port | Protocole / Mode | Usage | Notes |
+|------|------------------|-------|-------|
+| **143** | IMAP + STARTTLS | Lecture mail depuis client | TLS négocié après connexion via STARTTLS. Port standard IMAP. |
+| **993** | IMAPS (SSL direct) | Lecture mail sécurisée | SSL/TLS dès la connexion. **Port recommandé** pour tous les clients modernes. |
+
+---
+
+### 📥 Détails des ports IMAP
+
+**Port 143 - IMAP (avec STARTTLS)**
+- Port standard du protocole IMAP (Internet Message Access Protocol)
+- Permet de consulter ses emails depuis n'importe où
+- **STARTTLS** : connexion en clair puis passage en TLS
+- Les emails restent sur le serveur (contrairement à POP3)
+
+**Port 993 - IMAPS (SSL direct)**
+- **Port recommandé** pour tous les clients modernes
+- SSL/TLS actif **dès le début** de la connexion
+- Standard utilisé par défaut par Outlook, Apple Mail, Thunderbird
+- Plus sécurisé que le port 143
+
+💡 **IMAP vs POP3** : IMAP synchronise les emails (ils restent sur le serveur), POP3 les télécharge (et les supprime généralement du serveur).
+
+---
+
+## 📥 Ports POP3 - Téléchargement de mails
+
+| Port | Protocole / Mode | Usage | Notes |
+|------|------------------|-------|-------|
+| **110** | POP3 + STARTTLS | Téléchargement depuis serveur | TLS peut être négocié via STARTTLS. |
+| **995** | POP3S (SSL direct) | Téléchargement sécurisé | SSL/TLS dès la connexion. Port recommandé pour POP3. |
+
+---
+
+### 📥 Détails des ports POP3
+
+**Port 110 - POP3 (avec STARTTLS)**
+- Port standard du protocole POP3 (Post Office Protocol v3)
+- Télécharge les emails du serveur vers le client
+- Par défaut, **supprime les emails du serveur** après téléchargement
+- **STARTTLS** : connexion en clair puis passage en TLS
+
+**Port 995 - POP3S (SSL direct)**
+- SSL/TLS actif **dès le début** de la connexion
+- Port recommandé si vous utilisez POP3
+- Certains clients anciens préfèrent POP3 à IMAP
+
+⚠️ **Note** : Dans cette formation, nous privilégierons **IMAP** (plus moderne et pratique), mais nous configurerons quand même POP3 pour la compatibilité.
+
+---
+
+## ⚙️ Résumé rapide des ports
+
+**Communication serveur à serveur :**
+- Port **25** → SMTP (relay entre serveurs mail)
+
+**Envoi depuis un client mail (Outlook, Apple Mail, Thunderbird) :**
+- Port **587** → SMTP Submission avec STARTTLS ✅ **Recommandé**
+- Port **465** → SMTPS avec SSL direct
+
+**Lecture de mails (IMAP) :**
+- Port **143** → IMAP avec STARTTLS
+- Port **993** → IMAPS avec SSL direct ✅ **Recommandé**
+
+**Téléchargement de mails (POP3) :**
+- Port **110** → POP3 avec STARTTLS
+- Port **995** → POP3S avec SSL direct ✅ **Recommandé**
+
+---
+
+## 💡 Astuces mnémotechniques
+
+### Retenir les ports facilement
+
+**Ports pairs = SSL/TLS direct**
+- **465** (SMTPS) - SSL dès la connexion
+- **993** (IMAPS) - SSL dès la connexion
+- **995** (POP3S) - SSL dès la connexion
+
+**Ports impairs = STARTTLS possible**
+- **25** (SMTP) - Connexion en clair, STARTTLS optionnel
+- **587** (Submission) - Connexion en clair, puis STARTTLS
+- **143** (IMAP) - Connexion en clair, puis STARTTLS
+- **110** (POP3) - Connexion en clair, puis STARTTLS
+
+💡 **Règle simple** : Si le port est pair, c'est du SSL direct. Si le port est impair, c'est STARTTLS.
+
+---
+
+## 🔧 Configuration importante : master.cf
+
+⚠️ **ATTENTION** : Pour que le port **587** (Submission) fonctionne, il faut activer le service dans `/etc/postfix/master.cf`.
+
+**Par défaut, le service `submission` est commenté !**
+
+Nous verrons comment le configurer dans les prochains modules, mais retenez déjà :
+- Il faut **décommenter** les lignes `submission` dans `master.cf`
+- Il faut activer **STARTTLS** pour sécuriser les connexions
+- Il faut activer **SMTP AUTH** pour authentifier les clients
+
+Sans cette configuration, **Outlook et les autres clients ne pourront pas envoyer d'emails** via votre serveur !
+
+---
+
+## 🔥 Ouverture des ports firewall
+
+Maintenant que nous comprenons les ports, ouvrons-les !
 
 ```bash
 # Pour Ubuntu (UFW)
-sudo ufw allow 25/tcp    # SMTP = Postfix = Votre serveur mail
-sudo ufw allow 587/tcp   # Submission = Postfix = Pour envoyer des emails depuis votre serveur mail
-sudo ufw allow 465/tcp   # SMTPS = Postfix = Pour envoyer des emails via SSL/TLS
+sudo ufw allow 25/tcp     # SMTP (serveur à serveur)
+sudo ufw allow 587/tcp    # Submission (client à serveur avec STARTTLS)
+sudo ufw allow 465/tcp    # SMTPS (client à serveur avec SSL)
+sudo ufw allow 143/tcp    # IMAP (lecture mail avec STARTTLS)
+sudo ufw allow 993/tcp    # IMAPS (lecture mail avec SSL)
+sudo ufw allow 110/tcp    # POP3 (téléchargement avec STARTTLS)
+sudo ufw allow 995/tcp    # POP3S (téléchargement avec SSL)
+```
 
+---
+
+```bash
 # Pour Rocky Linux (firewalld)
-sudo firewall-cmd --permanent --add-service=smtp
-sudo firewall-cmd --permanent --add-service=smtp-submission
-sudo firewall-cmd --permanent --add-service=smtps
+sudo firewall-cmd --permanent --add-service=smtp          # Port 25
+sudo firewall-cmd --permanent --add-service=smtp-submission  # Port 587
+sudo firewall-cmd --permanent --add-service=smtps         # Port 465
+sudo firewall-cmd --permanent --add-service=imap          # Port 143
+sudo firewall-cmd --permanent --add-service=imaps         # Port 993
+sudo firewall-cmd --permanent --add-service=pop3          # Port 110
+sudo firewall-cmd --permanent --add-service=pop3s         # Port 995
 sudo firewall-cmd --reload
 ```
+
+💡 **Note** : Même si nous n'utiliserons pas beaucoup POP3, nous ouvrons les ports pour assurer la compatibilité avec tous les clients mail.
 
 ---
 
