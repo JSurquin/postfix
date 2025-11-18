@@ -193,6 +193,8 @@ Pour cela, nous devons ouvrir plusieurs ports selon leur usage :
 
 ### 📧 Détails des ports SMTP
 
+<small>
+
 **Port 25 - SMTP (Communication serveur à serveur)**
 - C'est le port historique du protocole SMTP
 - Utilisé pour le **relay entre serveurs** mail (exemple : gmail.com → votre-domaine.com)
@@ -210,6 +212,8 @@ Pour cela, nous devons ouvrir plusieurs ports selon leur usage :
 - Port historique mais toujours très utilisé
 - Supporté par Outlook, Apple Mail, Gmail
 - Alternative au port 587
+
+</small>
 
 ---
 
@@ -310,10 +314,10 @@ Pour cela, nous devons ouvrir plusieurs ports selon leur usage :
 
 **Par défaut, le service `submission` est commenté !**
 
-Nous verrons comment le configurer dans les prochains modules, mais retenez déjà :
-- Il faut **décommenter** les lignes `submission` dans `master.cf`
-- Il faut activer **STARTTLS** pour sécuriser les connexions
-- Il faut activer **SMTP AUTH** pour authentifier les clients
+Nous allons le configurer dans ce module pour permettre l'envoi d'emails depuis les clients (Outlook, Thunderbird, Apple Mail) :
+- Nous **décommenterons** les lignes `submission` dans `master.cf`
+- Nous activerons **SASL** pour l'authentification
+- Nous configurerons **TLS optionnel** (sera rendu obligatoire au module 09)
 
 Sans cette configuration, **Outlook et les autres clients ne pourront pas envoyer d'emails** via votre serveur !
 
@@ -554,6 +558,263 @@ sudo systemctl reload postfix
 ```
 
 ⚠️ **Important** : `postfix check` est votre meilleur ami ! Utilisez-le systématiquement.
+
+---
+
+## Configuration du port 587 (Submission)
+
+Maintenant que la configuration de base est en place, activons le port 587 pour permettre aux clients mail (Outlook, Thunderbird, Apple Mail) d'envoyer des emails via notre serveur.
+
+⚠️ **Important** : Par défaut, le service `submission` est **commenté** dans `master.cf` !
+
+---
+
+### 📝 Modifier le fichier master.cf
+
+Ouvrez le fichier de configuration des services :
+
+```bash
+sudo nano /etc/postfix/master.cf
+```
+
+Recherchez les lignes suivantes (elles sont commentées avec `#`) :
+
+```bash
+#submission inet n       -       y       -       -       smtpd
+#  -o syslog_name=postfix/submission
+#  -o smtpd_tls_security_level=encrypt
+```
+
+---
+
+### ✏️ Décommenter et configurer submission
+
+Décommentez et modifiez ces lignes pour activer le service :
+
+```bash
+submission inet n       -       y       -       -       smtpd
+  -o syslog_name=postfix/submission
+  -o smtpd_tls_security_level=may
+  -o smtpd_sasl_auth_enable=yes
+  -o smtpd_client_restrictions=permit_sasl_authenticated,reject
+  -o smtpd_relay_restrictions=permit_sasl_authenticated,reject
+```
+
+---
+
+### 🔍 Explications de la configuration
+
+**`submission inet n - y - - smtpd`**
+- Active le service submission sur le port 587
+
+**`-o syslog_name=postfix/submission`**
+- Nom dans les logs pour distinguer du port 25
+
+**`-o smtpd_tls_security_level=may`**
+- TLS optionnel (pour l'instant, on le rendra obligatoire au module 09)
+
+**`-o smtpd_sasl_auth_enable=yes`**
+- Active l'authentification SASL (obligatoire pour envoyer des mails)
+
+**`-o smtpd_client_restrictions=permit_sasl_authenticated,reject`**
+- Autorise uniquement les clients authentifiés
+
+**`-o smtpd_relay_restrictions=permit_sasl_authenticated,reject`**
+- Autorise le relay uniquement pour les clients authentifiés
+
+---
+
+## Installation de SASL pour l'authentification
+
+Pour que les clients puissent s'authentifier, il faut installer SASL (Simple Authentication and Security Layer).
+
+### 📦 Installation sur Ubuntu/Debian
+
+```bash
+sudo apt install libsasl2-2 sasl2-bin libsasl2-modules -y
+```
+
+---
+
+### 📦 Installation sur Rocky Linux
+
+```bash
+sudo dnf install cyrus-sasl cyrus-sasl-plain -y
+```
+
+---
+
+### 🔧 Configuration de SASL dans main.cf
+
+Ajoutez ces lignes dans `/etc/postfix/main.cf` :
+
+```bash
+# Configuration SASL
+smtpd_sasl_type = dovecot
+smtpd_sasl_path = private/auth
+smtpd_sasl_auth_enable = yes
+smtpd_sasl_security_options = noanonymous
+smtpd_sasl_local_domain = $myhostname
+broken_sasl_auth_clients = yes
+```
+
+---
+
+### 🔍 Explications SASL
+
+**`smtpd_sasl_type = dovecot`**
+- Utilise Dovecot pour l'authentification (nous le configurerons plus tard)
+- En attendant Dovecot, SASL utilisera les comptes Unix du système
+
+**`smtpd_sasl_path = private/auth`**
+- Socket de communication avec Dovecot
+
+**`smtpd_sasl_auth_enable = yes`**
+- Active l'authentification SASL
+
+**`smtpd_sasl_security_options = noanonymous`**
+- Interdit les connexions anonymes
+
+**`broken_sasl_auth_clients = yes`**
+- Compatibilité avec les vieux clients (Outlook 2003, etc.)
+
+---
+
+### ⚠️ Configuration temporaire sans Dovecot
+
+Pour tester immédiatement (avant d'installer Dovecot), modifiez temporairement la configuration SASL :
+
+```bash
+# Configuration SASL temporaire (sans Dovecot)
+smtpd_sasl_type = cyrus
+smtpd_sasl_path = smtpd
+smtpd_sasl_auth_enable = yes
+smtpd_sasl_security_options = noanonymous
+smtpd_sasl_local_domain = $myhostname
+broken_sasl_auth_clients = yes
+```
+
+⚠️ **Cette configuration utilise les comptes Unix du système pour l'authentification.**
+
+---
+
+### 🔧 Configuration de Cyrus SASL (temporaire)
+
+Créez le fichier de configuration SASL :
+
+```bash
+sudo nano /etc/postfix/sasl/smtpd.conf
+```
+
+Ajoutez :
+
+```bash
+pwcheck_method: saslauthd
+mech_list: PLAIN LOGIN
+```
+
+---
+
+### 🚀 Démarrer le service saslauthd
+
+```bash
+# Ubuntu/Debian
+sudo systemctl enable saslauthd
+sudo systemctl start saslauthd
+
+# Rocky Linux
+sudo systemctl enable saslauthd
+sudo systemctl start saslauthd
+```
+
+---
+
+### 💾 Appliquer la configuration
+
+```bash
+# Vérifier la syntaxe
+sudo postfix check
+
+# Recharger Postfix
+sudo systemctl reload postfix
+
+# Vérifier que le port 587 écoute
+sudo ss -tlnp | grep master
+```
+
+Vous devriez maintenant voir les ports **25** et **587** !
+
+---
+
+### ✅ Vérifier les ports actifs
+
+```bash
+sudo ss -tlnp | grep master
+```
+
+Résultat attendu :
+
+```
+LISTEN  0  100  0.0.0.0:25   0.0.0.0:*  users:(("master",pid=1234,fd=13))
+LISTEN  0  100  0.0.0.0:587  0.0.0.0:*  users:(("master",pid=1234,fd=17))
+```
+
+✅ Le port 587 est maintenant actif !
+
+---
+
+### 🧪 Tester l'authentification SASL
+
+Vérifions que SASL fonctionne :
+
+```bash
+testsaslauthd -u votre_utilisateur -p votre_mot_de_passe
+```
+
+Résultat attendu : `0: OK "Success."`
+
+⚠️ **Note** : Utilisez un compte Unix existant sur votre système pour tester.
+
+---
+
+### 📧 Tester l'envoi via le port 587
+
+Test manuel avec telnet/openssl :
+
+```bash
+telnet localhost 587
+```
+
+Une fois connecté, tapez :
+
+```
+EHLO mail.example.com
+```
+
+Vous devriez voir dans la réponse :
+
+```
+250-AUTH PLAIN LOGIN
+250-AUTH=PLAIN LOGIN
+```
+
+✅ L'authentification est disponible !
+
+---
+
+## 🎯 Récapitulatif de la configuration
+
+À ce stade, nous avons :
+
+✅ Postfix installé et configuré  
+✅ Port 25 actif (serveur à serveur)  
+✅ Port 587 actif (clients à serveur)  
+✅ Authentification SASL fonctionnelle  
+✅ Configuration basique (TLS optionnel)
+
+🔜 **Au module 09 (TLS et Sécurité)**, nous sécuriserons tout ça en rendant TLS **obligatoire** sur le port 587 !
+
+🔜 **Au module 14 (Dovecot)**, nous configurerons Dovecot pour une authentification plus robuste et la lecture des emails (IMAP/POP3).
 
 ---
 

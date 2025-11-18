@@ -363,9 +363,17 @@ smtp_tls_loglevel = 1
 
 ---
 
-## Configuration du port 587 (Submission)
+## Sécurisation du port 587 (Submission)
 
-### 📝 Dans master.cf
+⚠️ **Rappel** : Au module 02, nous avons configuré le port 587 avec TLS **optionnel** (`smtpd_tls_security_level = may`).
+
+Maintenant, nous allons le sécuriser en rendant TLS **obligatoire** !
+
+---
+
+### 📝 Modifier master.cf
+
+Ouvrez `/etc/postfix/master.cf` et modifiez la configuration du service `submission` :
 
 ```bash
 submission inet n       -       y       -       -       smtpd
@@ -378,6 +386,18 @@ submission inet n       -       y       -       -       smtpd
   -o smtpd_relay_restrictions=permit_sasl_authenticated,reject
   -o milter_macro_daemon_name=ORIGINATING
 ```
+
+---
+
+### 🔍 Différences avec la configuration du module 02
+
+**`smtpd_tls_security_level=encrypt`** (au lieu de `may`)
+- TLS est maintenant **obligatoire** sur le port 587
+- Les clients non-TLS seront rejetés
+
+**`smtpd_tls_auth_only=yes`** (nouveau)
+- L'authentification SASL est **impossible** sans TLS
+- Force les clients à utiliser une connexion chiffrée avant de s'authentifier
 
 ---
 

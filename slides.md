@@ -87,13 +87,13 @@ routeAlias: 'sommaire-initiation'
 ::right::
 
 <div class="flex flex-col gap-2">
+<Link to="dovecot">🔧 Dovecot (1h30)</Link>
 <Link to="protection-anti-spam">🛡️ Anti-spam essentiel (1h)</Link>
 <Link to="logs-surveillance">📊 Logs et monitoring (45min)</Link>
 <Link to="sauvegarde-restauration">💾 Sauvegarde (30min)</Link>
 <Link to="exercices-debutant">🎯 TP pratiques (2h)</Link>
 <Link to="troubleshooting-essentiel">🔧 Troubleshooting (1h)</Link>
 <Link to="qcm-validation">✅ QCM final (30min)</Link>
-<Link to="dovecot">🔧 Bonus Dovecot (30min)</Link>
 </div>
 
 ---
@@ -219,6 +219,14 @@ src: './pages/qcm-module-08.md'
 ---
 
 ---
+src: './pages/14-dovecot.md'
+---
+
+---
+src: './pages/qcm-dovecot.md'
+---
+
+---
 src: './pages/07-protection-anti-spam.md'
 ---
 
@@ -248,12 +256,4 @@ src: './pages/12-exercices-debutant.md'
 
 ---
 src: './pages/13-qcm-initiation.md'
----
-
----
-src: './pages/14-dovecot.md'
----
-
----
-src: './pages/qcm-dovecot.md'
 ---
