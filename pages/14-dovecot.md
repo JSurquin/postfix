@@ -473,6 +473,8 @@ Ce qu'on va faire ici c'est activer le protocole LMTP.
 
 Pourquoi l'activer ? Parce que Postfix va utiliser LMTP pour envoyer les emails à Dovecot.
 
+> Nous n'allons pas l'utiliser lors de cette formation , mais il est important de le savoir.
+
 ```bash
 service lmtp {
   unix_listener /var/spool/postfix/private/dovecot-lmtp {
@@ -538,12 +540,12 @@ ssl_cipher_list = ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDH
 ssl_prefer_server_ciphers = yes
 ```
 
+Bonus :
+
 ```bash
 # Paramètres DH (Diffie-Hellman)
 ssl_dh = </etc/dovecot/dh.pem
 ```
-
----
 
 ## 🔑 Génération des paramètres DH
 
@@ -551,8 +553,6 @@ ssl_dh = </etc/dovecot/dh.pem
 # Générer des paramètres DH 4096 bits (peut prendre du temps)
 openssl dhparam -out /etc/dovecot/dh.pem 4096
 ```
-
----
 
 ```bash
 # Permissions
@@ -612,12 +612,17 @@ firewall-cmd --reload
 
 **Fichier `/etc/postfix/main.cf`**
 
+Si vous utilisez lmtp :
+
 ```bash
 # Utiliser Dovecot LMTP pour la livraison locale (dans le main.cf de postfix)
 mailbox_transport = lmtp:unix:private/dovecot-lmtp
 ```
 
 ---
+
+
+# A mettre dans le main.cf de postfix :
 
 ```bash
 # Authentification SMTP via Dovecot (dans le main.cf de postfix)
@@ -639,8 +644,6 @@ smtpd_sasl_local_domain = $myhostname
 broken_sasl_auth_clients = yes
 ```
 
----
-
 ```bash
 # Restreindre le relais aux utilisateurs authentifiés
 # N'oubliez pas d'activer le paramètre smtpd_sasl_auth_enable = yes dans le fichier main.cf de postfix
@@ -660,21 +663,15 @@ smtpd_relay_restrictions =
 doveconf -n
 ```
 
----
-
 ```bash
 # Redémarrer Dovecot
 systemctl restart dovecot
 ```
 
----
-
 ```bash
 # Redémarrer Postfix
 systemctl restart postfix
 ```
-
----
 
 ```bash
 # Vérifier les status
@@ -732,14 +729,6 @@ Si la configuration automatique échoue :
 1. Aller dans **Préférences** → **Comptes**
 2. Sélectionner votre compte
 3. Onglet **Avancé**
-
----
-
-**Recommandations :**
-- ✅ Activer **Utiliser IDLE si le serveur le prend en charge**
-- ✅ Définir **Supprimer les copies sur le serveur** : Jamais (pour IMAP)
-- ✅ Activer **Stocker les brouillons sur le serveur**
-- ✅ Activer **Stocker les messages envoyés sur le serveur**
 
 ---
 
@@ -880,7 +869,14 @@ Les paramètres serveurs sont identiques :
 
 ```bash
 # Tester l'auth avec doveadm
-doveadm auth test utilisateur@example.com
+doveadm auth test johndoe@andromed.cloud
+```
+
+### Tester l'user 
+
+```bash
+# Tester l'user avec doveadm
+doveadm user johndoe@andromed.cloud
 ```
 
 ---
@@ -916,7 +912,7 @@ tcp  0  0  0.0.0.0:995    0.0.0.0:*  LISTEN  1234/dovecot
 
 ```bash
 # Connexion IMAP non chiffrée (test uniquement)
-telnet mail.example.com 143
+telnet mail.andromed.cloud 143
 ```
 
 ---
@@ -924,7 +920,7 @@ telnet mail.example.com 143
 Commandes à tester :
 
 ```
-a001 LOGIN utilisateur@example.com password
+a001 LOGIN johndoe@andromed.cloud password
 a002 LIST "" "*"
 a003 SELECT INBOX
 a004 LOGOUT
@@ -936,7 +932,7 @@ a004 LOGOUT
 
 ```bash
 # Connexion IMAPS chiffrée
-openssl s_client -connect mail.example.com:993
+openssl s_client -connect mail.andromed.cloud:993
 ```
 
 ---
@@ -955,7 +951,7 @@ a003 LOGOUT
 
 ```bash
 # Connexion POP3 non chiffrée
-telnet mail.example.com 110
+telnet mail.andromed.cloud 110
 ```
 
 ---
@@ -963,7 +959,7 @@ telnet mail.example.com 110
 Commandes à tester :
 
 ```
-USER utilisateur@example.com
+USER johndoe@andromed.cloud
 PASS password
 STAT
 LIST
@@ -976,7 +972,7 @@ QUIT
 
 ```bash
 # Connexion POP3S chiffrée
-openssl s_client -connect mail.example.com:995
+openssl s_client -connect mail.andromed.cloud:995
 ```
 
 ---
@@ -1024,24 +1020,24 @@ auth_verbose = yes
 
 ```bash
 # Lister les boîtes aux lettres
-doveadm mailbox list -u utilisateur@example.com
+doveadm mailbox list -u johndoe@andromed.cloud
 ```
 
 ```bash
 # Vérifier le quota d'un utilisateur
-doveadm quota get -u utilisateur@example.com
+doveadm quota get -u johndoe@andromed.cloud
 ```
 
 ```bash
 # Forcer une réindexation
-doveadm index -u utilisateur@example.com INBOX
+doveadm index -u johndoe@andromed.cloud INBOX
 ```
 
 ---
 
 ```bash
 # Purger les emails marqués comme supprimés
-doveadm expunge -u utilisateur@example.com mailbox INBOX all
+doveadm expunge -u johndoe@andromed.cloud mailbox INBOX all
 ```
 
 ## 🔄 Recharger la configuration
@@ -1060,7 +1056,7 @@ doveadm who
 
 ```bash
 # Déconnecter un utilisateur
-doveadm kick utilisateur@example.com
+doveadm kick johndoe@andromed.cloud
 ```
 
 ---
@@ -1156,6 +1152,8 @@ doveconf -n | grep ssl
 postconf | grep mailbox_transport
 ```
 
+Si vous utilisez lmtp :
+
 ```bash
 # Vérifier le socket LMTP
 ls -la /var/spool/postfix/private/dovecot-lmtp
@@ -1180,8 +1178,6 @@ default_process_limit = 1000
 default_client_limit = 10000
 ```
 
----
-
 ```bash
 # Nombre de processus de login
 service imap-login {
@@ -1189,8 +1185,6 @@ service imap-login {
   service_count = 0
 }
 ```
-
----
 
 ```bash
 # Cache d'authentification
@@ -1201,37 +1195,9 @@ auth_cache_negative_ttl = 1 hour
 
 ---
 
-## 💾 Configuration des quotas
-
-**Fichier `/etc/dovecot/conf.d/90-quota.conf`**
-
-```bash
-plugin {
-  quota = maildir:User quota
-  quota_rule = *:storage=1GB
-  quota_rule2 = Trash:storage=+100M
-  quota_warning = storage=95%% quota-warning 95 %u
-  quota_warning2 = storage=80%% quota-warning 80 %u
-}
-```
-
----
-
-```bash
-# Service de notification de quota
-service quota-warning {
-  executable = script /usr/local/bin/quota-warning.sh
-  unix_listener quota-warning {
-    user = vmail
-  }
-}
-```
-
----
-
 ## 📧 Configuration Sieve (filtres)
 
-### Activer Sieve
+### Activer Sieve (si vous utilisez lmtp)
 
 **Fichier `/etc/dovecot/conf.d/20-lmtp.conf`**
 
@@ -1286,14 +1252,10 @@ if address :is "from" "newsletter@example.com" {
 doveadm stats dump
 ```
 
----
-
 ```bash
 # Statistiques par utilisateur
 doveadm stats dump user
 ```
-
----
 
 ```bash
 # Statistiques des sessions
@@ -1412,7 +1374,7 @@ layout: new-section
 1. Installer Dovecot avec IMAP et POP3
 2. Créer l'utilisateur `vmail` (UID/GID 5000)
 3. Configurer le répertoire `/var/mail/vhosts`
-4. Définir `mail_location` en Maildir
+4. Définir `mail_location` en Maildir dans le fichier `/etc/dovecot/conf.d/10-mail.conf`
 
 ---
 
@@ -1433,18 +1395,14 @@ layout: new-section
 
 **Tâches :**
 
-1. Obtenir un certificat Let's Encrypt pour `mail.example.com`
-2. Configurer les chemins des certificats dans `10-ssl.conf`
+1. Obtenir un certificat Let's Encrypt pour `mail.andromed.cloud`
+2. Configurer les chemins des certificats dans `/etc/dovecot/conf.d/10-ssl.conf`
 3. Forcer SSL avec `ssl = required`
 4. Définir `ssl_min_protocol = TLSv1.2`
+
+**Optionnel :**
+
 5. Générer les paramètres DH 4096 bits
-
----
-
-6. Configurer des chiffrements modernes
-7. Désactiver les ports non chiffrés (143, 110)
-8. Tester la connexion IMAPS avec `openssl s_client`
-9. Vérifier le certificat avec SSL Labs
 
 ---
 
@@ -1454,15 +1412,11 @@ layout: new-section
 
 **Durée** : 25 minutes
 
----
-
 **Tâches :**
 
-1. Configurer le socket LMTP dans `10-master.conf`
 2. Configurer le socket d'authentification pour Postfix
 3. Modifier `main.cf` de Postfix :
-   - `mailbox_transport = lmtp:unix:private/dovecot-lmtp`
-   - `smtpd_sasl_type = dovecot`
+   - `smtpd_sasl_path = private/auth`
 
 ---
 
@@ -1558,7 +1512,7 @@ layout: new-section
 ```bash
 # Installation
 apt update
-apt install -y dovecot-core dovecot-imapd dovecot-pop3d dovecot-lmtpd
+apt install -y dovecot-core dovecot-imapd dovecot-pop3d
 ```
 
 ---
@@ -1606,7 +1560,7 @@ ss -tlnp | grep dovecot
 
 ```bash
 # Certificat Let's Encrypt
-certbot certonly --standalone -d mail.example.com
+certbot certonly --standalone -d mail.andromed.cloud
 ```
 
 ---
@@ -1614,8 +1568,8 @@ certbot certonly --standalone -d mail.example.com
 ```bash
 # Configuration /etc/dovecot/conf.d/10-ssl.conf
 ssl = required
-ssl_cert = </etc/letsencrypt/live/mail.example.com/fullchain.pem
-ssl_key = </etc/letsencrypt/live/mail.example.com/privkey.pem
+ssl_cert = </etc/letsencrypt/live/mail.andromed.cloud/fullchain.pem
+ssl_key = </etc/letsencrypt/live/mail.andromed.cloud/privkey.pem
 ssl_min_protocol = TLSv1.2
 ```
 
@@ -1653,25 +1607,12 @@ systemctl restart dovecot
 
 ```bash
 # Test
-openssl s_client -connect mail.example.com:993
+openssl s_client -connect mail.andromed.cloud:993
 ```
 
 ---
 
 ### Exercice 3 : Intégration Postfix
-
-```bash
-# /etc/dovecot/conf.d/10-master.conf
-service lmtp {
-  unix_listener /var/spool/postfix/private/dovecot-lmtp {
-    mode = 0600
-    user = postfix
-    group = postfix
-  }
-}
-```
-
----
 
 ```bash
 service auth {
@@ -1683,7 +1624,9 @@ service auth {
 }
 ```
 
----
+--- 
+
+# A mettre dans le main.cf de postfix :
 
 ```bash
 # /etc/postfix/main.cf
