@@ -117,14 +117,14 @@ routeAlias: 'programme-intensif'
 
 **JOUR 2 (7h) - PRATIQUE & PRODUCTION**
 
-- **9h00-10h00** : Anti-spam essentiel (1h)
-- **10h15-11h00** : Logs et monitoring (45min)
-- **11h15-11h45** : Sauvegarde (30min)
-- **13h00-15h00** : TP pratiques (2h)
-- **15h15-16h15** : Troubleshooting (1h)
-- **16h30-17h00** : QCM final (30min)
+- **9h00-10h00** : Dovecot (1h)
+- **10h15-11h15** : Anti-spam essentiel (1h)
+- **11h30-12h00** : Logs et monitoring (30min)
+- **12h00-13h00** : Sauvegarde (1h)
+- **13h15-14h15** : TP pratiques (1h)
+- **14h30-15h00** : Troubleshooting (30min)
+- **15h15-15h45** : QCM final (30min)
 
-- **17h15-17h45** : Bonus Dovecot (30min)
 
 ---
 
