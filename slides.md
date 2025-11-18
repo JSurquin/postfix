@@ -142,6 +142,8 @@ routeAlias: 'programme-intensif'
 
 ✅ **Sécuriser** avec DKIM, SPF, DMARC et TLS
 
+✅ **Configurer Dovecot** pour la gestion des boîtes mail
+
 ✅ **Protéger contre le spam** efficacement
 
 ✅ **Surveiller et diagnostiquer** les problèmes
