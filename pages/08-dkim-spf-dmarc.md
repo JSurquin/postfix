@@ -82,7 +82,7 @@ caption: Je vous ai mis une capture d'écran de l'enregistrement SPF de mon doma
 **Décryptage** : `v=spf1` (Version SPF)
 
 - `mx` (Les serveurs MX du domaine peuvent envoyer)
-- `a` (Le serveur A du domaine peut envoyer) : testmail.jimmylan.fr
+- `a` (Le serveur A du domaine peut envoyer) : testmail.andromed.cloud
 - `ip4:203.0.113.10` (Cette IP peut envoyer) - `-all` (Rejeter tout le reste)
 
 <br/>
@@ -331,10 +331,10 @@ AutoRestartRate         10/1h # Redémarrer le service si il crash 10 fois en 1 
 
 ```bash
 # Créer le répertoire
-sudo mkdir -p /etc/opendkim/keys/jimmylan.fr
+sudo mkdir -p /etc/opendkim/keys/andromed.cloud
 
 # Générer la paire de clés
-sudo opendkim-genkey -b 2048 -d jimmylan.fr -D /etc/opendkim/keys/jimmylan.fr -s mail -v
+sudo opendkim-genkey -b 2048 -d andromed.cloud -D /etc/opendkim/keys/andromed.cloud -s mail -v
 ```
 
 ---
@@ -342,7 +342,7 @@ sudo opendkim-genkey -b 2048 -d jimmylan.fr -D /etc/opendkim/keys/jimmylan.fr -s
 **Paramètres** :
 
 - `-b 2048` : Taille de la clé (2048 bits recommandé en 2025)
-- `-d jimmylan.fr` : Domaine
+- `-d andromed.cloud` : Domaine
 - `-D /path` : Répertoire de sortie
 - `-s mail` : Sélecteur
 - `-v` : Verbose
@@ -389,9 +389,9 @@ Nous avons :
 
 On a un utilisateur qui s'appelle john doe
 
-Donc on veut forcement johndoe@jimmylan.fr
+Donc on veut forcement johndoe@andromed.cloud
 
-Mais on a fais un enregistrement MX et A sur mail.jimmylan.fr
+Mais on a fais un enregistrement MX et A sur mail.andromed.cloud
 
 Donc il faut quand même préciser que on veux generer des clef pour le nom de domaine en entier et pas uniquement le sous domaine.
 
@@ -400,7 +400,7 @@ Donc il faut quand même préciser que on veux generer des clef pour le nom de d
 ### 📋 Fichier /etc/opendkim/KeyTable
 
 ```bash
-mail._domainkey.jimmylan.fr jimmylan.fr:mail:/etc/opendkim/keys/jimmylan.fr/mail.private # la clé mail._domainkey.jimmylan.fr est stockée dans le fichier /etc/opendkim/keys/jimmylan.fr/mail.private
+mail._domainkey.andromed.cloud andromed.cloud:mail:/etc/opendkim/keys/andromed.cloud/mail.private # la clé mail._domainkey.andromed.cloud est stockée dans le fichier /etc/opendkim/keys/andromed.cloud/mail.private
 ```
 
 Format : `selector._domainkey.domain  domain:selector:keyfile`
@@ -410,8 +410,8 @@ Format : `selector._domainkey.domain  domain:selector:keyfile`
 ### 📋 Fichier /etc/opendkim/SigningTable
 
 ```bash
-*@jimmylan.fr mail._domainkey.jimmylan.fr # tous les emails de jimmylan.fr seront signés par la clé mail._domainkey.jimmylan.fr
-johndoe@jimmylan.fr mail._domainkey.jimmylan.fr # tous les emails de johndoe@jimmylan.fr seront signés par la clé mail._domainkey.jimmylan.fr
+*@andromed.cloud mail._domainkey.andromed.cloud # tous les emails de andromed.cloud seront signés par la clé mail._domainkey.andromed.cloud
+johndoe@andromed.cloud mail._domainkey.andromed.cloud # tous les emails de johndoe@andromed.cloud seront signés par la clé mail._domainkey.andromed.cloud
 ```
 
 Format : `pattern  key`
@@ -423,7 +423,7 @@ Format : `pattern  key`
 ```bash
 127.0.0.1 # localhost
 localhost # le mapping de localhost vers 127.0.0.1
-testmail.jimmylan.fr # votre serveur mail
+mail.andromed.cloud # votre serveur mail
 51.68.224.131 # votre IP publique
 ```
 
@@ -492,7 +492,7 @@ mail._domainkey IN TXT ( "v=DKIM1; h=sha256; k=rsa; "
 
 **Type** : TXT/DKIM
 
-**Nom** : `mail._domainkey.jimmylan.fr`
+**Nom** : `mail._domainkey.andromed.cloud`
 
 **Valeur** :
 
@@ -511,7 +511,7 @@ Il faut que la clef sois en une seule ligne et sans guillemets.
 ### ✅ Vérifier l'enregistrement DNS
 
 ```bash
-dig mail._domainkey.jimmylan.fr TXT +short
+dig mail._domainkey.andromed.cloud TXT +short
 ```
 
 ---
@@ -534,7 +534,7 @@ caption: Un petit gif pour illustrer la verification de l'enregistrement DNS
 ### 📧 Envoyer un email de test
 
 ```bash
-echo "Test DKIM" | mail -s "Test DKIM" -r "johndoe@jimmylan.fr" check-auth@verifier.port25.com
+echo "Test DKIM" | mail -s "Test DKIM" -r "johndoe@andromed.cloud" check-auth@verifier.port25.com
 ```
 
 <img src="/check.png" alt="Un petit gif pour illustrer le test de DKIM avec mail-tester.com"
@@ -599,7 +599,7 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
 Et vérifiez :
 
 ```
-dkim=pass header.d=jimmylan.fr
+dkim=pass header.d=andromed.cloud
 ```
 
 ✅ DKIM fonctionne !
@@ -644,7 +644,7 @@ DMARC combine SPF et DKIM et définit une **politique** : que faire si SPF ou DK
 ## Format d'un enregistrement DMARC
 
 ```bash
-v=DMARC1; p=reject; rua=mailto:dmarc@jimmylan.fr; ruf=mailto:dmarc@jimmylan.fr; pct=100
+v=DMARC1; p=reject; rua=mailto:dmarc@andromed.cloud; ruf=mailto:dmarc@andromed.cloud; pct=100
 ```
 
 ---
@@ -835,7 +835,7 @@ Vous recevrez un rapport complet sur SPF, DKIM, DMARC !
 **Cause 1** : Enregistrement SPF incorrect
 
 ```bash
-dig jimmylan.fr TXT +short | grep spf
+dig andromed.cloud TXT +short | grep spf
 ```
 
 Vérifiez la syntaxe !
@@ -853,7 +853,7 @@ Vérifiez la syntaxe !
 **Cause 1** : Clé publique pas en DNS ou incorrecte
 
 ```bash
-dig mail._domainkey.jimmylan.fr TXT +short
+dig mail._domainkey.andromed.cloud TXT +short
 ```
 
 ---
@@ -874,8 +874,8 @@ sudo journalctl -u opendkim -f
 **Cause 3** : Permissions sur la clé privée
 
 ```bash
-sudo chmod 600 /etc/opendkim/keys/jimmylan.fr/mail.private
-sudo chown opendkim:opendkim /etc/opendkim/keys/jimmylan.fr/mail.private
+sudo chmod 600 /etc/opendkim/keys/andromed.cloud/mail.private
+sudo chown opendkim:opendkim /etc/opendkim/keys/andromed.cloud/mail.private
 ```
 
 ---

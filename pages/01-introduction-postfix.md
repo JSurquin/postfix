@@ -192,18 +192,22 @@ Postfix ne fonctionne généralement pas seul : **Postfixadmin** (interface web)
 
 Une stack email moderne ressemble à ça :
 
-```
-Internet
-    ↓
-[Firewall]
-    ↓
-[Postfix MTA] ←→ [Fichiers de configuration locaux]
-    ↓
-[Protection anti-spam basique]
-    ↓
-[Stockage emails local]
-    ↓
-[Clients : Thunderbird, Outlook, Webmail]
+```mermaid
+graph TB
+    A[Internet] --> B[Firewall]
+    B --> C[Postfix MTA]
+    C <--> D[Fichiers de<br/>configuration locaux]
+    C --> E[Protection<br/>anti-spam basique]
+    E --> F[Stockage<br/>emails local]
+    F --> G[Clients<br/>Thunderbird, Outlook, Webmail]
+    
+    style A fill:#e1f5ff
+    style B fill:#ffe1e1
+    style C fill:#fff4e1
+    style D fill:#f0f0f0
+    style E fill:#e1ffe1
+    style F fill:#e1e1ff
+    style G fill:#ffe1f5
 ```
 
 ---

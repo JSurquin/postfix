@@ -93,29 +93,78 @@ D) 587
 ## Exercice pratique - Module 1
 
 ### 🎯 Objectif
-Identifier les composants d'une architecture email
+Comprendre le flux d'emails dans un environnement professionnel réel
 
-### 📋 Tâche
-Sur papier ou tableau, dessinez le parcours d'un email de `alice@example.com` vers `bob@autre.com` en identifiant :
+### 📋 Scénario
+Alice (`alice@entreprise-a.fr`) envoie un email avec 3 destinataires :
+- `bob@entreprise-a.fr` (même domaine)
+- `charlie@entreprise-b.com` (domaine externe)
+- `david@entreprise-c.org` (domaine externe)
 
-1. Le MUA d'Alice
+Le serveur de `entreprise-a.fr` utilise un **relais SMTP** externe pour les emails sortants.
 
-2. Le MTA d'example.com (Postfix)
+### 📝 Questions
 
-3. Le MTA d'autre.com
+1. Identifiez tous les MTAs impliqués dans cette communication
 
-4. Le MDA/MUA de Bob
+2. Quel(s) email(s) ne passeront PAS par le relais SMTP externe ?
 
-**Temps** : 5 minutes
-**Correction** : Discussion collective
+3. Dans quel ordre les composants seront-ils sollicités ?
+
+4. Combien de connexions SMTP différentes seront établies au total ?
+
+**Temps** : 10 minutes  
+**Travail** : Individuel puis mise en commun
 
 ---
 
-### ✅ Réponse :
+## Exercice pratique - Module 1 (Suite)
+
+### ✅ Réponse détaillée
+
+**1. MTAs impliqués :**
+- MTA de `entreprise-a.fr` (Postfix local)
+- Relais SMTP externe (pour sortie)
+- MTA de `entreprise-b.com`
+- MTA de `entreprise-c.org`
+
+**2. Email(s) sans relais externe :**
+- L'email pour `bob@entreprise-a.fr` reste **interne** (livraison locale)
+- Les emails pour `charlie` et `david` passent par le relais
+
+**3. Ordre chronologique :**
+1. MUA d'Alice → MTA entreprise-a.fr (port 587/SMTP submission)
+2. MTA entreprise-a.fr → Livraison locale pour Bob (MDA)
+3. MTA entreprise-a.fr → Relais SMTP externe
+4. Relais SMTP → MTA entreprise-b.com
+5. Relais SMTP → MTA entreprise-c.org
+6. MTAs destinataires → MDAs respectifs
+
+---
+
+## Exercice pratique - Module 1 (Schéma)
+
+### ✅ Schéma de la solution
 
 ```mermaid
 graph TD
-    A[MUA Alice] --> B[MTA example.com]
-    B --> C[MTA autre.com]
-    C --> D[MDA/MUA Bob]
+    A[MUA Alice] -->|SMTP 587| B[MTA entreprise-a.fr]
+    B -->|Livraison locale| C[MDA Bob]
+    B -->|SMTP 25| D[Relais SMTP externe]
+    D -->|SMTP 25| E[MTA entreprise-b.com]
+    D -->|SMTP 25| F[MTA entreprise-c.org]
+    E --> G[MDA Charlie]
+    F --> H[MDA David]
+    
+    style B fill:#4CAF50
+    style D fill:#FF9800
+    style C fill:#2196F3
+    style G fill:#2196F3
+    style H fill:#2196F3
 ```
+
+**4. Connexions SMTP totales :** 4 connexions
+- Alice → MTA entreprise-a.fr (1)
+- MTA → Relais externe (1)
+- Relais → MTA entreprise-b.com (1)
+- Relais → MTA entreprise-c.org (1)

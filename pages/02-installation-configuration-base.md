@@ -87,7 +87,7 @@ L’enregistrement MX n’est pas nécessaire pour les tests internes.
 
 Nous allons utiliser un vrai domaine pour les tests, mais vous pouvez utiliser un domaine fictif comme `example.com`.
 
-Dans notre cas nous allons utiliser le domaine `jimmylan.fr`.
+Dans notre cas nous allons utiliser le domaine `andromed.cloud`.
 
 Et il nous faut bien sur un VPS ou un serveur dédié pour le serveur mail.
 
@@ -104,13 +104,13 @@ Donc nous allons configurer le DNS chez OVH directement , si vous avez un autre 
 **Enregistrement A** : Pointe vers l'IP de votre serveur
 
 ```
-mail.jimmylan.fr.  IN  A  51.68.224.131
+mail.andromed.cloud.  IN  A  51.68.224.131
 ```
 
 **Enregistrement MX** : Indique le serveur mail du domaine
 
 ```
-jimmylan.fr.  IN  MX  10  mail.jimmylan.fr.
+andromed.cloud.  IN  MX  10  mail.andromed.cloud.
 ```
 
 Le chiffre (10) est la priorité : plus c'est petit, plus c'est prioritaire.
@@ -120,7 +120,7 @@ Le chiffre (10) est la priorité : plus c'est petit, plus c'est prioritaire.
 Le PTR fait le lien inverse : IP → nom de domaine. Sans PTR correct, vos emails seront considérés comme spam !
 
 ```
-10.113.0.203.in-addr.arpa.  IN  PTR  mail.example.com.
+10.113.0.203.in-addr.arpa.  IN  PTR  mail.andromed.cloud.
 ```
 
 ⚠️ **Note importante** : Le PTR doit être configuré chez votre hébergeur/FAI (vous ne pouvez pas le faire vous-même).
@@ -130,7 +130,7 @@ layout: text-image
 ---
 
 <img src="/ovh2.png" alt="Configuration DNS chez le FAI"
-class="mx-auto"
+class="mx-auto w-full"
 height='auto'
 />
 
@@ -139,7 +139,7 @@ layout: text-image
 ---
 
 <img src="/ovh1.png" alt="Configuration DNS chez OVH"
-class="mx-auto"
+class="mx-auto w-full"
 height='auto'/>
 
 ---
@@ -148,10 +148,10 @@ height='auto'/>
 
 ```bash
 # Vérifier l'enregistrement MX
-dig jimmylan.fr MX +short
+dig andromed.cloud MX +short
 
 # Vérifier l'enregistrement A
-dig mail.jimmylan.fr A +short
+dig mail.andromed.cloud A +short
 
 # Vérifier le PTR (reverse DNS)
 dig -x 203.0.113.10 +short
@@ -515,8 +515,8 @@ smtpd_banner = $myhostname ESMTP
 
 ```bash
 # Nom du serveur
-myhostname = mail.jimmylan.fr
-mydomain = jimmylan.fr
+myhostname = mail.andromed.cloud
+mydomain = andromed.cloud
 myorigin = $mydomain
 
 # Interfaces réseau
@@ -966,7 +966,7 @@ sudo tail -f /var/log/maillog
 
 ```bash
 # Rechercher tous les logs d'un email spécifique
-sudo grep "test@jimmylan.fr" /var/log/mail.log
+sudo grep "test@andromed.cloud" /var/log/mail.log
 
 # Voir les erreurs uniquement
 sudo grep "error\|warning" /var/log/mail.log

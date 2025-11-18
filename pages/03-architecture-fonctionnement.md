@@ -408,7 +408,7 @@ Postfix configuré uniquement pour **envoyer**, pas recevoir :
 ```bash
 inet_interfaces = loopback-only
 mydestination =
-relayhost = [smtp.jimmylan.fr]
+relayhost = [smtp.andromed.cloud]
 ```
 
 ---
