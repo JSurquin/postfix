@@ -1,0 +1,8 @@
+# Format : adresse@domaine    chemin/relatif/
+#
+# Domaine : andromed.cloud
+johndoe@andromed.cloud       andromed.cloud/johndoe/
+janedoe@andromed.cloud       andromed.cloud/janedoe/
+contact@andromed.cloud       andromed.cloud/contact/
+support@andromed.cloud       andromed.cloud/support/
+admin@andromed.cloud         andromed.cloud/admin/

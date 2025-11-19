@@ -1,0 +1,3 @@
+mail._domainkey	IN	TXT	( "v=DKIM1; h=sha256; k=rsa; "
+	  "p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvQDlS92CNdmF4Sb/hq7vjDD2d/eQAp7cLum2VbY86wkIO46rtQ0jQrwLa74LHMY+igAq5Bmq40Xw/sv2yvxopAu9jTQA2YShTK7VxCqvb4Ds7SBmi7plYDUcJjCdim1QwLF8FXAKi9cckILU1l6C/jL6p+HlTg9UsW3Xtq+zwHUMSim/jrLOSG5dpH0Z0YxabZ754d2ExxyIwq"
+	  "WVcy880mc6d9uqOiANMgtcvppUDs7jkf12v20+Q/zbaSIysGohlzK8IQIIMB30hirEe9CjyU0MsSHUGv/n10QBYVc0FtdHyixZv+RsoBEigAk/52bLD2qANGlJ7+3s1m6Fg0ZLtwIDAQAB" )  ; ----- DKIM key mail for andromed.cloud
