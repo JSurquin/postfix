@@ -35,32 +35,32 @@ Pensez à une usine où chaque ouvrier a une tâche précise : c'est exactement 
 
 ## Vue d'ensemble de l'architecture
 
-```
-                    ┌──────────────┐
-                    │    Master    │ (Process manager)
-                    └──────┬───────┘
-                           │
-        ┌──────────────────┼──────────────────┐
-        │                  │                  │
-   ┌────▼────┐       ┌────▼────┐       ┌────▼────┐
-   │ smtpd   │       │ pickup  │       │  local  │
-   └────┬────┘       └────┬────┘       └────┬────┘
-        │                  │                  │
-        └─────────┬────────┴──────────────────┘
-                  │
-            ┌─────▼─────┐
-            │  cleanup  │
-            └─────┬─────┘
-                  │
-            ┌─────▼─────┐
-            │   qmgr    │ (Queue manager)
-            └─────┬─────┘
-                  │
-        ┌─────────┼─────────┐
-        │                   │
-   ┌────▼────┐         ┌───▼────┐
-   │  smtp   │         │bounce  │
-   └─────────┘         └────────┘
+```mermaid
+graph LR
+    Master[Master<br/>Process manager] --> smtpd[smtpd<br/>Reception SMTP]
+    Master --> pickup[pickup<br/>Courrier local]
+    Master --> local[local<br/>Livraison locale]
+    
+    smtpd --> cleanup[cleanup<br/>Nettoyage]
+    pickup --> cleanup
+    local --> cleanup
+    
+    cleanup --> qmgr[qmgr<br/>Queue manager]
+    
+    qmgr --> smtp[smtp<br/>Envoi distant]
+    qmgr --> bounce[bounce<br/>Retours]
+    
+    smtp --> Internet[Internet]
+    
+    style Master fill:#ff9999,stroke:#cc0000,stroke-width:2px
+    style smtpd fill:#99ccff,stroke:#0066cc,stroke-width:2px
+    style pickup fill:#99ff99,stroke:#00cc00,stroke-width:2px
+    style local fill:#ffcc99,stroke:#ff6600,stroke-width:2px
+    style cleanup fill:#ffff99,stroke:#cccc00,stroke-width:2px
+    style qmgr fill:#cc99ff,stroke:#6600cc,stroke-width:2px
+    style smtp fill:#99ffcc,stroke:#00cc66,stroke-width:2px
+    style bounce fill:#ffccff,stroke:#cc66cc,stroke-width:2px
+    style Internet fill:#cccccc,stroke:#666666,stroke-width:2px
 ```
 
 ---
@@ -619,47 +619,35 @@ sudo qshape deferred
 
 ## Schéma récapitulatif complet
 
-```
-┌─────────────────────────────────────────────────────┐
-│                    MASTER (root)                     │
-│         Surveille et gère tous les processus        │
-└────────────────────┬────────────────────────────────┘
-                     │
-      ┌──────────────┼──────────────┐
-      │              │              │
-      ▼              ▼              ▼
-┌─────────┐    ┌─────────┐    ┌─────────┐
-│ smtpd   │    │ pickup  │    │  local  │
-│(postfix)│    │(postfix)│    │ (root)  │
-└────┬────┘    └────┬────┘    └────┬────┘
-     │              │              │
-     └──────┬───────┴──────────────┘
-            ▼
-      ┌─────────┐
-      │ cleanup │
-      │(postfix)│
-      └────┬────┘
-           │
-     ┌─────▼─────────────────┐
-     │   QUEUES (fichiers)   │
-     │  incoming → active    │
-     │      → deferred       │
-     └─────┬─────────────────┘
-           │
-      ┌────▼────┐
-      │  qmgr   │
-      │(postfix)│
-      └────┬────┘
-           │
-     ┌─────┼─────┐
-     ▼           ▼
-┌─────────┐ ┌─────────┐
-│  smtp   │ │ bounce  │
-│(postfix)│ │(postfix)│
-└─────────┘ └─────────┘
-     │
-     ▼
- Internet
+```mermaid
+graph LR
+    Master[MASTER root<br/>Surveille et gere tous les processus] --> smtpd[smtpd<br/>postfix]
+    Master --> pickup[pickup<br/>postfix]
+    Master --> local[local<br/>root]
+    
+    smtpd --> cleanup[cleanup<br/>postfix]
+    pickup --> cleanup
+    local --> cleanup
+    
+    cleanup --> queues[QUEUES fichiers<br/>incoming active deferred]
+    
+    queues --> qmgr[qmgr<br/>postfix]
+    
+    qmgr --> smtp[smtp<br/>postfix]
+    qmgr --> bounce[bounce<br/>postfix]
+    
+    smtp --> Internet[Internet]
+    
+    style Master fill:#ff6666,stroke:#cc0000,stroke-width:3px,color:#fff
+    style smtpd fill:#66b3ff,stroke:#0066cc,stroke-width:2px
+    style pickup fill:#66ff66,stroke:#00cc00,stroke-width:2px
+    style local fill:#ffaa66,stroke:#ff6600,stroke-width:2px
+    style cleanup fill:#ffff66,stroke:#cccc00,stroke-width:2px
+    style queues fill:#cc66ff,stroke:#6600cc,stroke-width:3px,color:#fff
+    style qmgr fill:#ff66cc,stroke:#cc0066,stroke-width:2px
+    style smtp fill:#66ffaa,stroke:#00cc66,stroke-width:2px
+    style bounce fill:#ffccaa,stroke:#cc6633,stroke-width:2px
+    style Internet fill:#999999,stroke:#333333,stroke-width:2px
 ```
 
 ---

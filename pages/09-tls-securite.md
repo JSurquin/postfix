@@ -214,7 +214,7 @@ smtpd_tls_cert_file = /etc/letsencrypt/live/mail.example.com/fullchain.pem
 smtpd_tls_key_file = /etc/letsencrypt/live/mail.example.com/privkey.pem
 
 # Niveau de sécurité
-smtpd_tls_security_level = may
+smtpd_tls_security_level = encrypt
 ```
 
 ---
@@ -235,7 +235,7 @@ smtpd_tls_security_level = may
 ### 🔐 Configuration recommandée pour port 25
 
 ```bash
-smtpd_tls_security_level = may
+smtpd_tls_security_level = encrypt
 smtpd_tls_auth_only = yes
 smtpd_tls_loglevel = 1
 ```
@@ -329,7 +329,7 @@ smtpd_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
 ---
 
 ```bash
-smtpd_tls_security_level = may
+smtpd_tls_security_level = encrypt
 smtpd_tls_auth_only = yes
 smtpd_tls_protocols = >=TLSv1.2
 smtpd_tls_mandatory_protocols = >=TLSv1.2

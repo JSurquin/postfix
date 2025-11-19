@@ -894,9 +894,9 @@ smtpd_sender_restrictions =
 # === TLS ===
 smtpd_tls_cert_file = /etc/letsencrypt/live/mail.example.com/fullchain.pem
 smtpd_tls_key_file = /etc/letsencrypt/live/mail.example.com/privkey.pem
-smtpd_tls_security_level = may
+smtpd_tls_security_level = encrypt
 smtpd_tls_protocols = >=TLSv1.2
-smtp_tls_security_level = may
+smtp_tls_security_level = encrypt
 smtp_tls_protocols = >=TLSv1.2
 ```
 

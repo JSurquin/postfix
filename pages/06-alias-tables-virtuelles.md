@@ -1950,27 +1950,18 @@ janedoe@andromed.cloud → /var/mail/vhosts/andromed.cloud/janedoe/
 
 ### ✅ Architecture complète
 
-```
-┌──────────────┐
-│   Internet   │
-└──────┬───────┘
-       │ SMTP
-┌──────▼───────┐
-│   Postfix    │ ← virtual_mailbox_maps
-└──────┬───────┘
-       │
-┌──────▼───────┐
-│   /var/mail  │
-│    /vhosts   │ ← vmail (UID 5000)
-└──────┬───────┘
-       │
-┌──────▼───────┐
-│   Dovecot    │ ← IMAP/POP3
-└──────┬───────┘
-       │
-┌──────▼───────┐
-│   Clients    │ (Outlook, Apple Mail, etc.)
-└──────────────┘
+```mermaid
+graph LR
+    Internet[Internet] -->|SMTP| Postfix[Postfix<br/>virtual_mailbox_maps]
+    Postfix --> VarMail[var-mail-vhosts<br/>vmail UID 5000]
+    VarMail --> Dovecot[Dovecot<br/>IMAP-POP3]
+    Dovecot --> Clients[Clients<br/>Outlook Apple Mail etc]
+    
+    style Internet fill:#e1f5ff,stroke:#0066cc,stroke-width:2px
+    style Postfix fill:#fff4e1,stroke:#ff6600,stroke-width:2px
+    style VarMail fill:#e1ffe1,stroke:#00cc00,stroke-width:2px
+    style Dovecot fill:#ffe1f5,stroke:#cc0066,stroke-width:2px
+    style Clients fill:#f0f0f0,stroke:#666666,stroke-width:2px
 ```
 
 ---

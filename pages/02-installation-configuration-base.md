@@ -289,6 +289,67 @@ Pour cela, nous devons ouvrir plusieurs ports selon leur usage :
 
 ---
 
+🔵 1. SMTP : pourquoi 587 + STARTTLS ?
+
+**587 = le « port submission »**
+
+Le port 587 est aujourd’hui le standard pour soumettre un email au serveur d’envoi, c’est-à-dire quand un client (Mail, Outlook…) veut envoyer un mail.
+
+- On commence par une connexion en clair.
+- Puis on passe en mode chiffré via STARTTLS.
+- Ce port est officiellement dédié aux clients (pas aux serveurs).
+- Il exige une authentification obligatoire, ce que 465 n’a pas toujours imposé.
+
+👉 Pourquoi STARTTLS et pas SSL direct ?
+
+Historiquement, il n’existait pas de port SMTP officiel en SSL/TLS natif.
+Mais il existait le port 465 qui était un port SSL/TLS.
+Le port 465 avait été proposé pour ça… puis abandonné… puis réaccepté des années plus tard 😅.
+Du coup, les bonnes pratiques modernes ont laissé :
+- 587 avec STARTTLS = recommandé et standardisé (RFC 6409)
+- 465 SMTPS = aussi possible aujourd’hui, mais longtemps considéré « legacy »
+
+Donc Apple Mail et d’autres recommandent 587 car c’est le port normalisé et universel, compatible partout même si SSL direct échoue.
+
+---
+
+**2. IMAP/POP : pourquoi SSL direct (993 / 995) ?**
+
+Contrairement à SMTP, IMAP et POP ont toujours eu des ports SSL/TLS dédiés :
+- IMAP SSL → 993
+- POP SSL → 995
+
+Ici, pas de STARTTLS obligatoire :
+- On se connecte directement en TLS, immédiatement et intégralement.
+
+Pourquoi ne pas utiliser STARTTLS sur IMAP/POP ?
+
+Ça existe (IMAP sur 143 + STARTTLS), mais :
+- Les ports SSL directs (993/995) sont mieux supportés
+- Plus simples à configurer pour les clients
+- Pas de confusion historique comme avec SMTP
+- Les providers recommandent presque tous les ports SSL natifs
+
+Donc les clients de messagerie utilisent 993/995 par défaut.
+
+---
+
+**3. Résumé clair**
+
+Protocole	Port recommandé	Type de chiffrement	Pourquoi
+- SMTP (envoi)	587	STARTTLS	Port standardisé pour la soumission, authentification obligatoire, compatible partout
+- SMTP (alternative)	465	SSL/TLS direct	Revenu tardivement, pas toujours supporté
+- IMAP (lecture)	993	SSL/TLS direct	Port TLS dédié, simple, universel
+- POP (lecture)	995	SSL/TLS direct	Idem : port TLS natif
+
+---
+
+**4. En une phrase**
+
+👉 SMTP utilise 587 + STARTTLS pour des raisons historiques de normalisation, tandis que IMAP/POP ont toujours eu des ports SSL/TLS directs (993/995), plus simples et plus largement supportés.
+
+---
+
 ## 💡 Astuces mnémotechniques
 
 ### Retenir les ports facilement
