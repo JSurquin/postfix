@@ -1,7 +1,7 @@
 <template>
   <div class="slidev-layout">
     <div
-      class="grid grid-cols-2"
+      class="grid grid-cols-1"
       :class="$attrs.reverse ? 'gap-16' : 'gap-8'"
     >
       <div
