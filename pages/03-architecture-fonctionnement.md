@@ -341,51 +341,65 @@ Les messages en `deferred` sont retentés selon un algorithme exponentiel : 1èr
 
 ### 📧 Email entrant (réception)
 
-```
-1. smtpd reçoit la connexion (port 25)
-   ↓
-2. Applique les restrictions (RBL, SPF...)
-   ↓
-3. cleanup normalise le message
-   ↓
-4. qmgr place en queue active
-   ↓
-5. local délivre dans Maildir/
-   ✅ Email livré !
+```mermaid
+flowchart LR
+    A[smtpd recoit la connexion<br/>Port 25] --> B[Applique les restrictions<br/>RBL, SPF...]
+    B --> C[cleanup normalise<br/>le message]
+    C --> D[qmgr place en<br/>queue active]
+    D --> E[local delivre dans<br/>Maildir/]
+    E --> F[✓ Email livre !]
+    
+    style A fill:#4A90E2,stroke:#2E5C8A,stroke-width:3px,color:#fff
+    style B fill:#F5A623,stroke:#C77E1A,stroke-width:3px,color:#fff
+    style C fill:#7B68EE,stroke:#5A4AB8,stroke-width:3px,color:#fff
+    style D fill:#50C878,stroke:#3A9B5C,stroke-width:3px,color:#fff
+    style E fill:#FF6B6B,stroke:#CC5555,stroke-width:3px,color:#fff
+    style F fill:#2ECC71,stroke:#27AE60,stroke-width:4px,color:#fff
 ```
 
 ---
 
 ### 📤 Email sortant (envoi)
 
-```
-1. Application → sendmail → maildrop/
-   ↓
-2. pickup récupère → cleanup
-   ↓
-3. qmgr place en queue active
-   ↓
-4. smtp se connecte au serveur distant
-   ↓
-5. Transmission via SMTP
-   ✅ Email envoyé !
+```mermaid
+flowchart LR
+    A[Application] --> B[sendmail]
+    B --> C[maildrop/]
+    C --> D[pickup recupere]
+    D --> E[cleanup]
+    E --> F[qmgr place en<br/>queue active]
+    F --> G[smtp se connecte au<br/>serveur distant]
+    G --> H[Transmission via SMTP]
+    H --> I[✓ Email envoye !]
+    
+    style A fill:#9B59B6,stroke:#7D3C98,stroke-width:3px,color:#fff
+    style B fill:#3498DB,stroke:#2874A6,stroke-width:3px,color:#fff
+    style C fill:#E67E22,stroke:#CA6F1E,stroke-width:3px,color:#fff
+    style D fill:#1ABC9C,stroke:#148F77,stroke-width:3px,color:#fff
+    style E fill:#7B68EE,stroke:#5A4AB8,stroke-width:3px,color:#fff
+    style F fill:#50C878,stroke:#3A9B5C,stroke-width:3px,color:#fff
+    style G fill:#FF6B6B,stroke:#CC5555,stroke-width:3px,color:#fff
+    style H fill:#F39C12,stroke:#D68910,stroke-width:3px,color:#fff
+    style I fill:#2ECC71,stroke:#27AE60,stroke-width:4px,color:#fff
 ```
 
 ---
 
 ### ❌ Email en échec
 
+```mermaid
+flowchart LR
+    A[smtp ne peut pas livrer<br/>erreur connexion] --> B[qmgr vers deferred/<br/>file differee]
+    B --> C[Nouvelles tentatives espacees<br/>5min, 15min, 1h...]
+    C --> D[Apres 5 jours<br/>bounce NDR]
+    D --> E[✗ Message abandonne]
+    
+    style A fill:#E74C3C,stroke:#C0392B,stroke-width:3px,color:#fff
+    style B fill:#F39C12,stroke:#D68910,stroke-width:3px,color:#fff
+    style C fill:#3498DB,stroke:#2874A6,stroke-width:3px,color:#fff
+    style D fill:#E67E22,stroke:#CA6F1E,stroke-width:3px,color:#fff
+    style E fill:#95A5A6,stroke:#7F8C8D,stroke-width:4px,color:#fff
 ```
-1. smtp ne peut pas livrer (erreur connexion)
-   ↓
-2. qmgr → deferred/ (file différée)
-   ↓
-3. Nouvelles tentatives espacées (5min, 15min, 1h...)
-   ↓
-4. Après 5 jours → bounce (NDR à l'expéditeur)
-   ✉️ Message abandonné
-```
-
 ---
 
 ## Communication

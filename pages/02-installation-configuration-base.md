@@ -293,6 +293,8 @@ Pour cela, nous devons ouvrir plusieurs ports selon leur usage :
 
 **587 = le « port submission »**
 
+<small>
+
 Le port 587 est aujourd’hui le standard pour soumettre un email au serveur d’envoi, c’est-à-dire quand un client (Mail, Outlook…) veut envoyer un mail.
 
 - On commence par une connexion en clair.
@@ -311,9 +313,13 @@ Du coup, les bonnes pratiques modernes ont laissé :
 
 Donc Apple Mail et d’autres recommandent 587 car c’est le port normalisé et universel, compatible partout même si SSL direct échoue.
 
+</small>
+
 ---
 
 **2. IMAP/POP : pourquoi SSL direct (993 / 995) ?**
+
+<small>
 
 Contrairement à SMTP, IMAP et POP ont toujours eu des ports SSL/TLS dédiés :
 - IMAP SSL → 993
@@ -332,15 +338,18 @@ Pourquoi ne pas utiliser STARTTLS sur IMAP/POP ?
 
 Donc les clients de messagerie utilisent 993/995 par défaut.
 
+</small>
+
 ---
 
 **3. Résumé clair**
 
-Protocole	Port recommandé	Type de chiffrement	Pourquoi
-- SMTP (envoi)	587	STARTTLS	Port standardisé pour la soumission, authentification obligatoire, compatible partout
-- SMTP (alternative)	465	SSL/TLS direct	Revenu tardivement, pas toujours supporté
-- IMAP (lecture)	993	SSL/TLS direct	Port TLS dédié, simple, universel
-- POP (lecture)	995	SSL/TLS direct	Idem : port TLS natif
+| Protocole | Port recommandé | Type de chiffrement | Pourquoi |
+|-----------|-----------------|-------------------|----------|
+| SMTP (envoi) | 587 | STARTTLS | Port standardisé pour la soumission, authentification obligatoire, compatible partout |
+| SMTP (alternative) | 465 | SSL/TLS direct | Revenu tardivement, pas toujours supporté |
+| IMAP (lecture) | 993 | SSL/TLS direct | Port TLS dédié, simple, universel |
+| POP (lecture) | 995 | SSL/TLS direct | Idem : port TLS natif |
 
 ---
 
@@ -663,6 +672,8 @@ submission inet n       -       y       -       -       smtpd
 
 ---
 
+<small>
+
 ### 🔍 Explications de la configuration
 
 **`submission inet n - y - - smtpd`**
@@ -683,6 +694,8 @@ submission inet n       -       y       -       -       smtpd
 **`-o smtpd_relay_restrictions=permit_sasl_authenticated,reject`**
 - Autorise le relay uniquement pour les clients authentifiés
 
+</small>
+
 ---
 
 ## Installation de SASL pour l'authentification
@@ -695,6 +708,10 @@ Pour que les clients puissent s'authentifier, il faut installer SASL (Simple Aut
 sudo apt install libsasl2-2 sasl2-bin libsasl2-modules -y
 ```
 
+Mais pas trop vite ! ne l'installez pas :
+
+> Explication : Si vous utilisez Dovecot, il inclut déjà son propre mécanisme SASL intégré, postfix peut utiliser Dovecot pour l'authentification via le socket smtpd_sasl_path = private/auth sans avoir besoin d'installer les paquets SASL séparément, dans ce cas, les paquets libsasl2-* ne sont effectivement pas nécessaires car Dovecot gère tout l'authentification SASL pour Postfix.
+
 ---
 
 ### 📦 Installation sur Rocky Linux
@@ -702,6 +719,8 @@ sudo apt install libsasl2-2 sasl2-bin libsasl2-modules -y
 ```bash
 sudo dnf install cyrus-sasl cyrus-sasl-plain -y
 ```
+
+Pareil nous n'allons pas nous attarder sur ce qu'est cyrus 
 
 ---
 
@@ -723,6 +742,8 @@ broken_sasl_auth_clients = yes
 
 ### 🔍 Explications SASL
 
+<small>
+
 **`smtpd_sasl_type = dovecot`**
 - Utilise Dovecot pour l'authentification (nous le configurerons plus tard)
 - En attendant Dovecot, SASL utilisera les comptes Unix du système
@@ -739,6 +760,8 @@ broken_sasl_auth_clients = yes
 **`broken_sasl_auth_clients = yes`**
 - Compatibilité avec les vieux clients (Outlook 2003, etc.)
 
+</small>
+
 ---
 
 ### ⚠️ Configuration temporaire sans Dovecot
@@ -746,47 +769,16 @@ broken_sasl_auth_clients = yes
 Pour tester immédiatement (avant d'installer Dovecot), modifiez temporairement la configuration SASL :
 
 ```bash
-# Configuration SASL temporaire (sans Dovecot)
-smtpd_sasl_type = cyrus
-smtpd_sasl_path = smtpd
-smtpd_sasl_auth_enable = yes
-smtpd_sasl_security_options = noanonymous
-smtpd_sasl_local_domain = $myhostname
-broken_sasl_auth_clients = yes
+# vous n'avez qu'a commenter les lignes ci-dessous :
+#smtpd_sasl_type = dovecot
+#smtpd_sasl_path = private/auth
+#smtpd_sasl_auth_enable = yes
+#smtpd_sasl_security_options = noanonymous
+#smtpd_sasl_local_domain = $myhostname
+#broken_sasl_auth_clients = yes
 ```
 
-⚠️ **Cette configuration utilise les comptes Unix du système pour l'authentification.**
-
----
-
-### 🔧 Configuration de Cyrus SASL (temporaire)
-
-Créez le fichier de configuration SASL :
-
-```bash
-sudo nano /etc/postfix/sasl/smtpd.conf
-```
-
-Ajoutez :
-
-```bash
-pwcheck_method: saslauthd
-mech_list: PLAIN LOGIN
-```
-
----
-
-### 🚀 Démarrer le service saslauthd
-
-```bash
-# Ubuntu/Debian
-sudo systemctl enable saslauthd
-sudo systemctl start saslauthd
-
-# Rocky Linux
-sudo systemctl enable saslauthd
-sudo systemctl start saslauthd
-```
+⚠️ **la configuration par défaut utilisera les comptes Unix du système pour l'authentification.**
 
 ---
 
@@ -824,45 +816,6 @@ LISTEN  0  100  0.0.0.0:587  0.0.0.0:*  users:(("master",pid=1234,fd=17))
 
 ---
 
-### 🧪 Tester l'authentification SASL
-
-Vérifions que SASL fonctionne :
-
-```bash
-testsaslauthd -u votre_utilisateur -p votre_mot_de_passe
-```
-
-Résultat attendu : `0: OK "Success."`
-
-⚠️ **Note** : Utilisez un compte Unix existant sur votre système pour tester.
-
----
-
-### 📧 Tester l'envoi via le port 587
-
-Test manuel avec telnet/openssl :
-
-```bash
-telnet localhost 587
-```
-
-Une fois connecté, tapez :
-
-```
-EHLO mail.example.com
-```
-
-Vous devriez voir dans la réponse :
-
-```
-250-AUTH PLAIN LOGIN
-250-AUTH=PLAIN LOGIN
-```
-
-✅ L'authentification est disponible !
-
----
-
 ## 🎯 Récapitulatif de la configuration
 
 À ce stade, nous avons :
@@ -870,7 +823,6 @@ Vous devriez voir dans la réponse :
 ✅ Postfix installé et configuré  
 ✅ Port 25 actif (serveur à serveur)  
 ✅ Port 587 actif (clients à serveur)  
-✅ Authentification SASL fonctionnelle  
 ✅ Configuration basique (TLS optionnel)
 
 🔜 **Au module 09 (TLS et Sécurité)**, nous sécuriserons tout ça en rendant TLS **obligatoire** sur le port 587 !
@@ -1234,19 +1186,19 @@ Avant de passer au module suivant, vérifiez que :
 
 <small>
 
-**Configuration minimale** : `myhostname`, `mydomain`, `myorigin` sont essentiels 
+**Configuration minimale** : `myhostname`, `mydomain`, `myorigin` sont essentiels
 
 - `inet_interfaces` définit les interfaces d'écoute - `mynetworks` contrôle qui peut envoyer des emails
 
-**Sécurité de base** : Ne jamais faire un open relay (`mynetworks = 0.0.0.0/0`) 
+**Sécurité de base** : Ne jamais faire un open relay (`mynetworks = 0.0.0.0/0`)
 
 - Toujours vérifier le DNS (surtout le PTR) pour les enregistrements A, MX et PTR
 
 - Limiter les tailles de messages
 
-**Outils essentiels** : `postconf` (voir et modifier la configuration) - `mailq` / `postqueue -p` (voir la file d'attente) 
+**Outils essentiels** : `postconf` (voir et modifier la configuration) - `mailq` / `postqueue -p` (voir la file d'attente)
 
-- `postsuper` (gérer la file d'attente) 
+- `postsuper` (gérer la file d'attente)
 
 - `postfix check` (vérifier la syntaxe)
 
@@ -1267,4 +1219,3 @@ Dans le prochain module, nous allons plonger dans **l'architecture interne de Po
     Module suivant : Architecture et fonctionnement <carbon:arrow-right class="inline"/>
   </span>
 </div>
-

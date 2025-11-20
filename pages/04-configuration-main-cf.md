@@ -1122,6 +1122,12 @@ telnet mail.andromed.cloud 25
 
 - `mydestination`, `relay_domains` (Destinations) - Restrictions (Sécurité)
 
+</small>
+
+---
+
+<small>
+
 **Commandes utiles** : `postconf` (Voir la config)
 
 - `postconf -n` (Voir les modifs uniquement)
