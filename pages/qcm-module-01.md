@@ -136,6 +136,12 @@ Le serveur de `entreprise-a.fr` utilise un **relais SMTP** externe pour les emai
 - L'email pour `bob@entreprise-a.fr` reste **interne** (livraison locale)
 - Les emails pour `charlie` et `david` passent par le relais
 
+</small>
+
+---
+
+<small>
+
 **3. Ordre chronologique :**
 1. MUA d'Alice → MTA entreprise-a.fr (port 587/SMTP submission)
 2. MTA entreprise-a.fr → Livraison locale pour Bob (MDA)

@@ -225,7 +225,7 @@ caption: 🎥 Un petit gif pour illustrer l'enregistrement SPF
 
 <!-- gif a placer ici -->
 
-<img src="/ovh1.png" alt="Un petit gif pour illustrer l'enregistrement SPF" />
+<img src="/andromed-spf.png" alt="Un petit gif pour illustrer l'enregistrement SPF" />
 
 ---
 
@@ -519,7 +519,7 @@ layout: text-image
 caption: Un petit gif pour illustrer la verification de l'enregistrement DNS
 ---
 
-<img src="/ovh1.png" alt="Un petit gif pour illustrer la verification de l'enregistrement DNS" />
+<img src="/andromed-cloud1.png" alt="Un petit gif pour illustrer la verification de l'enregistrement DNS" />
 
 ---
 

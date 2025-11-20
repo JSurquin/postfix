@@ -129,8 +129,8 @@ Le PTR fait le lien inverse : IP → nom de domaine. Sans PTR correct, vos email
 layout: text-image
 ---
 
-<img src="/ovh2.png" alt="Configuration DNS chez le FAI"
-class="mx-auto w-full"
+<img src="/andromed-cloud1.png" alt="Configuration DNS chez le FAI"
+class="mx-auto lg:w-[600px]"
 height='auto'
 />
 
@@ -138,8 +138,8 @@ height='auto'
 layout: text-image
 ---
 
-<img src="/ovh1.png" alt="Configuration DNS chez OVH"
-class="mx-auto w-full"
+<img src="/andromed-spf.png" alt="Configuration DNS chez OVH"
+class="mx-auto lg:w-[600px]"
 height='auto'/>
 
 ---

@@ -353,7 +353,7 @@ Au cours de cette formation, nous allons construire progressivement un serveur m
 
 **Phase 3 - La protection** : Anti-spam (RBL, restrictions), anti-virus, content filtering
 
-**Phase 4 - L'intégration** : Domaines virtuels avec fichiers, webmail basique
+**Phase 4 - L'intégration** : Domaines virtuels etc
 
 **Phase 5 - La production** : Monitoring basique, sauvegarde et restauration simple
 
