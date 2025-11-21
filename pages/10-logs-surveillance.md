@@ -81,7 +81,7 @@ Dec 13 10:30:16 mail postfix/qmgr[1236]: ABC123DEF: removed
 
 ---
 
-**Parcours complet** : 
+**Parcours complet** :
 
 - 1. **smtpd** (Message reçu de `sender.com`)
 
@@ -211,59 +211,246 @@ sudo grep "reject:" /var/log/mail.log | awk '{print $7}' | sort | uniq -c | sort
 
 ## pflogsumm
 
-Générateur de rapports pour Postfix.
+**pflogsumm** est un outil d'analyse des logs de Postfix, très utilisé pour obtenir un résumé lisible de l'activité d'un serveur mail.
+
+---
+
+## 📌 À quoi sert pflogsumm ?
+
+pflogsumm sert à :
+
+- **Analyser les logs de Postfix** (habituellement `/var/log/maillog` ou `/var/log/mail.log`)
+- **Générer un rapport clair** sur :
+  - Le nombre de mails envoyés
+  - Le nombre de mails reçus
+  - Le nombre de mails rejetés/bloqués
+  - Les erreurs (bounces)
+
+---
+
+- **Générer un rapport clair** sur (suite) :
+  - Les destinataires/expéditeurs les plus actifs
+  - Les connexions SMTP
+  - Le volume de trafic
+- **Détecter rapidement des problèmes SMTP**
+  - Blacklists, erreurs de configuration, bots, spam, etc.
+
+---
+
+**En résumé** : Un bilan complet de ce que fait votre serveur mail Postfix, mais en format lisible et exploitable ! 📊
+
+---
+
+## 📌 Comment ça marche ?
+
+Très simple : pflogsumm **lit les logs Postfix** et génère un **rapport en texte clair**.
+
+L'outil ne modifie rien, il lit juste les logs et affiche un résumé.
 
 ---
 
 ### 📦 Installation
 
-```bash
-# Ubuntu/Debian
-sudo apt install pflogsumm
+#### 🔵 AlmaLinux / CentOS / RHEL
 
-# Rocky Linux
+Disponible dans les dépôts **EPEL** :
+
+```bash
+sudo dnf install epel-release -y
+sudo dnf install pflogsumm -y
+```
+
+---
+
+#### 🔵 Debian / Ubuntu
+
+```bash
+sudo apt install pflogsumm
+```
+
+---
+
+#### 🔵 Rocky Linux (alternative)
+
+```bash
 sudo dnf install postfix-perl-scripts
 ```
 
 ---
 
-### 📊 Générer un rapport
+L'outil est alors disponible directement sous la commande :
 
 ```bash
-# Rapport du jour
+pflogsumm
+```
+
+---
+
+### 📊 Utilisation de base
+
+#### Générer un rapport simple
+
+```bash
+sudo pflogsumm /var/log/maillog
+```
+
+---
+
+#### Rapport avec détail des rejets
+
+```bash
+sudo pflogsumm --detail 0 --rej-detail /var/log/maillog
+```
+
+---
+
+### 📊 Exemples d'utilisation avancée
+
+#### Rapport depuis minuit
+
+```bash
+pflogsumm --since midnight /var/log/maillog
+```
+
+---
+
+#### Rapport d'hier
+
+```bash
+pflogsumm --yesterday /var/log/maillog
+```
+
+---
+
+#### Rapport détaillé (verbose)
+
+```bash
+pflogsumm --verbose /var/log/maillog
+```
+
+---
+
+#### Rapport du jour (Ubuntu/Debian)
+
+```bash
 sudo pflogsumm /var/log/mail.log
+```
 
-# Rapport de la veille
+---
+
+#### Rapport de la veille
+
+```bash
 sudo pflogsumm /var/log/mail.log.1
+```
 
-# Rapport détaillé
+---
+
+#### Rapport avec filtre par date
+
+```bash
 sudo pflogsumm -d today /var/log/mail.log
 ```
 
 ---
 
-**Exemple de sortie** :
+### 📋 Exemple de résultat typique
+
+Vous obtenez un rapport structuré comme ceci :
 
 ```
 Grand Totals
 ------------
-  messages received:        1234
-  messages sent:            1156
-  messages deferred:          45
-  messages bounced:           12
-  messages rejected:         789
-  bytes received:        5.2 MB
-  bytes sent:            4.8 MB
+ messages: 125 received
+           118 delivered
+           7 bounced
+           3 rejected
+           0 held
+           189 sent via SMTP
 ```
+
+---
+
+```
+Top Senders:
+   user@example.com (45)
+   root@example.com (32)
+
+Top Recipients:
+   client@domaine.fr (28)
+   contact@example.org (19)
+```
+
+---
+
+```
+Top Reject Reasons:
+   Relay access denied (3)
+   SASL authentication failed (2)
+   Client host rejected (1)
+
+Top Bounce Reasons:
+   User unknown (5)
+   Mailbox full (2)
+```
+
+---
+
+**Très utile** pour voir rapidement si votre serveur mail tourne correctement et identifier les problèmes potentiels ! ✅
 
 ---
 
 ### ⏰ Automatiser avec cron
 
+#### Rapport quotidien envoyé par email
+
 ```bash
-# Rapport quotidien envoyé par email
 0 6 * * * /usr/sbin/pflogsumm -d yesterday /var/log/mail.log | mail -s "Postfix Report" admin@example.com
 ```
+
+---
+
+#### Rapport automatique dans /etc/cron.daily
+
+```bash
+#!/bin/bash
+# /etc/cron.daily/pflogsumm-report
+
+pflogsumm /var/log/maillog | mail -s "Rapport Postfix quotidien" admin@example.com
+```
+
+---
+
+Rendre le script exécutable :
+
+```bash
+sudo chmod +x /etc/cron.daily/pflogsumm-report
+```
+
+---
+
+### 💡 Conseils d'utilisation
+
+- Exécutez pflogsumm **après la rotation des logs** pour avoir un rapport complet
+- Utilisez `--detail` pour contrôler le niveau de détail (0 = minimal, 10 = maximal)
+- Combinez avec `--rej-detail` pour voir en détail pourquoi les mails sont rejetés
+- Archivez les rapports pour suivre l'évolution dans le temps
+
+---
+
+### 🎯 Cas d'usage pratiques
+
+**Détecter un problème de spam** :
+- Regardez "Top Senders" pour identifier des expéditeurs suspects
+- Vérifiez "Top Reject Reasons" pour voir si vous êtes blacklisté
+
+**Optimiser les performances** :
+- Analysez le volume de trafic
+- Identifiez les pics d'activité
+
+**Audit et conformité** :
+- Conservez les rapports pour traçabilité
+- Prouvez le bon fonctionnement du serveur
 
 ---
 
@@ -428,9 +615,10 @@ sudo systemctl start postfix-exporter
 
 ```yaml
 scrape_configs:
-  - job_name: 'postfix'
+  - job_name: postfix
     static_configs:
-      - targets: ['localhost:9154']
+      - targets:
+          - localhost:9154
 ```
 
 ---
@@ -679,12 +867,12 @@ mail_live_stats() {
     local duration=${1:-5}
     echo "📊 Statistiques des $duration dernières minutes:"
     local since=$(date -d "$duration minutes ago" '+%b %e %H:%M')
-    
+
     local sent=$(sudo grep "$since" /var/log/mail.log 2>/dev/null | grep -c "status=sent")
     local rejected=$(sudo grep "$since" /var/log/mail.log 2>/dev/null | grep -c "reject:")
     local deferred=$(sudo grep "$since" /var/log/mail.log 2>/dev/null | grep -c "status=deferred")
     local bounced=$(sudo grep "$since" /var/log/mail.log 2>/dev/null | grep -c "status=bounced")
-    
+
     echo "✅ Envoyés    : $sent"
     echo "❌ Rejetés    : $rejected"
     echo "⏱️  Différés   : $deferred"
@@ -742,7 +930,7 @@ track_message() {
         echo "Usage: track_message <queue_id>"
         return 1
     fi
-    
+
     echo "🔍 Parcours complet du message $1:"
     echo ""
     sudo grep "$1" /var/log/mail.log | while read line; do
@@ -750,7 +938,7 @@ track_message() {
         timestamp=$(echo "$line" | awk '{print $1, $2, $3}')
         service=$(echo "$line" | grep -oP 'postfix/\w+')
         info=$(echo "$line" | cut -d':' -f4-)
-        
+
         echo "⏰ $timestamp"
         echo "   📦 $service"
         echo "   ℹ️  $info"
@@ -768,22 +956,22 @@ track_message() {
 postfix_health() {
     echo "🏥 État de santé Postfix:"
     echo ""
-    
+
     # Service actif ?
     if systemctl is-active --quiet postfix; then
         echo "✅ Service: ACTIF"
     else
         echo "❌ Service: INACTIF"
     fi
-    
+
     # Taille de la queue
     local queue_size=$(sudo postqueue -p | tail -1 | awk '{print $5}')
     echo "📬 Queue: $queue_size messages"
-    
+
     # Activité récente (5 min)
     local recent=$(sudo grep "$(date -d '5 minutes ago' '+%b %e %H:')" /var/log/mail.log 2>/dev/null | wc -l)
     echo "📊 Activité (5min): $recent lignes de log"
-    
+
     # Erreurs récentes
     local errors=$(sudo grep "$(date -d '5 minutes ago' '+%b %e %H:')" /var/log/mail.log 2>/dev/null | grep -ic "error")
     if [ $errors -gt 0 ]; then
@@ -1087,4 +1275,3 @@ Vous savez maintenant surveiller votre serveur ! Passons à la **sauvegarde et r
     Module suivant : Sauvegarde et restauration <carbon:arrow-right class="inline"/>
   </span>
 </div>
-
