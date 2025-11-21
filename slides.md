@@ -91,6 +91,7 @@ routeAlias: 'sommaire-initiation'
 <Link to="protection-anti-spam">🛡️ Anti-spam essentiel (1h)</Link>
 <Link to="logs-surveillance">📊 Logs et monitoring (45min)</Link>
 <Link to="sauvegarde-restauration">💾 Sauvegarde (30min)</Link>
+<Link to="redondance-smtp">🔄 Redondance SMTP (1h)</Link>
 <Link to="exercices-debutant">🎯 TP pratiques (2h)</Link>
 <Link to="troubleshooting-essentiel">🔧 Troubleshooting (1h)</Link>
 <Link to="qcm-validation">✅ QCM final (30min)</Link>
@@ -250,6 +251,14 @@ src: './pages/11-sauvegarde-restauration.md'
 
 ---
 src: './pages/qcm-module-11.md'
+---
+
+---
+src: './pages/15-redondance-smtp.md'
+---
+
+---
+src: './pages/qcm-module-15.md'
 ---
 
 ---
