@@ -65,11 +65,11 @@ relay_domains = $mydestination # = donc mon relay sera $mydestination c'est à d
 # admin@andromed.cloud      [smtp.gmail.com]:587
 
 # Configuration de fallback en cas d'échec du relais principal
-fallback_relay = [smtp-fallback.example.com]:25
+#fallback_relay = [smtp-fallback.example.com]:25
 
 # Délai avant de considérer qu'un relais est en échec
-smtp_connect_timeout = 30s
-smtp_helo_timeout = 300s
+#smtp_connect_timeout = 30s
+#smtp_helo_timeout = 300s
 
 
 # notre ancien systeme si on veut faire un Maildir par utilisateur shell (pas utilisé dans notre cas)
