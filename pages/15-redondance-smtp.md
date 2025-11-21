@@ -89,7 +89,7 @@ gmail.com.        3600    IN      MX      40 alt4.gmail-smtp-in.l.google.com.
 
 **Ajouter plusieurs enregistrements MX dans votre zone DNS**
 
-```dns
+```bash
 ; Zone DNS pour example.com
 $ORIGIN example.com.
 $TTL 3600
@@ -543,7 +543,7 @@ define service{
 
 **Même priorité = load balancing automatique**
 
-```dns
+```bash
 ; Plusieurs MX avec la même priorité
 example.com.     IN      MX      10  mx1.example.com.
 example.com.     IN      MX      10  mx2.example.com.
@@ -842,7 +842,7 @@ ip addr show eth0          # Sur le backup (devrait avoir la VIP)
 
 **Configuration DNS simplifiée avec VIP**
 
-```dns
+```bash
 ; Un seul enregistrement MX pointant vers la VIP
 example.com.     IN      MX      10  mail.example.com.
 mail.example.com. IN     A       192.168.1.5
