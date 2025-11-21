@@ -1,50 +1,119 @@
 myhostname = mail.andromed.cloud
+# myhostname est le nom de votre serveur mail, il est utilisé pour les enregistrements MX et pour les emails qui sont envoyés par votre serveur mail.
 mydomain = andromed.cloud
+# mydomain est le domaine de votre serveur mail, il est utilisé pour les enregistrements MX et pour les emails qui sont envoyés par votre serveur mail.
 myorigin = $mydomain
+# l'origine des emails qui sont envoyés par votre serveur mail.
+
 inet_interfaces = all
+# inet_interfaces = all signifie que postfix va écouter sur toutes les interfaces de la machine, on pourrais limiter l'usage en fonction de notre besoin
 inet_protocols = ipv4
+# inet_protocols sera en ipv4 car on est dans un environnement de serveur mail qui ne supporte pas ipv6
+# Bonne pratique : utiliser inet_protocols = all si vous avez configuré les enregistrements AAAA (IPv6).
+
+# Configuration de la commande vrfy pour des raisons de sécurité
 disable_vrfy_command = yes
+
+# MyDestination : liste des domaines qui seront acceptés par postfix
 mydestination = $myhostname, localhost.$mydomain, localhost, 
-relay_domains = $mydestination
-#mydomain
+#$mydomain n'est pas présent car on utilise les virtual_mailbox_domains pour les domaines qui seront acceptés par postfix
+
+# Relay Domains : liste des domaines qui seront relayés par postfix
+relay_domains = $mydestination # = donc mon relay sera $mydestination c'est à dire myhostname, localhost.$mydomain, localhost, $mydestination
+#
+# Exemple de configuration de relais entre plusieurs serveurs
+# 
+# Scénario : Serveur mail principal (mail.andromed.cloud) qui relaye vers
+# des serveurs secondaires pour différents domaines ou sous-domaines
+#
+# 1. Relais vers un serveur de messagerie interne pour le domaine interne.andromed.cloud
+# 2. Relais vers un serveur externe pour backup.andromed.cloud
+# 3. Configuration de transport maps pour diriger les emails
+
+# Transport maps : définit comment router les emails selon le domaine
+#transport_maps = hash:/etc/postfix/transport
+
+# Exemple de contenu du fichier /etc/postfix/transport :
+# interne.andromed.cloud    smtp:[192.168.1.100]:25
+# backup.andromed.cloud     smtp:[mail-backup.example.com]:587
+# .andromed.cloud           smtp:[mail.andromed.cloud]:25
+
+# Relais pour domaines spécifiques (en plus de relay_domains défini plus haut)
+# relay_domains peut aussi inclure des domaines externes à relayer
+# relay_domains = $mydestination, interne.andromed.cloud, backup.andromed.cloud
+
+# Configuration pour authentification sur serveurs de relais externes
+#smtp_sasl_auth_enable = yes
+#smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+#smtp_sasl_security_options = noanonymous
+#smtp_sasl_mechanism_filter = plain, login
+
+# Ces paramètres SASL sont pour l'authentification sortante de Postfix vers des serveurs de relais externes (comme Gmail, OVH, etc.), pas pour l'authentification des clients entrants.
+# Dovecot gère l'authentification des clients qui se connectent à votre serveur
+# Ces paramètres SASL permettent à votre Postfix de s'authentifier auprès d'autres serveurs SMTP quand il fait du relais
+# Donc même avec Dovecot, si vous voulez relayer certains emails via des serveurs externes, vous devez activer ces options SASL pour que Postfix puisse s'authentifier correctement.
+
+# Exemple de contenu du fichier /etc/postfix/sasl_passwd :
+# [mail-backup.example.com]:587    username:password
+# [smtp.gmail.com]:587             user@gmail.com:app_password
+
+# Relais conditionnel basé sur l'expéditeur
+#sender_dependent_relayhost_maps = hash:/etc/postfix/sender_relay
+
+# Exemple de contenu du fichier /etc/postfix/sender_relay :
+# @backup.andromed.cloud    [mail-backup.example.com]:587
+# admin@andromed.cloud      [smtp.gmail.com]:587
+
+# Configuration de fallback en cas d'échec du relais principal
+fallback_relay = [smtp-fallback.example.com]:25
+
+# Délai avant de considérer qu'un relais est en échec
+smtp_connect_timeout = 30s
+smtp_helo_timeout = 300s
+
+
+# notre ancien systeme si on veut faire un Maildir par utilisateur shell (pas utilisé dans notre cas)
 #home_mailbox = Maildir/
+
+#notre banniere Smtp
 smtpd_banner = $myhostname ESMTP
-biff = no
-append_dot_mydomain = no
-readme_directory = no
-#smtpd_use_tls = yes
-smtpd_tls_cert_file=/etc/letsencrypt/live/mail.andromed.cloud/fullchain.pem
-smtpd_tls_key_file=/etc/letsencrypt/live/mail.andromed.cloud/privkey.pem
-smtpd_tls_security_level = encrypt
-smtp_tls_security_level = encrypt
-#smtpd_recipient_restrictions = permit_mynetworks permit_sasl_authenticated reject_unauth_destination
+
+# Configuration du certificat TLS
+
+# on va utiliser certbot 
+smtpd_tls_cert_file=/etc/letsencrypt/live/mail.andromed.cloud/fullchain.pem # = chemin du fichier de certificat TLS
+smtpd_tls_key_file=/etc/letsencrypt/live/mail.andromed.cloud/privkey.pem # = chemin du fichier de clé privée TLS
+smtpd_tls_security_level = encrypt # = encrypt signifie que le certificat TLS est obligatoire pour la connexion SMTP
+smtp_tls_security_level = encrypt # = encrypt signifie que le certificat TLS est obligatoire pour la connexion SMTP
+
+# pour opendkim et dkim 
 milter_default_action = accept
 smtpd_milters = inet:localhost:8891
 non_smtpd_milters = inet:localhost:8891
-#smtpd_milters = unix:/var/run/opendkim/opendkim.sock
-#non_smtpd_milters = unix:/var/run/opendkim/opendkim.sock
 milter_protocol = 6
 milter_macro_daemon_name = $myhostname
 
-# Virtual Mails
+# Virtual Mails (pour déclarer qu'on va utiliser des mailbox virtuelle)
 virtual_mailbox_domains = andromed.cloud
 virtual_mailbox_maps = hash:/etc/postfix/vmailbox
+
 # Répertoire de base pour les mailbox
 virtual_mailbox_base = /var/mail/vhosts
-# UID et GID de vmail
+
+# UID et GID de vmail (pour déclarer qu'on va utiliser des UID et GID pour les mailbox virtuelle)
 virtual_uid_maps = static:5000
 virtual_gid_maps = static:5000
 virtual_transport = virtual
 virtual_alias_maps = hash:/etc/postfix/virtual
 
-#mailbox_transport = lmtp:unix:private/dovecot-lmtp
+# pour dovecot en sasl (pour la connexion SMTP avec un client style outlook etc)
 smtpd_sasl_type = dovecot
 smtpd_sasl_path = private/auth
 smtpd_sasl_auth_enable = yes
-
 smtpd_sasl_security_options = noanonymous
 smtpd_sasl_local_domain = $myhostname
 broken_sasl_auth_clients = yes
+# broken_sasl_auth_clients = yes signifie que postfix va accepter les clients SASL qui ne sont pas conformes à la norme SASL
 
 # Vérification RBL avec Spamhaus ZEN
 smtpd_recipient_restrictions = 
@@ -52,12 +121,3 @@ smtpd_recipient_restrictions =
     permit_sasl_authenticated,
     reject_unauth_destination,
     reject_rbl_client zen.spamhaus.org
-
-
-#AUTHENTICATION 
-
-#smtpd_sasl_auth_enable = yes
-#smtpd_sasl_type = dovecot
-#smtpd_sasl_path = private/auth
-#smtpd_sasl_security_options = noanonymous
-#smtpd_sasl_local_domain = $mydomain
